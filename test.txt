@@ -1,8 +1,5 @@
 once upon a time
 hi im ayra
-<<<<<<< HEAD
 he went to class
 I slept in class
-=======
 he takes a bath
->>>>>>> main
