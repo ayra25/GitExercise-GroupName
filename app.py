@@ -1,9 +1,10 @@
+
 from flask import Flask
-from routes.event_routes import event_bp  # Import your blueprint
+from routes.event_routes import event_bp 
+from routes.user_routes import user_bp
 
 app = Flask(__name__)
-
-# Register the blueprint
+app.register_blueprint(user_bp)
 app.register_blueprint(event_bp)
 
 @app.route('/')
