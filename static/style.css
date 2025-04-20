@@ -1,0 +1,76 @@
+body {
+    font-family: 'Roboto', sans-serif;
+  }
+
+.navbar-custom {
+    background-color: #fff; /* White background */
+    padding: 0.5rem 1rem;
+  }
+
+.navbar-brand {
+    font-size: 2rem; /* Big logo text */
+    font-weight: bold;
+  }
+
+.navbar-nav {
+    gap: 2rem; /* Space between Home and Dashboard */
+  }
+
+.navbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+.navbar-icons i {
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
+  .navbar-nav .navbar-link {
+    position: relative;
+    color: #333;
+    text-decoration: none;
+    overflow: hidden;
+  }
+  
+  .navbar-link::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: maroon;
+    transition: width 0.3s;
+  }
+  
+  .navbar-nav .navbar-link:hover::after {
+    width: 100%;
+  }
+  
+  .club-header {
+    background-color: #6b1d1d;
+  }
+  
+  .nav-tabs .nav-link.active {
+    font-weight: bold;
+    border-color: #dee2e6 #dee2e6 #fff;
+  }
+  
+  .event-card {
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+  }
+  
+  .detail-panel {
+    background-color: #fff;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+  }
+  
+  ul li {
+    margin-bottom: 5px;
+  }
+    
