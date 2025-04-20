@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Events{% endblock %}
+
+{% block content %}
+<header class="club-header text-white p-4">
+  <div class="container">
+    <h2>Chess Club 2025</h2>
+    <p>Description of this club</p>
+  </div>
+</header>
+
+<main class="container mt-4">
+  <!-- Tabs -->
+  <ul class="nav nav-tabs" id="clubTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab">Events</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="announcements-tab" data-bs-toggle="tab" data-bs-target="#announcements" type="button" role="tab">Announcements</button>
+    </li>
+  </ul>
+
+  <div class="tab-content mt-3" id="clubTabsContent">
+    <!-- Events Tab -->
+    <div class="tab-pane fade show active" id="events" role="tabpanel">
+      <div class="row">
+        <div class="col-md-6">
+          <!-- Event Cards -->
+          <div class="event-card p-3 mb-3">
+            <h5>Weekly Chess Night 2</h5>
+            <p>2:00 p.m. – 4:00 p.m. @ CQA2003<br>Come join us on 24/5! Make sure to...</p>
+          </div>
+          <div class="event-card p-3 mb-3">
+            <h5>Ice Breaking Session</h5>
+            <p>2:00 p.m. – 4:00 p.m. @ CQA2003<br>Come join us on 24/5! Make sure to...</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <!-- Right Panel Details -->
+          <div class="detail-panel p-3">
+            <h5><strong>Weekly Chess Night 2</strong></h5>
+            <p><strong>2:00 p.m. – 4:00 p.m. @ CQA2003</strong></p>
+            <p><strong>Event Details:</strong><br>
+              Join us for a relaxed evening of chess! Whether you're here to learn, practice, or show off your skills...
+            </p>
+            <ul>
+              <li>♟️ Mini Blitz Tournament starts at 8:00 PM <em>(optional)</em></li>
+              <li>🧩 Puzzle corner for quick challenges</li>
+              <li>🎲 Casual free-play tables all evening</li>
+              <li>💡 Coaching tips available for beginners!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Announcements Tab -->
+    <div class="tab-pane fade" id="announcements" role="tabpanel">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="event-card p-3 mb-3">
+            <h5>Weekly Chess Night Poll</h5>
+            <p>Help us make Chess Night even better! 🌟 Cast your vote and let us know...</p>
+          </div>
+          <div class="event-card p-3 mb-3">
+            <h5>MMU Chess Championship</h5>
+            <p>2:00 p.m. – 4:00 p.m. @ CQA2003<br>Come join us on 24/5! Make sure to...</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="detail-panel p-3">
+            <h5><strong>Weekly Chess Night Poll</strong></h5>
+            <p>Help us make Chess Night even better! 🌟<br>Cast your vote and let us know your preferences...</p>
+            <form>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="format" id="rapid">
+                <label class="form-check-label" for="rapid">Rapid</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="format" id="blitz">
+                <label class="form-check-label" for="blitz">Blitz</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="format" id="bullet">
+                <label class="form-check-label" for="bullet">Bullet</label>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
