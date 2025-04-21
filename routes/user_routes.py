@@ -15,7 +15,6 @@ def handle_signup():
     name = request.form['name']
     email = request.form['email']
     password = request.form['password']
-    # You can save to a database here!
     return f"Welcome {name}, you’ve successfully signed up with {email}!"
 
 @user_bp.route('/login-user', methods=['POST'])
