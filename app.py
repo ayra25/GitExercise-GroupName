@@ -1,4 +1,3 @@
-
 from flask import Flask
 from routes.event_routes import event_bp 
 from routes.user_routes import user_bp

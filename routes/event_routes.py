@@ -39,4 +39,4 @@ def event_page():
 
 @event_bp.route('/post-event')
 def post_page():
-    return render_template('post-event.html')
+    return render_template('post_event.html')
