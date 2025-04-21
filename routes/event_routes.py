@@ -36,3 +36,7 @@ announcements = [
 @event_bp.route('/event')
 def event_page():
     return render_template('event.html', events=events, announcements=announcements)
+
+@event_bp.route('/post-event')
+def post_page():
+    return render_template('post-event.html')
