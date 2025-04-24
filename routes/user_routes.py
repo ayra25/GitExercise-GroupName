@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request
+from models.user import User
+from app import db
 
 user_bp = Blueprint('user',__name__)
 
@@ -15,14 +17,23 @@ def handle_signup():
     name = request.form['name']
     email = request.form['email']
     password = request.form['password']
+
+    new_user = User(name=name, email=email, password=password)
+    db.session.add(new_user)
+    db.session.commit()
+
     return f"Welcome {name}, you’ve successfully signed up with {email}!"
+
 
 @user_bp.route('/login-user', methods=['POST'])
 def handle_login():
     name = request.form['name']
-    username = request.form['username']
+    email = request.form['email']
     password = request.form['password']
-    if username == 'user' and password == '1234':
+
+    user = User.query.filter_by(email=email).first()
+    
+    if email == 'email' and password == '1234':
         return f"Welcome back {name}, Login successful!"
     else:
         return "Invalid Login credentials!"
