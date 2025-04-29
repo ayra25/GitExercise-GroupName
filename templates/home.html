@@ -1,2 +1,428 @@
-{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content%}
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-color: #6b1d1d;
+        --secondary-color: #4e73df;
+        --text-color: #333;
+        --light-gray: #f8f9fa;
+        --border-radius: 8px;
+        --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .section-header {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin: 0;
+    }
+    
+    .view-all {
+        font-size: 0.9rem;
+        color: var(--secondary-color);
+        text-decoration: none;
+    }
+    
+    /* Clubs Section */
+    .clubs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    
+    .club-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        transition: transform 0.2s, box-shadow 0.2s;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    
+    .club-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+    
+    .club-card-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 15px;
+    }
+    
+    .club-card-body {
+        padding: 15px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .club-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: white;
+    }
+    
+    .club-description {
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.8);
+        margin-bottom: 10px;
+    }
+    
+    .club-meta {
+        margin-top: auto;
+        font-size: 0.85rem;
+        color: #666;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .club-link {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+    
+    /* Events Section */
+    .events-container {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .event-section {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .event-item {
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+    }
+    
+    .event-item:last-child {
+        border-bottom: none;
+    }
+    
+    .event-icon {
+        margin-right: 15px;
+        color: var(--secondary-color);
+        font-size: 1.2rem;
+    }
+    
+    .event-content {
+        flex-grow: 1;
+    }
+    
+    .event-title {
+        font-weight: 500;
+        margin-bottom: 3px;
+    }
+    
+    .event-meta {
+        font-size: 0.85rem;
+        color: #666;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .event-meta span {
+        margin-right: 10px;
+    }
+    
+    /* Calendar Section */
+    .calendar-container {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 20px;
+        margin-bottom: 20px;
+        width: 300px;
+    }
+    
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+    }
+    
+    .calendar-day {
+        text-align: center;
+        padding: 5px;
+        font-weight: bold;
+        font-size: 0.8rem;
+        color: #666;
+    }
+    
+    .calendar-date {
+        text-align: center;
+        padding: 8px 5px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+    
+    .calendar-date.has-event {
+        background-color: var(--light-gray);
+        font-weight: bold;
+    }
+    
+    .calendar-date.today {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    /* Empty States */
+    .empty-state {
+        text-align: center;
+        padding: 30px;
+        color: #888;
+    }
+    
+    /* Floating Action Button */
+    .fab-container {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 15px;
+        z-index: 1000;
+    }
+    
+    .fab {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .attendance-badge {
+    display: inline-flex;
+    align-items: center;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 0.25rem 0.5rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    }
+    .attendance-badge i {
+    margin-right: 0.25rem;
+    font-size: 0.875rem;
+}
+    
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .events-container {
+            grid-template-columns: 1fr;
+        }
+        
+        .clubs-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .calendar-container {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="dashboard-container">
+    <!-- Welcome Header -->
+    <div class="welcome-header mb-4">
+        <h1>Welcome back, {{ current_user.first_name }}!</h1>
+        <p class="text-muted">Here's what's happening in your clubs</p>
+    </div>
+
+    <!-- My Clubs Section -->
+    <div class="section-header">
+        <h2 class="section-title">My Clubs</h2>
+        <a href="{{ url_for('club.create_club') }}" class="btn btn-sm btn-outline-primary">Create Club</a>
+    </div>
+    
+    {% if clubs %}
+    <div class="clubs-grid">
+        {% for club in clubs %}
+        <div class="club-card">
+            <a href="{{ url_for('event.events_page', club_id=club.id) }}" class="club-link" aria-label="View {{ club.name }}"></a>
+            <div class="club-card-header">
+                <h3 class="club-name">{{ club.name }}</h3>
+                <p class="club-description">{{ club.description|default('No description', true) }}</p>
+            </div>
+            <div class="club-card-body">
+                <div class="club-meta">
+                    <span>{{ club.events|length }} {{ 'event' if club.events|length == 1 else 'events' }}</span>
+                    {% if club.is_host %}
+                    <span class="badge bg-primary">Host</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="bi bi-people" style="font-size: 2rem; color: #ccc;"></i>
+        <p>You haven't joined any clubs yet</p>
+        <a href="{{ url_for('club.join_club') }}" class="btn btn-primary">Join a Club</a>
+    </div>
+    {% endif %}
+
+    <!-- Events and Calendar Section -->
+    <div class="events-container">
+        <!-- Recent Events -->
+        <div class="event-section">
+            <div class="section-header">
+                <h2 class="section-title">My Recent Events</h2>
+                {% if attended_events %}<a href="{{ url_for('event.events_page', club_id=attended_events[0].club.id) }}" class="view-all">View All</a>{% endif %}
+            </div>
+            
+            {% if attended_events %}
+                {% for event in attended_events %}
+                <div class="event-item">
+                    <div class="event-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div class="event-content">
+                        <h5 class="event-title">{{ event.title }}</h5>
+                        <div class="event-meta">
+                            <span>{{ event.club.name }}</span>
+                            <span>
+                                {% set days_diff = (now.date() - event.date).days %}
+                                {% if days_diff == 0 %}
+                                    Today
+                                {% elif days_diff == 1 %}
+                                    Yesterday
+                                {% else %}
+                                    {{ days_diff }} days ago
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="attendance-badge">
+                            <i class="bi bi-check-circle-fill"></i> Attended
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-calendar" style="font-size: 1.5rem;"></i>
+                    <p>No recent events attended</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Calendar and Upcoming Events -->
+        <div>
+            <!-- Upcoming Events -->
+            <div class="event-section">
+                <div class="section-header">
+                    <h2 class="section-title">Upcoming</h2>
+                    {% if upcoming_events %}<a href="#" class="view-all">View All</a>{% endif %}
+                </div>
+                
+                {% if upcoming_events %}
+                    {% for event in upcoming_events %}
+                    <div class="event-item">
+                        <div class="event-icon">
+                            <i class="bi bi-alarm"></i>
+                        </div>
+                        <div class="event-content">
+                            <h5 class="event-title">{{ event.title }}</h5>
+                            <div class="event-meta">
+                                <span>{{ event.club.name }}</span>
+                                <span>{{ event.date.strftime('%b %d') }} at {{ event.time.strftime('%I:%M %p') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="bi bi-calendar-plus" style="font-size: 1.5rem;"></i>
+                        <p>No upcoming events</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Calendar -->
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <h2 class="section-title">Calendar</h2>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary">Today</button>
+                    </div>
+                </div>
+                
+                <!-- Simple Calendar Implementation -->
+                <div class="calendar-grid">
+                    <!-- Day headers -->
+                    <div class="calendar-day">Sun</div>
+                    <div class="calendar-day">Mon</div>
+                    <div class="calendar-day">Tue</div>
+                    <div class="calendar-day">Wed</div>
+                    <div class="calendar-day">Thu</div>
+                    <div class="calendar-day">Fri</div>
+                    <div class="calendar-day">Sat</div>
+                    
+                    <!-- Calendar dates (simplified) -->
+                    {% for day in range(1, 32) %}
+                    <div class="calendar-date {% if day == now.day %}today{% endif %}">
+                        {{ day }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Action Buttons -->
+<div class="fab-container">
+    <a href="{{ url_for('club.join_club') }}" class="fab fab-secondary" title="Join Club">
+        <i class="bi bi-plus-lg"></i>
+    </a>
+</div>
+
 {% endblock %}

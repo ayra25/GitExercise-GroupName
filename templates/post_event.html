@@ -1,82 +1,56 @@
-{% extends "base.html" %}
-
-{% block title %}Post Event{% endblock %}
+{% extends 'base.html' %}
 
 {% block content %}
-<style>
-    .post-event-page {
+  <style>
+    .form-container {
       background-color: #f8f9fa;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      padding: 30px;
+      border-radius: 10px;
     }
-    .post-event-page .post-event-card {
-      background-color: #fff;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 600px;
+    .form-container h3 {
+      margin-bottom: 20px;
     }
-    .post-event-page .form-control {
-      background-color: #f6f5f5;
-      border: none;
-      border-radius: 50px;
+    .form-container .form-group {
+      margin-bottom: 1rem;
     }
-    .post-event-page textarea.form-control {
-      border-radius: 20px;
-      height: 150px;
-    }
-    .post-event-page .post-button {
-      background-color: #bbb;
-      border: none;
-      border-radius: 50px;
-      padding: 10px 40px;
-      font-weight: bold;
-      color: black;
-      transition: background-color 0.3s;
-    }
-    .post-event-page .post-button:hover {
-      background-color: #999;
-    }
-    .post-event-page label {
-      font-weight: 500;
-      margin-top: 20px;
-      margin-bottom: 8px;
-    }
-</style>
+  </style>
 
-<div class="post-event-page">
-    <div class="post-event-card">
-      <h4 class="mb-4">Post An Event</h4>
-
-      <!-- Flash messages -->
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} mb-3" role="alert">
-              {{ message }}
-            </div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
-
-      <form method="POST">
-        <div class="mb-3">
-          <label for="eventTitle" class="form-label">Event Title</label>
-          <input type="text" class="form-control" id="eventTitle" name="eventTitle" placeholder="Enter event title">
+  <div class="container my-4">
+    <h3>Post a New Event for {{ club.name }}</h3>
+    <div class="form-container">
+      <form method="POST" action="{{ url_for('event.post_event', club_id=club.id) }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+          <label for="title">{{ form.title.label }}</label>
+          {{ form.title(class="form-control") }}
         </div>
-        <div class="mb-4">
-          <label for="eventDescription" class="form-label">Event Description</label>
-          <textarea class="form-control" id="eventDescription" name="eventDescription" placeholder="Enter event description"></textarea>
+
+        <div class="form-group">
+          <label for="description">{{ form.description.label }}</label>
+          {{ form.description(class="form-control", rows=4) }}
         </div>
-        <div class="d-flex justify-content-between">
-          <a href="{{ url_for('event.view_events') }}" class="btn btn-secondary">View All Events</a>
-          <button type="submit" class="post-button">Post</button>
+
+        <div class="form-group">
+          <label for="date">{{ form.date.label }}</label>
+          {{ form.date(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+          <label for="time">{{ form.time.label }}</label>
+          {{ form.time(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+          <label for="location">{{ form.location.label }}</label>
+          {{ form.location(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+          {{ form.submit(class="btn btn-primary") }}
         </div>
       </form>
     </div>
-</div>
+  </div>
 
 {% endblock %}

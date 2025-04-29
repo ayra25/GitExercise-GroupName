@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Create a New Club</h2>
+
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <div class="mb-3">
+            <label for="name" class="form-label">Club Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="join_code" class="form-label">Join Code</label>
+            <input type="text" class="form-control" id="join_code" name="join_code" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description (Optional)</label>
+            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Club</button>
+    </form>
+</div>
+
+{% endblock %}

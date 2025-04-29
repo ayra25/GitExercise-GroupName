@@ -1,41 +1,388 @@
-{% extends "base.html" %}
-
-{% block title %}All Events{% endblock %}
+{% extends 'base.html' %}
 
 {% block content %}
 <style>
-  .event-list-page {
-    background-color: #f8f9fa;
-    padding: 50px;
-    min-height: 100vh;
-  }
-  .event-card {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-  }
-  .event-card h5 {
-    margin-bottom: 10px;
-    font-weight: 600;
-  }
-  .event-card p {
-    color: #666;
-  }
+    :root {
+        --maroon: #6b1d1d;
+        --maroon-light: #8a2a2a;
+        --light-gray: #f8f9fa;
+        --medium-gray: #e9ecef;
+        --dark-gray: #495057;
+    }
+    
+    body {
+        background-color: var(--light-gray);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .hero-section {
+    background: linear-gradient(135deg, var(--maroon));
+    color: white;
+    padding: 2.5rem 0;
+    margin-bottom: 2rem;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: flex-start; /* Align items to the left */
+    align-items: flex-end; /* Align content to the bottom */
+    height: 250px; /* You can adjust the height depending on how large you want the banner */
+}
+
+.club-header {
+    max-width: 800px;
+    margin: 0 1rem;
+    padding-bottom: 1rem; /* Ensure the content doesn't touch the very bottom */
+    padding-left: 1rem;
+}
+
+.club-name {
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.club-description {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    max-width: 600px;
+}
+    
+    .analytics-link {
+        position: absolute;
+        bottom: 1.5rem;
+        right: 1.5rem;
+    }
+    
+    .analytics-link a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: opacity 0.2s;
+    }
+    
+    .analytics-link a:hover {
+        opacity: 0.8;
+        text-decoration: none;
+    }
+    
+    .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    
+    .nav-tabs {
+        border-bottom: 2px solid var(--medium-gray);
+        margin-bottom: 1.5rem;
+    }
+    
+    .nav-tabs .nav-link {
+        color: var(--dark-gray);
+        font-weight: 500;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.2s;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        color: var(--maroon);
+        background-color: transparent;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: var(--maroon);
+        background-color: transparent;
+        border-bottom: 3px solid var(--maroon);
+        font-weight: 600;
+    }
+    
+    .event-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+    }
+    
+    .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    }
+    
+    .event-card.selected-event {
+        border-left: 4px solid var(--maroon);
+    }
+    
+    .event-card-body {
+        padding: 1.5rem;
+    }
+    
+    .event-title {
+        font-weight: 600;
+        color: var(--maroon);
+        margin-bottom: 0.5rem;
+    }
+    
+    .event-meta {
+        color: var(--dark-gray);
+        font-size: 0.9rem;
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .event-details-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 20px;
+        overflow: hidden;
+    }
+    
+    .event-details-header {
+        background-color: var(--maroon);
+        color: white;
+        padding: 1.5rem;
+    }
+    
+    .event-details-body {
+        padding: 2rem;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: var(--maroon);
+        margin-bottom: 0.25rem;
+    }
+    
+    .detail-value {
+        margin-bottom: 1.5rem;
+    }
+    
+    .empty-state {
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--dark-gray);
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        opacity: 0.5;
+        margin-bottom: 1rem;
+    }
+    
+    .add-event-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--maroon);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 1000;
+        transition: all 0.3s;
+    }
+    
+    .add-event-btn:hover {
+        background: var(--maroon-light);
+        transform: scale(1.1);
+        color: white;
+    }
+    
+    .attendance-btn {
+        background: var(--maroon);
+        border: none;
+        padding: 0.5rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    
+    .attendance-btn:hover {
+        background: var(--maroon-light);
+    }
+    
+    @media (max-width: 768px) {
+        .event-details-card {
+            position: static;
+            margin-top: 2rem;
+        }
+    }
 </style>
 
-<div class="event-list-page">
-  <h3 class="mb-4">All Posted Events</h3>
-
-  {% for event in events %}
-    <div class="event-card">
-      <h5>{{ event.title }}</h5>
-      <p>{{ event.description }}</p>
-      <small class="text-muted">Posted on {{ event.date_posted.strftime('%d %B %Y') }}</small>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="club-header">
+        <h1 class="club-name">{{ club.name }}</h1>
+        <p class="club-description">{{ club.description or "Welcome to our club events page" }}</p>
+        {% if is_host %}
+        <div class="analytics-link">
+            <a href="{{ url_for('club.attendance_analytics', club_id=club.id) }}">
+                <i class="bi bi-graph-up"></i> Attendance Analytics
+            </a>
+        </div>
+        {% endif %}
     </div>
-  {% else %}
-    <p>No events posted yet.</p>
-  {% endfor %}
+</section>
+
+<!-- Main Content -->
+<div class="main-container">
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs" id="eventTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab">
+                <i class="bi bi-calendar-event me-2"></i>Events
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="announcements-tab" data-bs-toggle="tab" data-bs-target="#announcements" type="button" role="tab">
+                <i class="bi bi-megaphone me-2"></i>Announcements
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="eventTabsContent">
+        <!-- Events Tab -->
+        <div class="tab-pane fade show active" id="events" role="tabpanel">
+            <div class="row">
+                <!-- Event List Column -->
+                <div class="col-lg-6">
+                    {% for event in events %}
+                    <div class="event-card {% if request.args.get('selected') == event.id|string %}selected-event{% endif %}">
+                        <div class="event-card-body">
+                            <a href="{{ url_for('event.events_page', club_id=club.id, selected=event.id) }}" style="text-decoration: none; color: inherit;">
+                                <h5 class="event-title">{{ event.title }}</h5>
+                                <div class="event-meta">
+                                    <span><i class="bi bi-calendar me-1"></i>{{ event.date.strftime('%b %d, %Y') }}</span>
+                                    <span><i class="bi bi-clock me-1"></i>{{ event.time.strftime('%I:%M %p') }}</span>
+                                    <span><i class="bi bi-geo-alt me-1"></i>{{ event.location }}</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Event Details Column -->
+                <div class="col-lg-6">
+                    {% if selected_event %}
+                    <div class="event-details-card">
+                        <div class="event-details-header">
+                            <h3>{{ selected_event.title }}</h3>
+                        </div>
+                        <div class="event-details-body">
+                            <div class="mb-4">
+                                <div class="detail-label">Date & Time</div>
+                                <div class="detail-value">
+                                    {{ selected_event.date.strftime('%A, %B %d, %Y') }} at {{ selected_event.time.strftime('%I:%M %p') }}
+                                </div>
+                                
+                                <div class="detail-label">Location</div>
+                                <div class="detail-value">
+                                    {{ selected_event.location }}
+                                </div>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div class="mb-4">
+                                <div class="detail-label">Description</div>
+                                <div class="detail-value">
+                                    {{ selected_event.description }}
+                                </div>
+                            </div>
+                            
+                            {% if selected_event.additional_info %}
+                            <div class="mb-4">
+                                <div class="detail-label">Additional Information</div>
+                                <div class="detail-value">
+                                    {{ selected_event.additional_info }}
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Attendance Button -->
+                            {% if selected_event and selected_event.date <= now.date() and is_host %}
+                            <div class="d-flex gap-2 mt-4">
+                                {% if selected_event.attendance_started %}
+                                <a href="{{ url_for('attendance.take_attendance', event_id=selected_event.id) }}" 
+                                   class="btn attendance-btn">
+                                    <i class="bi bi-pencil-square me-2"></i>Update Attendance
+                                </a>
+                                {% else %}
+                                <a href="{{ url_for('attendance.take_attendance', event_id=selected_event.id) }}" 
+                                   class="btn attendance-btn">
+                                    <i class="bi bi-clipboard-check me-2"></i>Take Attendance
+                                </a>
+                                {% endif %}
+                                <a href="#" class="btn btn-outline-secondary">
+                                    <i class="bi bi-calendar-plus me-2"></i>Add to Calendar
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="event-details-card">
+                        <div class="empty-state">
+                            <div>
+                                <i class="bi bi-calendar-event"></i>
+                                <h4>No Event Selected</h4>
+                                <p>Select an event from the list to view details</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements Tab -->
+        <div class="tab-pane fade" id="announcements" role="tabpanel">
+            {% if announcements %}
+                {% for announcement in announcements %}
+                <div class="card mb-3 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5>{{ announcement.title }}</h5>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-clock me-1"></i>{{ announcement.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                        </p>
+                        <p class="mb-0">{{ announcement.content }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-megaphone text-muted" style="font-size: 2.5rem;"></i>
+                        <h4 class="mt-3">No Announcements Yet</h4>
+                        <p class="text-muted">Check back later for updates</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
+
+<!-- Add Event Button -->
+{% if is_host %}
+<a href="{{ url_for('event.post_event', club_id=club.id) }}" class="add-event-btn">
+    <i class="bi bi-plus"></i>
+</a>
+{% endif %}
+
 {% endblock %}
