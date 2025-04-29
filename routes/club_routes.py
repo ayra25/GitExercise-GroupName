@@ -20,34 +20,29 @@ def verify_host(club_id):
 @club_bp.route('/')
 @login_required
 def dashboard():
-    # Get user's clubs
     memberships = ClubMembership.query.filter_by(user_id=current_user.id).all()
     club_ids = [m.club_id for m in memberships]
     
-    # Current date for filtering
     today = datetime.utcnow().date()
-    
-    # Get UPCOMING events (future dates only)
     upcoming_events = Event.query.filter(
         Event.club_id.in_(club_ids),
-        Event.date >= today  # Only future events
+        Event.date >= today  
     ).order_by(Event.date.asc()).limit(5).all()
     
-    # Get RECENTLY ATTENDED events (only those user marked as attended)
     attended_events = db.session.query(Event).join(
         EventAttendance,
         (EventAttendance.event_id == Event.id) & 
         (EventAttendance.user_id == current_user.id) &
-        (EventAttendance.attended == True)  # Only attended events
+        (EventAttendance.attended == True) 
     ).filter(
         Event.club_id.in_(club_ids),
-        Event.date <= today  # Only past events
+        Event.date <= today  
     ).order_by(Event.date.desc()).limit(5).all()
     
     return render_template('home.html',
         clubs=[m.club for m in memberships],
         upcoming_events=upcoming_events,
-        attended_events=attended_events,  # Changed from recent_events
+        attended_events=attended_events,  
         now=datetime.utcnow()
     )
 
@@ -134,12 +129,10 @@ def attendance_analytics(club_id):
     
     club = Club.query.get_or_404(club_id)
     
-    # Get all events with attendance data
     events = Event.query.filter_by(club_id=club_id).options(
         db.joinedload(Event.attendances)
     ).all()
     
-    # Calculate event statistics
     event_stats = []
     for event in events:
         total_members = ClubMembership.query.filter_by(club_id=club_id).count()
@@ -151,7 +144,6 @@ def attendance_analytics(club_id):
             'attendance_rate': (attended / total_members * 100) if total_members > 0 else 0
         })
     
-    # Calculate member statistics
     members = ClubMembership.query.filter_by(club_id=club_id).options(
         db.joinedload(ClubMembership.member)
     ).all()
@@ -164,7 +156,7 @@ def attendance_analytics(club_id):
             attended=True
         ).count()
         member_stats.append({
-            'member': member.member,  # Access the related User via 'member'
+            'member': member.member,  
             'total_events': total_events,
             'attended_events': attended_events,
             'attendance_rate': (attended_events / total_events * 100) if total_events > 0 else 0
@@ -179,7 +171,6 @@ def attendance_analytics(club_id):
 @club_bp.route('/my-events')
 @login_required
 def event_history():
-    # Get user's attended events
     attended_events = db.session.query(Event).join(
         EventAttendance,
         (EventAttendance.event_id == Event.id) & 

@@ -24,7 +24,6 @@ def events_page(club_id):
         abort(403)
     
     events = Event.query.filter_by(club_id=club_id).order_by(Event.date.desc()).all()
-    # Get selected event
     selected_id = request.args.get('selected')
     selected_event = next(
         (e for e in events if str(e.id) == selected_id),
@@ -37,13 +36,12 @@ def events_page(club_id):
         selected_event=selected_event,
         is_host=membership.is_host,
         now=datetime.utcnow(),
-        membership=membership,  # Pass membership to the template
+        membership=membership,  
     )
 
 @event_bp.route('/event/<int:club_id>/post-event', methods=['GET', 'POST'])
 @login_required
 def post_event(club_id):
-    # Verify host status
     if not ClubMembership.query.filter_by(
         user_id=current_user.id,
         club_id=club_id,
@@ -59,8 +57,8 @@ def post_event(club_id):
             new_event = Event(
                 title=form.title.data.strip(),
                 description=form.description.data.strip(),
-                date=form.date.data,        # ✅ Save date properly
-                time=form.time.data,        # ✅ Save time properly
+                date=form.date.data,        
+                time=form.time.data,        
                 location=form.location.data.strip(),
                 club_id=club.id,
                 host_id=current_user.id
@@ -83,7 +81,6 @@ def post_event(club_id):
 def mark_attendance(event_id):
     event = Event.query.get_or_404(event_id)
     
-    # Check membership first
     membership = ClubMembership.query.filter_by(
         user_id=current_user.id,
         club_id=event.club_id

@@ -1,9 +1,8 @@
-# routes/user_routes.py
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from models.user import User
 from extensions import db
 from flask_login import login_user, login_required, logout_user, current_user
-import bcrypt  # Import bcrypt for hashing and verifying passwords
+import bcrypt  
 
 user_bp = Blueprint('user', __name__)
 

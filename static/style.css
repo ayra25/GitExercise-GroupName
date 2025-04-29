@@ -3,17 +3,17 @@ body {
   }
 
 .navbar-custom {
-    background-color: #fff; /* White background */
+    background-color: #fff; 
     padding: 0.5rem 1rem;
   }
 
 .navbar-brand {
-    font-size: 2rem; /* Big logo text */
+    font-size: 2rem; 
     font-weight: bold;
   }
 
 .navbar-nav {
-    gap: 2rem; /* Space between Home and Dashboard */
+    gap: 2rem; 
   }
 
 .navbar-icons {

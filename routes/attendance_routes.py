@@ -13,17 +13,13 @@ attendance_bp = Blueprint('attendance', __name__)
 def take_attendance(event_id):
     event = Event.query.get_or_404(event_id)
     
-    # Verify user is host of this club
     membership = ClubMembership.query.filter_by(
         user_id=current_user.id,
         club_id=event.club_id,
         is_host=True
     ).first_or_404()
     
-    # Get all club members
     members = ClubMembership.query.filter_by(club_id=event.club_id).all()
-    
-    # Get existing attendance records
     attendances = {a.user_id: a for a in event.attendances}
     
     return render_template('take_attendance.html',
@@ -36,15 +32,12 @@ def take_attendance(event_id):
 @login_required
 def submit_attendance(event_id):
     event = Event.query.get_or_404(event_id)
-    
-    # Verify user is host
     membership = ClubMembership.query.filter_by(
         user_id=current_user.id,
         club_id=event.club_id,
         is_host=True
     ).first_or_404()
     
-    # Process attendance form
     for member_id, attended in request.form.items():
         if member_id.isdigit():
             attendance = EventAttendance.query.filter_by(

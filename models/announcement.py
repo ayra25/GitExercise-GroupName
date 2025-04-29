@@ -8,9 +8,9 @@ class Announcement(db.Model):
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    club_id = db.Column(db.Integer, db.ForeignKey('clubs.id'), nullable=False)  # Add this line
+    club_id = db.Column(db.Integer, db.ForeignKey('clubs.id'), nullable=False)  
     
-    # Relationship to Club
+  
     club = db.relationship('Club', backref=db.backref('announcements', lazy=True))
     
     def __repr__(self):
