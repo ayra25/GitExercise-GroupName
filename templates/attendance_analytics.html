@@ -1,0 +1,54 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-4">
+  <h2>Attendance Analytics for {{ club.name }}</h2>
+  
+  <h3 class="mt-4">Event Statistics</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Event</th>
+        <th>Date</th>
+        <th>Participants</th>
+        <th>Attended</th>
+        <th>Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for stat in event_stats %}
+      <tr>
+        <td>{{ stat.event.title }}</td>
+        <td>{{ stat.event.date.strftime('%Y-%m-%d') }}</td>
+        <td>{{ stat.total_participants }}</td>
+        <td>{{ stat.attended }}</td>
+        <td>{{ "%.1f"|format(stat.attendance_rate) }}%</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  <h3 class="mt-4">Member Statistics</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Member</th>
+        <th>Events</th>
+        <th>Attended</th>
+        <th>Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for stat in member_stats %}
+      <tr>
+        <td>{{ stat.member.first_name }}</td>
+        <td>{{ stat.total_events }}</td>
+        <td>{{ stat.attended_events }}</td>
+        <td>{{ "%.1f"|format(stat.attendance_rate) }}%</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

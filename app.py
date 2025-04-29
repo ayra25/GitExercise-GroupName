@@ -32,7 +32,13 @@ def create_app():
     # Register blueprints
     from routes.user_routes import user_bp
     from routes.event_routes import event_bp
+    from routes.club_routes import club_bp
+    from routes.attendance_routes import attendance_bp
     app.register_blueprint(user_bp)
+    app.register_blueprint(event_bp)
+    app.register_blueprint(club_bp)
+    app.register_blueprint(attendance_bp)
+
 
     # You can register more blueprints here, e.g., event_bp, attendance_bp later
 
