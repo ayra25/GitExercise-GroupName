@@ -67,3 +67,33 @@ def submit_attendance(event_id):
     
     flash('Attendance saved successfully!', 'success')
     return redirect(url_for('event.events_page', club_id=event.club_id))
+
+@attendance_bp.route('/event/<int:event_id>/attend', methods=['POST'])
+@login_required
+def mark_attendance(event_id):
+    event = Event.query.get_or_404(event_id)
+    
+    # Check membership first
+    membership = ClubMembership.query.filter_by(
+        user_id=current_user.id,
+        club_id=event.club_id
+    ).first_or_404()
+    
+    attendance = EventAttendance.query.filter_by(
+        event_id=event_id,
+        user_id=current_user.id
+    ).first()
+    
+    if attendance:
+        attendance.attended = not attendance.attended
+    else:
+        attendance = EventAttendance(
+            event_id=event_id,
+            user_id=current_user.id,
+            attended=True  # Mark as attended when first created
+        )
+        db.session.add(attendance)
+    
+    db.session.commit()
+    flash('Attendance updated!', 'success')
+    return redirect(url_for('event.events_page', club_id=event.club_id))
