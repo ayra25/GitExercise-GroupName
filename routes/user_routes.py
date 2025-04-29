@@ -1,9 +1,8 @@
-# routes/user_routes.py
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from models.user import User
 from extensions import db
 from flask_login import login_user, login_required, logout_user, current_user
-import bcrypt  # Import bcrypt for hashing and verifying passwords
+import bcrypt  
 
 user_bp = Blueprint('user', __name__)
 
@@ -15,7 +14,6 @@ def login():
 
         user = User.query.filter_by(email=email).first()
         if user:
-            # Check if the password matches the stored hashed password
             if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
                 flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)
@@ -53,7 +51,7 @@ def signup():
         elif len(password1) < 7:
             flash('Password must be at least 7 characters.', category='error')
         else:
-            # Hash the password using bcrypt
+
             hashed_password = bcrypt.hashpw(password1.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
             new_user = User(email=email, first_name=first_name, password=hashed_password)

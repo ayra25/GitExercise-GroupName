@@ -23,15 +23,15 @@
     position: relative;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     display: flex;
-    justify-content: flex-start; /* Align items to the left */
-    align-items: flex-end; /* Align content to the bottom */
-    height: 250px; /* You can adjust the height depending on how large you want the banner */
+    justify-content: flex-start; 
+    align-items: flex-end; 
+    height: 250px; 
 }
 
 .club-header {
     max-width: 800px;
     margin: 0 1rem;
-    padding-bottom: 1rem; /* Ensure the content doesn't touch the very bottom */
+    padding-bottom: 1rem; 
     padding-left: 1rem;
 }
 
@@ -223,7 +223,7 @@
     }
 </style>
 
-<!-- Hero Section -->
+
 <section class="hero-section">
     <div class="club-header">
         <h1 class="club-name">{{ club.name }}</h1>
@@ -238,9 +238,9 @@
     </div>
 </section>
 
-<!-- Main Content -->
+
 <div class="main-container">
-    <!-- Navigation Tabs -->
+    
     <ul class="nav nav-tabs" id="eventTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab">
@@ -254,12 +254,12 @@
         </li>
     </ul>
 
-    <!-- Tab Content -->
+    
     <div class="tab-content" id="eventTabsContent">
-        <!-- Events Tab -->
+        
         <div class="tab-pane fade show active" id="events" role="tabpanel">
             <div class="row">
-                <!-- Event List Column -->
+                
                 <div class="col-lg-6">
                     {% for event in events %}
                     <div class="event-card {% if request.args.get('selected') == event.id|string %}selected-event{% endif %}">
@@ -277,7 +277,7 @@
                     {% endfor %}
                 </div>
 
-                <!-- Event Details Column -->
+                
                 <div class="col-lg-6">
                     {% if selected_event %}
                     <div class="event-details-card">
@@ -315,7 +315,7 @@
                             </div>
                             {% endif %}
                             
-                            <!-- Attendance Button -->
+                            
                             {% if selected_event and selected_event.date <= now.date() and is_host %}
                             <div class="d-flex gap-2 mt-4">
                                 {% if selected_event.attendance_started %}
@@ -351,7 +351,7 @@
             </div>
         </div>
 
-        <!-- Announcements Tab -->
+        
         <div class="tab-pane fade" id="announcements" role="tabpanel">
             {% if announcements %}
                 {% for announcement in announcements %}
@@ -378,7 +378,7 @@
     </div>
 </div>
 
-<!-- Add Event Button -->
+
 {% if is_host %}
 <a href="{{ url_for('event.post_event', club_id=club.id) }}" class="add-event-btn">
     <i class="bi bi-plus"></i>

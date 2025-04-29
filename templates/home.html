@@ -36,8 +36,7 @@
         color: var(--secondary-color);
         text-decoration: none;
     }
-    
-    /* Clubs Section */
+
     .clubs-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -104,7 +103,7 @@
         z-index: 1;
     }
     
-    /* Events Section */
+
     .events-container {
         display: grid;
         grid-template-columns: 1fr 300px;
@@ -157,7 +156,7 @@
         margin-right: 10px;
     }
     
-    /* Calendar Section */
+    
     .calendar-container {
         background: white;
         border-radius: var(--border-radius);
@@ -270,13 +269,13 @@
 </style>
 
 <div class="dashboard-container">
-    <!-- Welcome Header -->
+    
     <div class="welcome-header mb-4">
         <h1>Welcome back, {{ current_user.first_name }}!</h1>
         <p class="text-muted">Here's what's happening in your clubs</p>
     </div>
 
-    <!-- My Clubs Section -->
+    
     <div class="section-header">
         <h2 class="section-title">My Clubs</h2>
         <a href="{{ url_for('club.create_club') }}" class="btn btn-sm btn-outline-primary">Create Club</a>
@@ -307,9 +306,9 @@
     </div>
     {% endif %}
 
-    <!-- Events and Calendar Section -->
+    
     <div class="events-container">
-        <!-- Recent Events -->
+        
         <div class="event-section">
             <div class="section-header">
                 <h2 class="section-title">My Recent Events</h2>
@@ -351,9 +350,9 @@
             {% endif %}
         </div>
         
-        <!-- Calendar and Upcoming Events -->
+        
         <div>
-            <!-- Upcoming Events -->
+            
             <div class="event-section">
                 <div class="section-header">
                     <h2 class="section-title">Upcoming</h2>
@@ -383,7 +382,7 @@
                 {% endif %}
             </div>
             
-            <!-- Calendar -->
+            
             <div class="calendar-container">
                 <div class="calendar-header">
                     <h2 class="section-title">Calendar</h2>
@@ -392,9 +391,9 @@
                     </div>
                 </div>
                 
-                <!-- Simple Calendar Implementation -->
+                
                 <div class="calendar-grid">
-                    <!-- Day headers -->
+                    
                     <div class="calendar-day">Sun</div>
                     <div class="calendar-day">Mon</div>
                     <div class="calendar-day">Tue</div>
@@ -403,7 +402,7 @@
                     <div class="calendar-day">Fri</div>
                     <div class="calendar-day">Sat</div>
                     
-                    <!-- Calendar dates (simplified) -->
+                
                     {% for day in range(1, 32) %}
                     <div class="calendar-date {% if day == now.day %}today{% endif %}">
                         {{ day }}
@@ -415,7 +414,6 @@
     </div>
 </div>
 
-<!-- Floating Action Buttons -->
 <div class="fab-container">
     <a href="{{ url_for('club.join_club') }}" class="fab fab-secondary" title="Join Club">
         <i class="bi bi-plus-lg"></i>
