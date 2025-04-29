@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h3 class="mt-5">Join a Club</h3>
+    <form method="POST" action="{{ url_for('club.join_club') }}">
+        <div class="form-group" >
+            <label for="join_code">Enter Join Code</label>
+            <input type="text" name="join_code" id="join_code" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Join Club</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,28 +1,66 @@
-from flask import Blueprint, render_template, request
+# routes/user_routes.py
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+from models.user import User
+from extensions import db
+from flask_login import login_user, login_required, logout_user, current_user
+import bcrypt  # Import bcrypt for hashing and verifying passwords
 
-user_bp = Blueprint('user',__name__)
+user_bp = Blueprint('user', __name__)
 
-@user_bp.route('/signup')
-def signup():
-    return render_template('signup.html')
-
-@user_bp.route('/login')
+@user_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
 
-@user_bp.route('/signup-user', methods=['POST'])
-def handle_signup():
-    name = request.form['name']
-    email = request.form['email']
-    password = request.form['password']
-    return f"Welcome {name}, you’ve successfully signed up with {email}!"
+        user = User.query.filter_by(email=email).first()
+        if user:
+            # Check if the password matches the stored hashed password
+            if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+                flash('Logged in successfully!', category='success')
+                login_user(user, remember=True)
+                return redirect(url_for('club.dashboard'))
+            else:
+                flash('Incorrect password, try again.', category='error')
+        else:
+            flash('Email does not exist.', category='error')
 
-@user_bp.route('/login-user', methods=['POST'])
-def handle_login():
-    name = request.form['name']
-    username = request.form['username']
-    password = request.form['password']
-    if username == 'user' and password == '1234':
-        return f"Welcome back {name}, Login successful!"
-    else:
-        return "Invalid Login credentials!"
+    return render_template("login.html", user=current_user)
+
+@user_bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('user.login'))
+
+
+@user_bp.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        first_name = request.form.get('firstName')
+        password1 = request.form.get('password1')
+        password2 = request.form.get('password2')
+        user = User.query.filter_by(email=email).first()
+        if user:
+            flash('Email already exists.', category='error')
+        elif len(email) < 4:
+            flash('Email must be greater than 3 characters.', category='error')
+        elif len(first_name) < 2:
+            flash('First name must be greater than 1 character.', category='error')
+        elif password1 != password2:
+            flash('Passwords don\'t match.', category='error')
+        elif len(password1) < 7:
+            flash('Password must be at least 7 characters.', category='error')
+        else:
+            # Hash the password using bcrypt
+            hashed_password = bcrypt.hashpw(password1.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+            new_user = User(email=email, first_name=first_name, password=hashed_password)
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user, remember=True)
+            flash('Account created!', category='success')
+            return redirect(url_for('club.dashboard'))
+
+    return render_template("signup.html", user=current_user)
