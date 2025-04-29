@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-4">
+  <h2>Take Attendance for {{ event.title }}</h2>
+  <p class="text-muted">{{ event.date.strftime('%A, %B %d, %Y') }}</p>
+  
+  <form method="POST" action="{{ url_for('attendance.submit_attendance', event_id=event.id) }}">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Present</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for member in members %}
+        <tr>
+          <td>{{ member.member.first_name }}</td>  <!-- Accessing first_name from the member -->
+          <td>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" 
+                     name="{{ member.user_id }}" 
+                     id="member-{{ member.user_id }}"
+                     {% if attendances.get(member.user_id) and attendances[member.user_id].attended %}checked{% endif %}>
+              <label class="form-check-label" for="member-{{ member.user_id }}"></label>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    <button type="submit" class="btn btn-primary">Save Attendance</button>
+    <a href="{{ url_for('event.events_page', club_id=event.club_id) }}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}
