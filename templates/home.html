@@ -282,21 +282,18 @@
         <a href="{{ url_for('club.create_club') }}" class="btn btn-sm btn-outline-primary">Create Club</a>
     </div>
     
-    {% if clubs %}
+    {% if clubs_data %}
     <div class="clubs-grid">
-        {% for club in clubs %}
+        {% for club_data in clubs_data %}
         <div class="club-card">
-            <a href="{{ url_for('event.events_page', club_id=club.id) }}" class="club-link" aria-label="View {{ club.name }}"></a>
+            <a href="{{ url_for('event.events_page', club_id=club_data.club.id) }}" class="club-link" aria-label="View {{ club_data.club.name }}"></a>
             <div class="club-card-header">
-                <h3 class="club-name">{{ club.name }}</h3>
-                <p class="club-description">{{ club.description|default('No description', true) }}</p>
+                <h3 class="club-name">{{ club_data.club.name }}</h3>
+                <p class="club-description">{{ club_data.club.description|default('No description', true) }}</p>
             </div>
             <div class="club-card-body">
                 <div class="club-meta">
-                    <span>{{ club.events|length }} {{ 'event' if club.events|length == 1 else 'events' }}</span>
-                    {% if club.is_host %}
-                    <span class="badge bg-primary">Host</span>
-                    {% endif %}
+                    <span class="count-badge">{{ club_data.total_events }} events</span>
                 </div>
             </div>
         </div>

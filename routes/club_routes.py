@@ -20,34 +20,57 @@ def verify_host(club_id):
 @club_bp.route('/')
 @login_required
 def dashboard():
-    # Get user's clubs
-    memberships = ClubMembership.query.filter_by(user_id=current_user.id).all()
+    # Get user's clubs with membership info and event counts
+    memberships = ClubMembership.query.filter_by(user_id=current_user.id).options(
+        db.joinedload(ClubMembership.club).joinedload(Club.club_events)
+    ).all()
+    
+    today = datetime.utcnow().date()
     club_ids = [m.club_id for m in memberships]
     
-    # Current date for filtering
-    today = datetime.utcnow().date()
+    # Prepare club data with counts
+    clubs_data = []
+    for membership in memberships:
+        club = membership.club
+        total_events = len(club.club_events)
+        upcoming_count = sum(1 for e in club.club_events if e.date >= today)
+        
+        clubs_data.append({
+            'club': club,
+            'total_events': total_events,
+            'upcoming_count': upcoming_count,
+            'is_host': membership.is_host
+        })
     
-    # Get UPCOMING events (future dates only)
-    upcoming_events = Event.query.filter(
+    # Get UPCOMING events (future dates only) that user hasn't attended
+    upcoming_events = db.session.query(Event).outerjoin(
+        EventAttendance,
+        (EventAttendance.event_id == Event.id) & 
+        (EventAttendance.user_id == current_user.id)
+    ).filter(
         Event.club_id.in_(club_ids),
-        Event.date >= today  # Only future events
+        Event.date >= today,
+        db.or_(
+            EventAttendance.attended == None,  # Not marked at all
+            EventAttendance.attended == False   # Explicitly not attended
+        )
     ).order_by(Event.date.asc()).limit(5).all()
     
-    # Get RECENTLY ATTENDED events (only those user marked as attended)
+    # Get RECENTLY ATTENDED events
     attended_events = db.session.query(Event).join(
         EventAttendance,
         (EventAttendance.event_id == Event.id) & 
         (EventAttendance.user_id == current_user.id) &
-        (EventAttendance.attended == True)  # Only attended events
+        (EventAttendance.attended == True)
     ).filter(
         Event.club_id.in_(club_ids),
-        Event.date <= today  # Only past events
+        Event.date <= today
     ).order_by(Event.date.desc()).limit(5).all()
     
     return render_template('home.html',
-        clubs=[m.club for m in memberships],
+        clubs_data=clubs_data,
         upcoming_events=upcoming_events,
-        attended_events=attended_events,  # Changed from recent_events
+        attended_events=attended_events,
         now=datetime.utcnow()
     )
 
