@@ -250,9 +250,28 @@
     margin-right: 0.25rem;
     font-size: 0.875rem;
 }
-    
-    
-    /* Responsive Adjustments */
+
+.calendar-date.other-month {
+    color: #aaa;
+    opacity: 0.7;
+}
+
+.event-indicator.other-month {
+    background-color: #aaa;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.calendar-header .section-title {
+    margin: 0 10px;
+    font-size: 1.1rem;
+}
+
     @media (max-width: 768px) {
         .events-container {
             grid-template-columns: 1fr;
@@ -382,18 +401,23 @@
                 {% endif %}
             </div>
             
-            
+
             <div class="calendar-container">
                 <div class="calendar-header">
-                    <h2 class="section-title">Calendar</h2>
-                    <div>
-                        <button class="btn btn-sm btn-outline-secondary">Today</button>
-                    </div>
+                    <a href="{{ url_for('club.dashboard', month=prev_month, year=prev_year) }}" 
+                       class="btn btn-sm btn-outline-secondary" title="Previous month">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                    <h2 class="section-title mx-2">{{ datetime(current_year, current_month, 1).strftime('%B %Y') }}</h2>
+                    <a href="{{ url_for('club.dashboard', month=next_month, year=next_year) }}" 
+                       class="btn btn-sm btn-outline-secondary" title="Next month">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
                 </div>
                 
-                
+                <!-- Calendar Grid -->
                 <div class="calendar-grid">
-                    
+                    <!-- Day headers -->
                     <div class="calendar-day">Sun</div>
                     <div class="calendar-day">Mon</div>
                     <div class="calendar-day">Tue</div>
@@ -402,17 +426,70 @@
                     <div class="calendar-day">Fri</div>
                     <div class="calendar-day">Sat</div>
                     
-                
-                    {% for day in range(1, 32) %}
-                    <div class="calendar-date {% if day == now.day %}today{% endif %}">
-                        {{ day }}
-                    </div>
+                    <!-- Calculate calendar data -->
+                    {% set first_day = datetime(current_year, current_month, 1) %}
+                    {% set days_in_month = (datetime(current_year, current_month + 1, 1) - datetime(current_year, current_month, 1)).days %}
+                    {% set starting_weekday = first_day.weekday() %}
+                    {% set today = now.date() %}
+                    
+                    <!-- Previous month days (if needed to fill first week) -->
+                    {% if starting_weekday > 0 %}
+                        {% set prev_month_days = (datetime(current_year, current_month, 1) - datetime(prev_year, prev_month, 1)).days %}
+                        {% for day in range(prev_month_days - starting_weekday + 1, prev_month_days + 1) %}
+                            <div class="calendar-date other-month">
+                                {{ day }}
+                                <!-- Event indicators for previous month -->
+                                {% set prev_month_date = datetime(prev_year, prev_month, day).date() %}
+                                {% for event in calendar_events if event.date == prev_month_date %}
+                                    <div class="event-indicator other-month" 
+                                         title="{{ event.title }} - {{ event.club_name }}"
+                                         onclick="window.location.href='{{ event.url }}'; event.stopPropagation();">
+                                        <i class="bi bi-circle-fill"></i>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <!-- Current month days -->
+                    {% for day in range(1, days_in_month + 1) %}
+                        {% set current_date = datetime(current_year, current_month, day).date() %}
+                        <div class="calendar-date 
+                            {% if current_date == today %}today{% endif %}
+                            {% if calendar_events|selectattr('date', 'equalto', current_date)|list %}has-event{% endif %}">
+                            {{ day }}
+                            <!-- Event indicators -->
+                            {% for event in calendar_events if event.date == current_date %}
+                                <div class="event-indicator" 
+                                     title="{{ event.title }} - {{ event.club_name }}"
+                                     onclick="window.location.href='{{ event.url }}'; event.stopPropagation();">
+                                    <i class="bi bi-circle-fill"></i>
+                                </div>
+                            {% endfor %}
+                        </div>
                     {% endfor %}
+                    
+                    <!-- Next month days (if needed to fill last week) -->
+                    {% set total_cells = starting_weekday + days_in_month %}
+                    {% set remaining_cells = (7 - (total_cells % 7)) % 7 %}
+                    {% if remaining_cells > 0 %}
+                        {% for day in range(1, remaining_cells + 1) %}
+                            <div class="calendar-date other-month">
+                                {{ day }}
+                                <!-- Event indicators for next month -->
+                                {% set next_month_date = datetime(next_year, next_month, day).date() %}
+                                {% for event in calendar_events if event.date == next_month_date %}
+                                    <div class="event-indicator other-month" 
+                                         title="{{ event.title }} - {{ event.club_name }}"
+                                         onclick="window.location.href='{{ event.url }}'; event.stopPropagation();">
+                                        <i class="bi bi-circle-fill"></i>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
 <div class="fab-container">
     <a href="{{ url_for('club.join_club') }}" class="fab fab-secondary" title="Join Club">
