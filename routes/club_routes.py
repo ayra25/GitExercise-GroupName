@@ -3,7 +3,8 @@ from models.club import ClubMembership, Club
 from models.event import Event, EventAttendance
 from extensions import db
 from flask_login import login_required, current_user
-from datetime import datetime
+from datetime import datetime, timedelta
+import calendar
 
 club_bp = Blueprint('club', __name__)
 
@@ -62,12 +63,67 @@ def dashboard():
         Event.club_id.in_(club_ids),
         Event.date <= today
     ).order_by(Event.date.desc()).limit(5).all()
+
+        # Get month and year from request args (default to current)
+    month = request.args.get('month', type=int, default=datetime.utcnow().month)
+    year = request.args.get('year', type=int, default=datetime.utcnow().year)
+    
+    # Validate month and year
+    if month < 1 or month > 12:
+        month = datetime.utcnow().month
+    if year < 2000 or year > 2100:
+        year = datetime.utcnow().year
+    
+    # Get all events for the calendar (including previous/next month events for display)
+    calendar_events = []
+    for membership in memberships:
+        # Get events for current month and adjacent months
+        start_date = datetime(year, month, 1).date()
+        if month == 1:
+            prev_month = 12
+            prev_year = year - 1
+        else:
+            prev_month = month - 1
+            prev_year = year
+            
+        if month == 12:
+            next_month = 1
+            next_year = year + 1
+        else:
+            next_month = month + 1
+            next_year = year
+            
+        end_date = datetime(next_year, next_month, 1).date() - timedelta(days=1)
+        
+        club_events = Event.query.filter(
+            Event.club_id == membership.club_id,
+            Event.date >= datetime(prev_year, prev_month, 1).date(),
+            Event.date <= end_date
+        ).all()
+        
+        for event in club_events:
+            calendar_events.append({
+                'date': event.date,
+                'title': event.title,
+                'club_name': membership.club.name,
+                'url': url_for('event.events_page', club_id=membership.club_id)
+            })
     
     return render_template('home.html',
         clubs_data=clubs_data,
         upcoming_events=upcoming_events,
         attended_events=attended_events,
-        now=datetime.utcnow()
+        now=datetime.utcnow(),
+        calendar_events=calendar_events,
+        current_month=month,
+        current_year=year,
+        prev_month=prev_month,
+        prev_year=prev_year,
+        next_month=next_month,
+        next_year=next_year,
+        datetime=datetime,  # Pass the datetime class
+        timedelta=timedelta,  # Pass timedelta for calculations
+        calendar=calendar
     )
 
 @club_bp.route('/create-club', methods=['GET', 'POST'])
