@@ -64,7 +64,6 @@ def dashboard():
         Event.date <= today
     ).order_by(Event.date.desc()).limit(5).all()
 
-        # Get month and year from request args (default to current)
     month = request.args.get('month', type=int, default=datetime.utcnow().month)
     year = request.args.get('year', type=int, default=datetime.utcnow().year)
     
@@ -74,25 +73,69 @@ def dashboard():
     if year < 2000 or year > 2100:
         year = datetime.utcnow().year
     
+    # Calculate calendar navigation variables
+    if month == 1:
+        prev_month = 12
+        prev_year = year - 1
+    else:
+        prev_month = month - 1
+        prev_year = year
+        
+    if month == 12:
+        next_month = 1
+        next_year = year + 1
+    else:
+        next_month = month + 1
+        next_year = year
+    
+    memberships = ClubMembership.query.filter_by(user_id=current_user.id).options(
+        db.joinedload(ClubMembership.club).joinedload(Club.club_events)
+    ).all()
+    
+    today = datetime.utcnow().date()
+    club_ids = [m.club_id for m in memberships]
+    
+    clubs_data = []
+    for membership in memberships:
+        club = membership.club
+        total_events = len(club.club_events)
+        upcoming_count = sum(1 for e in club.club_events if e.date >= today)
+        
+        clubs_data.append({
+            'club': club,
+            'total_events': total_events,
+            'upcoming_count': upcoming_count,
+            'is_host': membership.is_host
+        })
+    
+    upcoming_events = db.session.query(Event).outerjoin(
+        EventAttendance,
+        (EventAttendance.event_id == Event.id) & 
+        (EventAttendance.user_id == current_user.id)
+    ).filter(
+        Event.club_id.in_(club_ids),
+        Event.date >= today,
+        db.or_(
+            EventAttendance.attended == None,  
+            EventAttendance.attended == False  
+        )
+    ).order_by(Event.date.asc()).limit(5).all()
+    
+    attended_events = db.session.query(Event).join(
+        EventAttendance,
+        (EventAttendance.event_id == Event.id) & 
+        (EventAttendance.user_id == current_user.id) &
+        (EventAttendance.attended == True)
+    ).filter(
+        Event.club_id.in_(club_ids),
+        Event.date <= today
+    ).order_by(Event.date.desc()).limit(5).all()
+
     # Get all events for the calendar (including previous/next month events for display)
     calendar_events = []
     for membership in memberships:
         # Get events for current month and adjacent months
         start_date = datetime(year, month, 1).date()
-        if month == 1:
-            prev_month = 12
-            prev_year = year - 1
-        else:
-            prev_month = month - 1
-            prev_year = year
-            
-        if month == 12:
-            next_month = 1
-            next_year = year + 1
-        else:
-            next_month = month + 1
-            next_year = year
-            
         end_date = datetime(next_year, next_month, 1).date() - timedelta(days=1)
         
         club_events = Event.query.filter(
@@ -121,8 +164,8 @@ def dashboard():
         prev_year=prev_year,
         next_month=next_month,
         next_year=next_year,
-        datetime=datetime,  # Pass the datetime class
-        timedelta=timedelta,  # Pass timedelta for calculations
+        datetime=datetime,
+        timedelta=timedelta,
         calendar=calendar
     )
 
