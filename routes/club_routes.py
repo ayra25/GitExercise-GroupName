@@ -148,8 +148,10 @@ def dashboard():
             calendar_events.append({
                 'date': event.date,
                 'title': event.title,
+                'club_id': membership.club_id,  # Add club_id
+                'event_id': event.id,  # Add event_id
                 'club_name': membership.club.name,
-                'url': url_for('event.events_page', club_id=membership.club_id)
+                'url': url_for('event.events_page', club_id=membership.club_id, selected=event.id)
             })
     
     return render_template('home.html',
@@ -226,7 +228,7 @@ def join_club():
                 
             if ClubMembership.query.filter_by(user_id=current_user.id, club_id=club.id).first():
                 flash('You are already a member of this club', 'info')
-                return redirect(url_for('club.dashboard'))
+                return redirect(url_for('club.join_club'))
                 
             new_membership = ClubMembership(
                 user_id=current_user.id,

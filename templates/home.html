@@ -331,7 +331,6 @@
         <div class="event-section">
             <div class="section-header">
                 <h2 class="section-title">My Recent Events</h2>
-                {% if attended_events %}<a href="{{ url_for('event.events_page', club_id=attended_events[0].club.id) }}" class="view-all">View All</a>{% endif %}
             </div>
             
             {% if attended_events %}
@@ -375,7 +374,6 @@
             <div class="event-section">
                 <div class="section-header">
                     <h2 class="section-title">Upcoming</h2>
-                    {% if upcoming_events %}<a href="#" class="view-all">View All</a>{% endif %}
                 </div>
                 
                 {% if upcoming_events %}
@@ -404,15 +402,19 @@
 
             <div class="calendar-container">
                 <div class="calendar-header">
-                    <a href="{{ url_for('club.dashboard', month=prev_month, year=prev_year) }}" 
-                       class="btn btn-sm btn-outline-secondary" title="Previous month">
-                        <i class="bi bi-chevron-left"></i>
-                    </a>
-                    <h2 class="section-title mx-2">{{ datetime(current_year, current_month, 1).strftime('%B %Y') }}</h2>
-                    <a href="{{ url_for('club.dashboard', month=next_month, year=next_year) }}" 
-                       class="btn btn-sm btn-outline-secondary" title="Next month">
-                        <i class="bi bi-chevron-right"></i>
-                    </a>
+                    <h2 class="section-title" >{{ datetime(current_year, current_month, 1).strftime('%B %Y') }}</h2>
+                    <div>
+                        <a href="?month={{ prev_month }}&year={{ prev_year }}" 
+                           class="btn btn-sm btn-outline-secondary month-nav" 
+                           title="Previous month">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                        <a href="?month={{ next_month }}&year={{ next_year }}" 
+                           class="btn btn-sm btn-outline-secondary month-nav" 
+                           title="Next month">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
                 </div>
                 
                 <!-- Calendar Grid -->
