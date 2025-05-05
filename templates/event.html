@@ -193,6 +193,7 @@
         padding: 0.5rem 1.5rem;
         font-weight: 500;
         transition: all 0.2s;
+        color: white;
     }
     
     .attendance-btn:hover {
@@ -281,6 +282,224 @@
 .floating-btn-secondary:hover {
     background: var(--maroon-light);
 }
+
+.comments-section {
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(107, 29, 29, 0.1);
+    }
+
+    .comments-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .comments-header h5 {
+        margin: 0;
+        font-weight: 600;
+        color: var(--maroon);
+    }
+
+    .comments-count {
+        background-color: var(--maroon);
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        margin-left: 0.75rem;
+    }
+
+    .comment-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+        transition: all 0.2s ease;
+        border-left: 3px solid var(--maroon);
+    }
+
+    .comment-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transform: translateX(2px);
+    }
+
+    .comment-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+
+    .comment-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: var(--maroon-light);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-right: 0.75rem;
+    }
+
+    .comment-user {
+        flex: 1;
+    }
+
+    .comment-user-name {
+        font-weight: 600;
+        margin-bottom: 0.1rem;
+        color: var(--dark-gray);
+    }
+
+    .comment-time {
+        font-size: 0.8rem;
+        color: var(--dark-gray);
+        opacity: 0.7;
+    }
+
+    .comment-content {
+        padding-left: 2.75rem;
+        line-height: 1.6;
+        color: var(--dark-gray);
+    }
+
+    .empty-comments {
+        text-align: center;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .empty-comments i {
+        font-size: 2rem;
+        color: var(--maroon);
+        opacity: 0.5;
+        margin-bottom: 1rem;
+    }
+
+    .empty-comments p {
+        color: var(--dark-gray);
+        margin-bottom: 0;
+    }
+
+    .comment-form {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-top: 1.5rem;
+    }
+
+    .comment-form textarea {
+        border: 1px solid var(--medium-gray);
+        border-radius: 8px;
+        padding: 0.75rem;
+        min-height: 10px;
+        resize: vertical;
+        transition: all 0.2s;
+    }
+
+    .comment-form textarea:focus {
+        border-color: var(--maroon);
+        box-shadow: 0 0 0 0.2rem rgba(107, 29, 29, 0.1);
+        outline: none;
+    }
+
+    .comment-submit {
+        background: var(--maroon);
+        color: white;
+        border: none;
+        padding: 0.5rem 1.25rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s;
+        margin-top: 0.75rem;
+    }
+
+    .comment-submit:hover {
+        background: var(--maroon-light);
+        transform: translateY(-1px);
+    }
+
+    .comment-submit:active {
+        transform: translateY(0);
+    }
+
+    .comment-user-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background-color: var(--maroon-light);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    margin-left: 0.5rem;
+    font-weight: 500;
+}
+
+.comment-user-badge.host-badge {
+    background-color: var(--maroon);
+}
+
+.comment-user-badge i {
+    font-size: 0.65rem;
+}
+
+    .replies-container {
+        margin-left: 2.5rem;
+        padding-left: 1rem;
+    }
+
+    .reply-form {
+        margin-top: 1rem;
+        display: none;
+    }
+
+    .reply-form.active {
+        display: block;
+    }
+
+    .reply-btn {
+        background: none;
+        border: none;
+        color: var(--maroon);
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        transition: all 0.2s;
+    }
+
+    .reply-btn:hover {
+        color: var(--maroon-light);
+    }
+
+    .reply-indicator {
+        font-size: 0.8rem;
+        color: var(--dark-gray);
+        opacity: 0.7;
+        margin-bottom: 0.5rem;
+    }
+
+    .reply-indicator a {
+        color: var(--maroon);
+        text-decoration: none;
+    }
+
+    .reply-indicator a:hover {
+        text-decoration: underline;
+    }
     
     @media (max-width: 768px) {
         .event-details-card {
@@ -364,8 +583,6 @@
                                 </div>
                             </div>
                             
-                            <hr>
-                            
                             <div class="mb-4">
                                 <div class="detail-label">Description</div>
                                 <div class="detail-value">
@@ -381,8 +598,7 @@
                                 </div>
                             </div>
                             {% endif %}
-                            
-                            
+
                             {% if selected_event and selected_event.date <= now.date() and is_host %}
                             <div class="d-flex gap-2 mt-4">
                                 {% if selected_event.attendance_started %}
@@ -398,6 +614,123 @@
                                 {% endif %}
                             </div>
                             {% endif %}
+
+                            <div class="comments-section">
+                                <div class="comments-header">
+                                    <h5>Comments</h5>
+                                    <div class="comments-count">{{ selected_event.comments|length }}</div>
+                                </div>
+                                
+                                {% if selected_event.comments %}
+                                    <div class="comments-list">
+                                        {% for comment in selected_event.comments|sort(attribute='created_at', reverse=True) if not comment.parent_id %}
+                                        <div class="comment-card" id="comment-{{ comment.id }}">
+                                            <!-- Comment header (same as before) -->
+                                            <div class="comment-header">
+                                                <div class="comment-avatar">
+                                                    {{ comment.user.first_name[0]|upper }}
+                                                </div>
+                                                <div class="comment-user-name">
+                                                    {{ comment.user.first_name }}
+                                                    {% if comment.user.id in host_user_ids %}
+                                                        <span class="comment-user-badge host-badge">
+                                                            <i class="bi bi-star-fill"></i> Club Host
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Comment content -->
+                                            <div class="comment-content">
+                                                {{ comment.content }}
+                                            </div>
+                                            
+                                            <!-- Reply button -->
+                                            <button class="reply-btn" onclick="toggleReplyForm('{{ comment.id }}')">
+                                                <i class="bi bi-reply"></i> Reply
+                                            </button>
+                                            
+                                            <!-- Reply form (hidden by default) -->
+                                            <form method="POST" action="{{ url_for('event.post_comment', event_id=selected_event.id) }}" 
+                                                  class="reply-form" id="reply-form-{{ comment.id }}">
+                                                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                                <div class="form-group mb-2">
+                                                    <textarea class="form-control" name="comment_content" 
+                                                              rows="2" placeholder="Write your reply..." required></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-sm" 
+                                                        style="background-color: var(--maroon); color: white;">
+                                                    Post Reply
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary ms-2" 
+                                                        onclick="toggleReplyForm('{{ comment.id }}')">
+                                                    Cancel
+                                                </button>
+                                            </form>
+                                            
+                                            <!-- Replies section -->
+                                            {% for reply in selected_event.comments if reply.parent_id == comment.id %}
+                                            <div class="replies-container mt-3">
+                                                <div class="comment-card" id="comment-{{ reply.id }}">
+                                                    <div class="reply-indicator">
+                                                        <i class="bi bi-arrow-return-right"></i>
+                                                        Replying to <a href="#comment-{{ comment.id }}">@{{ comment.user.first_name }}</a>
+                                                    </div>
+                                                    
+                                                    <!-- Reply header -->
+                                                    <div class="comment-header">
+                                                        <div class="comment-avatar">
+                                                            {{ reply.user.first_name[0]|upper }}
+                                                        </div>
+                                                        <div class="comment-user">
+                                                            <div class="comment-user-name">
+                                                                {{ reply.user.first_name }}
+                                                                {% if reply.user.id in host_ids %}
+                                                                    <span class="comment-user-badge host-badge">Club Host</span>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="comment-time">
+                                                                <i class="bi bi-clock me-1"></i>
+                                                                {{ reply.created_at.strftime('%b %d, %Y at %I:%M %p') }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Reply content -->
+                                                    <div class="comment-content">
+                                                        {{ reply.content }}
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="empty-comments">
+                                        <i class="bi bi-chat-left-text"></i>
+                                        <p>No comments yet. Be the first to share your thoughts!</p>
+                                    </div>
+                                {% endif %}
+
+                                {% if membership %}
+                                <form method="POST" action="{{ url_for('event.post_comment', event_id=selected_event.id) }}" class="comment-form">
+                                    <div class="form-group">
+                                        <textarea class="form-control" name="comment_content" 
+                                                  placeholder="Write your comment here..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="comment-submit">
+                                        <i class="bi bi-send me-1"></i> Post Comment
+                                    </button>
+                                </form>
+                                {% else %}
+                                <div class="alert alert-info" style="background-color: rgba(107, 29, 29, 0.05); border-color: rgba(107, 29, 29, 0.2); color: var(--dark-gray);">
+                                    <i class="bi bi-info-circle me-2"></i> You need to be a club member to post comments.
+                                </div>
+                                {% endif %}
+                            </div>
+                            
                         </div>
                     </div>
                     {% else %}
@@ -463,5 +796,26 @@
 </div>
 
 {% endif %}
+
+<script>
+    function toggleReplyForm(commentId) {
+        const form = document.getElementById(`reply-form-${commentId}`);
+        form.classList.toggle('active');
+    }
+    
+    // Scroll to comment when URL has hash
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.hash) {
+            const comment = document.querySelector(window.location.hash);
+            if (comment) {
+                comment.scrollIntoView({ behavior: 'smooth' });
+                comment.classList.add('highlight-comment');
+                setTimeout(() => {
+                    comment.classList.remove('highlight-comment');
+                }, 2000);
+            }
+        }
+    });
+</script>
 
 {% endblock %}
