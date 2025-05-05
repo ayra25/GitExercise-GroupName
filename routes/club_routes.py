@@ -23,6 +23,7 @@ def verify_host(club_id):
 @club_bp.route('/')
 @login_required
 def dashboard():
+    # Get all clubs the user is a member of with their events
     memberships = ClubMembership.query.filter_by(user_id=current_user.id).options(
         db.joinedload(ClubMembership.club).joinedload(Club.club_events)
     ).all()
@@ -30,6 +31,7 @@ def dashboard():
     today = datetime.utcnow().date()
     club_ids = [m.club_id for m in memberships]
     
+    # Prepare clubs data
     clubs_data = []
     for membership in memberships:
         club = membership.club
@@ -43,6 +45,7 @@ def dashboard():
             'is_host': membership.is_host
         })
     
+    # Get upcoming events (next 5 days)
     upcoming_events = db.session.query(Event).outerjoin(
         EventAttendance,
         (EventAttendance.event_id == Event.id) & 
@@ -56,6 +59,7 @@ def dashboard():
         )
     ).order_by(Event.date.asc()).limit(5).all()
     
+    # Get attended events (most recent 5)
     attended_events = db.session.query(Event).join(
         EventAttendance,
         (EventAttendance.event_id == Event.id) & 
@@ -66,14 +70,24 @@ def dashboard():
         Event.date <= today
     ).order_by(Event.date.desc()).limit(5).all()
 
+    # Get announcements (most recent 5)
+    announcements = db.session.query(Announcement).select_from(Announcement).join(
+    ClubMembership, ClubMembership.club_id == Announcement.club_id
+    ).filter(
+    ClubMembership.user_id == current_user.id
+    ).order_by(Announcement.created_at.desc()).limit(5).all()
+
+    # Calendar setup
     month = request.args.get('month', type=int, default=datetime.utcnow().month)
     year = request.args.get('year', type=int, default=datetime.utcnow().year)
     
+    # Validate month and year
     if month < 1 or month > 12:
         month = datetime.utcnow().month
     if year < 2000 or year > 2100:
         year = datetime.utcnow().year
     
+    # Calculate previous and next months for navigation
     if month == 1:
         prev_month = 12
         prev_year = year - 1
@@ -88,49 +102,7 @@ def dashboard():
         next_month = month + 1
         next_year = year
     
-    memberships = ClubMembership.query.filter_by(user_id=current_user.id).options(
-        db.joinedload(ClubMembership.club).joinedload(Club.club_events)
-    ).all()
-    
-    today = datetime.utcnow().date()
-    club_ids = [m.club_id for m in memberships]
-    
-    clubs_data = []
-    for membership in memberships:
-        club = membership.club
-        total_events = len(club.club_events)
-        upcoming_count = sum(1 for e in club.club_events if e.date >= today)
-        
-        clubs_data.append({
-            'club': club,
-            'total_events': total_events,
-            'upcoming_count': upcoming_count,
-            'is_host': membership.is_host
-        })
-    
-    upcoming_events = db.session.query(Event).outerjoin(
-        EventAttendance,
-        (EventAttendance.event_id == Event.id) & 
-        (EventAttendance.user_id == current_user.id)
-    ).filter(
-        Event.club_id.in_(club_ids),
-        Event.date >= today,
-        db.or_(
-            EventAttendance.attended == None,  
-            EventAttendance.attended == False  
-        )
-    ).order_by(Event.date.asc()).limit(5).all()
-    
-    attended_events = db.session.query(Event).join(
-        EventAttendance,
-        (EventAttendance.event_id == Event.id) & 
-        (EventAttendance.user_id == current_user.id) &
-        (EventAttendance.attended == True)
-    ).filter(
-        Event.club_id.in_(club_ids),
-        Event.date <= today
-    ).order_by(Event.date.desc()).limit(5).all()
-
+    # Prepare calendar events
     calendar_events = []
     for membership in memberships:
         start_date = datetime(year, month, 1).date()
@@ -146,8 +118,8 @@ def dashboard():
             calendar_events.append({
                 'date': event.date,
                 'title': event.title,
-                'club_id': membership.club_id,  
-                'event_id': event.id,  
+                'club_id': membership.club_id,
+                'event_id': event.id,
                 'club_name': membership.club.name,
                 'url': url_for('event.events_page', club_id=membership.club_id, selected=event.id)
             })
@@ -156,6 +128,7 @@ def dashboard():
         clubs_data=clubs_data,
         upcoming_events=upcoming_events,
         attended_events=attended_events,
+        announcements=announcements,
         now=datetime.utcnow(),
         calendar_events=calendar_events,
         current_month=month,
@@ -165,8 +138,7 @@ def dashboard():
         next_month=next_month,
         next_year=next_year,
         datetime=datetime,
-        timedelta=timedelta,
-        calendar=calendar
+        timedelta=timedelta
     )
 
 @club_bp.route('/create-club', methods=['GET', 'POST'])
