@@ -13,4 +13,5 @@ class User(db.Model, UserMixin):
     hosted_events = db.relationship('Event', back_populates='host')
     event_attendances = db.relationship('EventAttendance', back_populates='user')
     club_memberships = db.relationship('ClubMembership', back_populates='member')
+    event_comments = db.relationship('EventComment', back_populates='user')
 
