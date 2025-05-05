@@ -10,26 +10,26 @@
         --dark-gray: #495057;
     }
     
-    .event-form-container {
+    .announcement-form-container {
         max-width: 800px;
         margin: 2rem auto;
         padding: 0 1rem;
     }
     
-    .event-form-card {
+    .announcement-form-card {
         border: none;
         border-radius: 10px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         overflow: hidden;
     }
     
-    .event-form-header {
+    .announcement-form-header {
         background-color: var(--maroon);
         color: white;
         padding: 1.5rem;
     }
     
-    .event-form-body {
+    .announcement-form-body {
         padding: 2rem;
         background-color: white;
     }
@@ -44,7 +44,6 @@
         border: 1px solid var(--medium-gray);
         border-radius: 5px;
         padding: 0.75rem;
-        margin-bottom: 1.25rem;
     }
     
     .form-control:focus {
@@ -93,63 +92,36 @@
         color: var(--maroon-light);
         text-decoration: underline;
     }
-    
-    .form-row {
-        display: flex;
-        gap: 1.5rem;
-    }
-    
-    .form-row .form-group {
-        flex: 1;
-    }
 </style>
 
-<div class="event-form-container">
+<div class="announcement-form-container">
     
-    <div class="event-form-card">
-        <div class="event-form-header">
-            <h2 class="mb-0"><i class="bi bi-calendar-event me-2"></i>Create New Event</h2>
-            <p class="mb-0 mt-1" style="opacity: 0.9;">For {{ club.name }}</p>
+    <div class="announcement-form-card">
+        <div class="announcement-form-header">
+            <h2 class="mb-0"><i class="bi bi-megaphone me-2"></i>Post New Announcement</h2>
         </div>
         
-        <div class="event-form-body">
-            <form method="POST" action="{{ url_for('event.post_event', club_id=club.id) }}">
-                {{ form.hidden_tag() }}
-                
-                <div class="form-group">
-                    <label for="title" class="form-label">{{ form.title.label }}</label>
-                    {{ form.title(class="form-control", placeholder="Enter event title") }}
+        <div class="announcement-form-body">
+            <form method="POST" action="{{ url_for('club.post_announcement', club_id=club_id) }}">
+                <div class="mb-4">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" required
+                           placeholder="Enter announcement title">
                 </div>
                 
-                <div class="form-group">
-                    <label for="description" class="form-label">{{ form.description.label }}</label>
-                    {{ form.description(class="form-control", rows=5, placeholder="Describe your event...") }}
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="date" class="form-label">{{ form.date.label }}</label>
-                        {{ form.date(class="form-control") }}
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="time" class="form-label">{{ form.time.label }}</label>
-                        {{ form.time(class="form-control") }}
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="location" class="form-label">{{ form.location.label }}</label>
-                    {{ form.location(class="form-control", placeholder="Enter event location") }}
+                <div class="mb-4">
+                    <label for="content" class="form-label">Content</label>
+                    <textarea class="form-control" id="content" name="content" rows="6" required
+                              placeholder="Write your announcement details here..."></textarea>
                 </div>
                 
                 <div class="d-flex justify-content-end gap-3">
-                    <a href="{{ url_for('event.events_page', club_id=club.id) }}" 
+                    <a href="{{ url_for('event.events_page', club_id=club_id) }}" 
                        class="btn btn-outline-maroon">
                         Cancel
                     </a>
                     <button type="submit" class="btn btn-maroon">
-                        <i class="bi bi-check-circle me-2"></i>Create Event
+                        <i class="bi bi-send me-2"></i>Post Announcement
                     </button>
                 </div>
             </form>
