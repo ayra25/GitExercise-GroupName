@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from models.event import Event, EventAttendance
 from models.club import Club, ClubMembership
 from models.form import EventForm
+from models.announcement import Announcement
 from extensions import db
 from datetime import datetime
 
@@ -24,7 +25,10 @@ def events_page(club_id):
         abort(403)
     
     events = Event.query.filter_by(club_id=club_id).order_by(Event.date.desc()).all()
-    # Get selected event
+    announcements = Announcement.query.filter_by(
+        club_id=club_id
+    ).order_by(Announcement.created_at.desc()).all()
+    
     selected_id = request.args.get('selected')
     selected_event = next(
         (e for e in events if str(e.id) == selected_id),
@@ -34,6 +38,7 @@ def events_page(club_id):
     return render_template('event.html',
         club=club,
         events=events,
+        announcements=announcements,
         selected_event=selected_event,
         is_host=membership.is_host,
         now=datetime.utcnow(),

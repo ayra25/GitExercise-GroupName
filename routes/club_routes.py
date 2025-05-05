@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from models.club import ClubMembership, Club
 from models.event import Event, EventAttendance
+from models.announcement import Announcement
 from extensions import db
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
@@ -307,3 +308,35 @@ def event_history():
         events=attended_events,
         now=datetime.utcnow()
     )
+
+@club_bp.route('/club/<int:club_id>/post-announcement', methods=['GET', 'POST'])
+@login_required
+def post_announcement(club_id):
+    verify_host(club_id)
+    
+    if request.method == 'POST':
+        try:
+            title = request.form.get('title', '').strip()
+            content = request.form.get('content', '').strip()
+            
+            if not title or not content:
+                flash('Title and content are required', 'danger')
+                return redirect(url_for('club.post_announcement', club_id=club_id))
+                
+            new_announcement = Announcement(
+                title=title,
+                content=content,
+                club_id=club_id
+            )
+            
+            db.session.add(new_announcement)
+            db.session.commit()
+            
+            flash('Announcement posted!', 'success')
+            return redirect(url_for('event.events_page', club_id=club_id))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error posting announcement: {str(e)}', 'danger')
+    
+    return render_template('post_announcement.html', club_id=club_id)
