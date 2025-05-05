@@ -6,6 +6,7 @@ from extensions import db
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 import calendar
+import random
 
 club_bp = Blueprint('club', __name__)
 
@@ -68,13 +69,11 @@ def dashboard():
     month = request.args.get('month', type=int, default=datetime.utcnow().month)
     year = request.args.get('year', type=int, default=datetime.utcnow().year)
     
-    # Validate month and year
     if month < 1 or month > 12:
         month = datetime.utcnow().month
     if year < 2000 or year > 2100:
         year = datetime.utcnow().year
     
-    # Calculate calendar navigation variables
     if month == 1:
         prev_month = 12
         prev_year = year - 1
@@ -132,10 +131,8 @@ def dashboard():
         Event.date <= today
     ).order_by(Event.date.desc()).limit(5).all()
 
-    # Get all events for the calendar (including previous/next month events for display)
     calendar_events = []
     for membership in memberships:
-        # Get events for current month and adjacent months
         start_date = datetime(year, month, 1).date()
         end_date = datetime(next_year, next_month, 1).date() - timedelta(days=1)
         
@@ -149,8 +146,8 @@ def dashboard():
             calendar_events.append({
                 'date': event.date,
                 'title': event.title,
-                'club_id': membership.club_id,  # Add club_id
-                'event_id': event.id,  # Add event_id
+                'club_id': membership.club_id,  
+                'event_id': event.id,  
                 'club_name': membership.club.name,
                 'url': url_for('event.events_page', club_id=membership.club_id, selected=event.id)
             })
@@ -188,11 +185,14 @@ def create_club():
             if Club.query.filter_by(join_code=join_code).first():
                 flash('Join code already taken!', 'danger')
                 return redirect(url_for('club.create_club'))
+            
+            cover_image = random.randint(1, 5)
 
             new_club = Club(
                 name=name,
                 join_code=join_code,
-                description=description
+                description=description,
+                cover_image=cover_image
             )
             db.session.add(new_club)
             db.session.flush()
@@ -340,3 +340,36 @@ def post_announcement(club_id):
             flash(f'Error posting announcement: {str(e)}', 'danger')
     
     return render_template('post_announcement.html', club_id=club_id)
+
+@club_bp.route('/leave-club', methods=['POST'])
+@login_required
+def leave_club():
+    try:
+        club_id = request.form.get('club_id')
+        if not club_id:
+            flash('Invalid request', 'danger')
+            return redirect(url_for('club.dashboard'))
+        
+        membership = ClubMembership.query.filter_by(
+            user_id=current_user.id,
+            club_id=club_id
+        ).first()
+        
+        if not membership:
+            flash('You are not a member of this club', 'danger')
+            return redirect(url_for('club.dashboard'))
+        
+        if membership.is_host:
+            flash('Hosts cannot leave their own club', 'danger')
+            return redirect(url_for('club.dashboard'))
+        
+        db.session.delete(membership)
+        db.session.commit()
+        
+        flash('You have left the club', 'success')
+        return redirect(url_for('club.dashboard'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error leaving club: {str(e)}', 'danger')
+        return redirect(url_for('club.dashboard'))
