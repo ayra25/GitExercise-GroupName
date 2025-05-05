@@ -343,6 +343,8 @@
         margin-bottom: 2rem;
         border: 1px solid rgba(0,0,0,0.05);
         width: 100%;
+        overflow: hidden;
+        max-width: 100%;
     }
     
     .calendar-header {
@@ -374,7 +376,8 @@
     .calendar-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 0.5rem;
+        gap: 0.1rem;
+        width: 100%;
     }
     
     .calendar-day {
@@ -398,6 +401,8 @@
         align-items: center;
         justify-content: center;
         font-size: 0.9rem;
+        min-width: 0; 
+        word-break: break-word;
     }
     
     .calendar-date:hover {
@@ -524,6 +529,33 @@
             font-size: 1.3rem;
         }
     }
+
+    @media (max-width: 768px) {
+    .calendar-date {
+        padding: 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    .calendar-day {
+        font-size: 0.75rem;
+    }
+}
+
+    @media (max-width: 576px) {
+    .calendar-container {
+        padding: 1rem;
+    }
+    
+    .calendar-date {
+        padding: 0.15rem;
+        font-size: 0.7rem;
+    }
+    
+    .event-indicator {
+        width: 4px;
+        height: 4px;
+    }
+}
 </style>
 
 <div class="dashboard-container">
