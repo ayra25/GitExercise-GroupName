@@ -7,10 +7,11 @@ class Club(db.Model):
     name = db.Column(db.String(100))
     description = db.Column(db.Text)
     join_code = db.Column(db.String(10), nullable=False, unique=True)
+    cover_image = db.Column(db.Integer, default=1)
     
-    # Relationships
+    
     club_events = db.relationship('Event', back_populates='club', cascade='all, delete-orphan')
-    memberships = db.relationship('ClubMembership', back_populates='club')  # Changed from 'members'
+    memberships = db.relationship('ClubMembership', back_populates='club')  
 
 
 class ClubMembership(db.Model):
@@ -22,7 +23,6 @@ class ClubMembership(db.Model):
     is_host = db.Column(db.Boolean, default=False)
     joined_at = db.Column(db.DateTime, default=db.func.now())
     
-    # Relationships
     member = db.relationship('User', back_populates='club_memberships')
     club = db.relationship('Club', back_populates='memberships')
 

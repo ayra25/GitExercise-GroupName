@@ -55,6 +55,85 @@
         flex-direction: column;
         height: 100%;
     }
+
+    .club-design-1 {
+    background: linear-gradient(135deg, #6b1d1d 0%, #8a2a2a 100%);
+}
+
+.club-design-2 {
+    background: linear-gradient(135deg, #1d4e6b 0%, #2a6b8a 100%);
+}
+
+.club-design-3 {
+    background: linear-gradient(135deg, #4e6b1d 0%, #6b8a2a 100%);
+}
+
+.club-design-4 {
+    background: linear-gradient(135deg, #6b1d4e 0%, #8a2a6b 100%);
+}
+
+.club-design-5 {
+    background: linear-gradient(135deg, #1d6b4e 0%, #2a8a6b 100%);
+}
+
+
+.club-menu {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+}
+
+.club-menu-toggle {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.8);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.club-menu-toggle:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.club-menu-dropdown {
+    position: absolute;
+    right: 0;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    min-width: 150px;
+    display: none;
+}
+
+.club-menu-dropdown form {
+    display: contents;
+}
+
+.club-menu-dropdown button {
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    background: none;
+    border: none;
+    color: #333;
+    cursor: pointer;
+}
+
+.club-menu-dropdown button:hover {
+    background: #f5f5f5;
+}
+
+.club-menu.active .club-menu-dropdown {
+    display: block;
+}
     
     .club-card:hover {
         transform: translateY(-5px);
@@ -305,7 +384,22 @@
         {% for club_data in clubs_data %}
         <div class="club-card">
             <a href="{{ url_for('event.events_page', club_id=club_data.club.id) }}" class="club-link" aria-label="View {{ club_data.club.name }}"></a>
-            <div class="club-card-header">
+            
+            <div class="club-menu">
+                <button class="club-menu-toggle" onclick="this.parentElement.classList.toggle('active')">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <div class="club-menu-dropdown">
+                    <form action="{{ url_for('club.leave_club') }}" method="POST">
+                        <input type="hidden" name="club_id" value="{{ club_data.club.id }}">
+                        <button type="submit" class="text-danger">
+                            <i class="bi bi-box-arrow-right me-2"></i>Leave Club
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="club-card-header club-design-{{ club_data.club.cover_image }}">
                 <h3 class="club-name">{{ club_data.club.name }}</h3>
                 <p class="club-description">{{ club_data.club.description|default('No description', true) }}</p>
             </div>

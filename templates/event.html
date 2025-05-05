@@ -8,14 +8,16 @@
         --light-gray: #f8f9fa;
         --medium-gray: #e9ecef;
         --dark-gray: #495057;
-    }
+
+}
+
+    
     
     body {
         background-color: var(--light-gray);
     }
     
     .hero-section {
-    background: linear-gradient(135deg, var(--maroon));
     color: white;
     padding: 2.5rem 0;
     margin-bottom: 2rem;
@@ -26,6 +28,27 @@
     align-items: flex-end; 
     height: 250px; 
 }
+
+.club-design-1 {
+    background: linear-gradient(135deg, #6b1d1d 0%, #8a2a2a 100%);
+}
+
+.club-design-2 {
+    background: linear-gradient(135deg, #1d4e6b 0%, #2a6b8a 100%);
+}
+
+.club-design-3 {
+    background: linear-gradient(135deg, #4e6b1d 0%, #6b8a2a 100%);
+}
+
+.club-design-4 {
+    background: linear-gradient(135deg, #6b1d4e 0%, #8a2a6b 100%);
+}
+
+.club-design-5 {
+    background: linear-gradient(135deg, #1d6b4e 0%, #2a8a6b 100%);
+}
+
 
 .club-header {
     max-width: 800px;
@@ -270,7 +293,7 @@
 </style>
 
 
-<section class="hero-section">
+<section class="hero-section club-design-{{ club.cover_image }}">
     <div class="club-header">
         <h1 class="club-name">{{ club.name }}</h1>
         <p class="club-description">{{ club.description or "Welcome to our club events page" }}</p>
