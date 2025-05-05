@@ -9,9 +9,7 @@
         --medium-gray: #e9ecef;
         --dark-gray: #495057;
 
-}
-
-    
+    }
     
     body {
         background-color: var(--light-gray);
@@ -27,27 +25,27 @@
     justify-content: flex-start; 
     align-items: flex-end; 
     height: 250px; 
-}
+    }
 
-.club-design-1 {
+    .club-design-1 {
     background: linear-gradient(135deg, #6b1d1d 0%, #8a2a2a 100%);
-}
+    }
 
-.club-design-2 {
+    .club-design-2 {
     background: linear-gradient(135deg, #1d4e6b 0%, #2a6b8a 100%);
-}
+    }
 
-.club-design-3 {
+    .club-design-3 {
     background: linear-gradient(135deg, #4e6b1d 0%, #6b8a2a 100%);
-}
+    }
 
-.club-design-4 {
+    .club-design-4 {
     background: linear-gradient(135deg, #6b1d4e 0%, #8a2a6b 100%);
-}
+    }
 
-.club-design-5 {
+    .club-design-5 {
     background: linear-gradient(135deg, #1d6b4e 0%, #2a8a6b 100%);
-}
+    }
 
 
 .club-header {
@@ -440,12 +438,6 @@
                         <i class="bi bi-megaphone" style="font-size: 3rem;"></i>
                         <h4>No Announcements Yet</h4>
                         <p>Check back later for updates</p>
-                        {% if is_host %}
-                        <a href="{{ url_for('club.post_announcement', club_id=club.id) }}" 
-                           class="btn btn-maroon mt-3">
-                            <i class="bi bi-megaphone me-2"></i>Post First Announcement
-                        </a>
-                        {% endif %}
                     </div>
                 </div>
             {% endif %}
