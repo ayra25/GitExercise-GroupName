@@ -28,45 +28,45 @@
     }
 
     .club-design-1 {
-    background: linear-gradient(135deg, #e0cfa2 0%, #e1c16e 100%);
-}
+        background: linear-gradient(135deg, #e0cfa2 0%, #e1c16e 100%);
+    }
 
-.club-design-2 {
-    background: linear-gradient(135deg, #779ed1 0%, #1d4e6b 100%);
-}
+    .club-design-2 {
+        background: linear-gradient(135deg, #779ed1 0%, #1d4e6b 100%);
+    }
 
-.club-design-3 {
-    background: linear-gradient(135deg, #493f55 0%, #2a2a5a 100%);
-}
+    .club-design-3 {
+        background: linear-gradient(135deg, #493f55 0%, #2a2a5a 100%);
+    }
 
-.club-design-4 {
-    background: linear-gradient(135deg, #466f6f 0%, #008080 100%);
-}
+    .club-design-4 {
+        background: linear-gradient(135deg, #466f6f 0%, #008080 100%);
+    }
 
-.club-design-5 {
-    background: linear-gradient(135deg, #987c83 0%, #63323d 100%);
-}
+    .club-design-5 {
+        background: linear-gradient(135deg, #987c83 0%, #63323d 100%);
+    }
 
 
-.club-header {
-    max-width: 800px;
-    margin: 0 1rem;
-    padding-bottom: 1rem; 
-    padding-left: 1rem;
-}
+    .club-header {
+        max-width: 800px;
+        margin: 0 1rem;
+        padding-bottom: 1rem; 
+        padding-left: 1rem;
+    }
 
-.club-name {
-    font-weight: 700;
-    font-size: 2.2rem;
-    margin-bottom: 0.5rem;
-    color: white;
-}
+    .club-name {
+        font-weight: 700;
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+        color: white;
+    }
 
-.club-description {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    max-width: 600px;
-}
+    .club-description {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+    }
     
     .analytics-link {
         position: absolute;
@@ -161,6 +161,33 @@
     .event-details-body {
         padding: 2rem;
     }
+
+    .event-status-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        background-color: var(--dark-gray);
+        color: white;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .event-card:hover .event-status-badge {
+        opacity: 1;
+    }
+
+    .event-status-badge.past {
+        background-color: #dc3545;
+    }
+
+    .event-status-badge.upcoming {
+        background-color: #28a745;
+    }
+
     
     .detail-label {
         font-weight: 600;
@@ -202,88 +229,88 @@
 
 
 
-.announcement-card {
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-    margin-bottom: 1.25rem;
-    overflow: hidden;
-}
+    .announcement-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+    }
 
-.announcement-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.12);
-}
+    .announcement-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    }
 
-.announcement-header {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid rgba(74, 107, 175, 0.1);
-}
+    .announcement-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgba(74, 107, 175, 0.1);
+    }
 
-.announcement-title {
-    font-weight: 600;
-    color: maroon;
-    margin-bottom: 0.25rem;
-}
+    .announcement-title {
+        font-weight: 600;
+        color: maroon;
+        margin-bottom: 0.25rem;
+    }
 
-.announcement-time {
-    font-size: 0.85rem;
-    color: #6c757d;
-}
+    .announcement-time {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
 
-.announcement-content {
-    padding: 1.5rem;
-    line-height: 1.6;
-}
+    .announcement-content {
+        padding: 1.5rem;
+        line-height: 1.6;
+    }
 
-.floating-buttons {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    z-index: 1000;
-}
+    .floating-buttons {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        z-index: 1000;
+    }
 
-.floating-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    transition: all 0.3s;
-    border: none;
-    cursor: pointer;
-}
+    .floating-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
 
-.floating-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-}
+    .floating-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
 
-.floating-btn-primary {
-    background: var(--maroon);
-}
+    .floating-btn-primary {
+        background: var(--maroon);
+    }
 
-.floating-btn-primary:hover {
-    background: var(--maroon-light);
-}
+    .floating-btn-primary:hover {
+        background: var(--maroon-light);
+    }
 
-.floating-btn-secondary {
-    background: var(--maroon);
-}
+    .floating-btn-secondary {
+        background: var(--maroon);
+    }
 
-.floating-btn-secondary:hover {
-    background: var(--maroon-light);
-}
+    .floating-btn-secondary:hover {
+        background: var(--maroon-light);
+    }
 
-.comments-section {
+    .comments-section {
         margin-top: 2.5rem;
         padding-top: 1.5rem;
         border-top: 1px solid rgba(107, 29, 29, 0.1);
@@ -434,25 +461,25 @@
     }
 
     .comment-user-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    background-color: var(--maroon-light);
-    color: white;
-    font-size: 0.75rem;
-    padding: 0.15rem 0.5rem;
-    border-radius: 10px;
-    margin-left: 0.5rem;
-    font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        background-color: var(--maroon-light);
+        color: white;
+        font-size: 0.75rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 10px;
+        margin-left: 0.5rem;
+        font-weight: 500;
 }
 
-.comment-user-badge.host-badge {
-    background-color: var(--maroon);
-}
+    .comment-user-badge.host-badge {
+        background-color: var(--maroon);
+    }
 
-.comment-user-badge i {
-    font-size: 0.65rem;
-}
+    .comment-user-badge i {
+        font-size: 0.65rem;
+    }
 
     .replies-container {
         margin-left: 2.5rem;
@@ -500,6 +527,38 @@
     .reply-indicator a:hover {
         text-decoration: underline;
     }
+
+    .event-filters {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+    .filter-btn {
+        background-color: white;
+        border: 1px solid var(--medium-gray);
+        color: var(--dark-gray);
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .filter-btn:hover {
+        background-color: var(--medium-gray);
+    }
+
+    .filter-btn.active {
+        background-color: var(--maroon);
+        color: white;
+        border-color: var(--maroon);
+    }
+
+    .filter-btn i {
+        margin-right: 0.5rem;
+    }
     
     @media (max-width: 768px) {
         .event-details-card {
@@ -544,12 +603,34 @@
     <div class="tab-content" id="eventTabsContent">
         
         <div class="tab-pane fade show active" id="events" role="tabpanel">
+
+            <div class="event-filters">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="bi bi-collection"></i> All Events
+                </button>
+                <button class="filter-btn" data-filter="upcoming">
+                    <i class="bi bi-arrow-up-circle"></i> Upcoming
+                </button>
+                <button class="filter-btn" data-filter="past">
+                    <i class="bi bi-clock-history"></i> Past Events
+                </button>
+            </div>
+
             <div class="row">
-                
                 <div class="col-lg-6">
                     {% for event in events %}
-                    <div class="event-card {% if request.args.get('selected') == event.id|string %}selected-event{% endif %}">
+                    <div class="event-card {% if request.args.get('selected') == event.id|string %}selected-event{% endif %}" 
+                    data-event-date="{{ event.date.strftime('%Y-%m-%d') }}"
+                    data-event-time="{{ event.time.strftime('%H:%M') }}">
                         <div class="event-card-body">
+                            {% if event.date < (now - timedelta(days=1)).date() %}
+                                <div class="event-status-badge past">Past Event</div>
+                            {% elif event.date > now.date() %}
+                                <div class="event-status-badge upcoming">Upcoming</div>
+                            {% else %}
+                                <div class="event-status-badge">Today</div>
+                            {% endif %}
+                            
                             <a href="{{ url_for('event.events_page', club_id=club.id, selected=event.id) }}" style="text-decoration: none; color: inherit;">
                                 <h5 class="event-title">{{ event.title }}</h5>
                                 <div class="event-meta">
@@ -625,7 +706,6 @@
                                     <div class="comments-list">
                                         {% for comment in selected_event.comments|sort(attribute='created_at', reverse=True) if not comment.parent_id %}
                                         <div class="comment-card" id="comment-{{ comment.id }}">
-                                            <!-- Comment header (same as before) -->
                                             <div class="comment-header">
                                                 <div class="comment-avatar">
                                                     {{ comment.user.first_name[0]|upper }}
@@ -640,17 +720,14 @@
                                                 </div>
                                             </div>
                                             
-                                            <!-- Comment content -->
                                             <div class="comment-content">
                                                 {{ comment.content }}
                                             </div>
                                             
-                                            <!-- Reply button -->
                                             <button class="reply-btn" onclick="toggleReplyForm('{{ comment.id }}')">
                                                 <i class="bi bi-reply"></i> Reply
                                             </button>
                                             
-                                            <!-- Reply form (hidden by default) -->
                                             <form method="POST" action="{{ url_for('event.post_comment', event_id=selected_event.id) }}" 
                                                   class="reply-form" id="reply-form-{{ comment.id }}">
                                                 <input type="hidden" name="parent_id" value="{{ comment.id }}">
@@ -668,7 +745,6 @@
                                                 </button>
                                             </form>
                                             
-                                            <!-- Replies section -->
                                             {% for reply in selected_event.comments if reply.parent_id == comment.id %}
                                             <div class="replies-container mt-3">
                                                 <div class="comment-card" id="comment-{{ reply.id }}">
@@ -677,7 +753,6 @@
                                                         Replying to <a href="#comment-{{ comment.id }}">@{{ comment.user.first_name }}</a>
                                                     </div>
                                                     
-                                                    <!-- Reply header -->
                                                     <div class="comment-header">
                                                         <div class="comment-avatar">
                                                             {{ reply.user.first_name[0]|upper }}
@@ -696,7 +771,6 @@
                                                         </div>
                                                     </div>
                                                     
-                                                    <!-- Reply content -->
                                                     <div class="comment-content">
                                                         {{ reply.content }}
                                                     </div>
@@ -803,7 +877,6 @@
         form.classList.toggle('active');
     }
     
-    // Scroll to comment when URL has hash
     document.addEventListener('DOMContentLoaded', function() {
         if (window.location.hash) {
             const comment = document.querySelector(window.location.hash);
@@ -816,6 +889,47 @@
             }
         }
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const eventCards = document.querySelectorAll('.event-card');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const filter = this.dataset.filter;
+            const now = new Date();
+            const currentDate = now.toISOString().split('T')[0];
+            const currentHours = now.getHours();
+            const currentMinutes = now.getMinutes();
+            
+            eventCards.forEach(card => {
+                const eventDate = card.dataset.eventDate;
+                const [eventHours, eventMinutes] = card.dataset.eventTime.split(':').map(Number);
+                let shouldShow = true;
+                
+                if (filter === 'upcoming') {
+
+                    shouldShow = (eventDate > currentDate) || 
+                               (eventDate === currentDate && 
+                                (eventHours > currentHours || 
+                                (eventHours === currentHours && eventMinutes >= currentMinutes)));
+                } else if (filter === 'past') {
+
+                    shouldShow = (eventDate < currentDate) || 
+                               (eventDate === currentDate && 
+                                (eventHours < currentHours || 
+                                (eventHours === currentHours && eventMinutes < currentMinutes)));
+                }
+                
+                card.style.display = shouldShow ? 'block' : 'none';
+            });
+        });
+    });
+});
 </script>
 
 {% endblock %}
