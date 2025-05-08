@@ -377,12 +377,16 @@
 
     .comment-user {
         flex: 1;
+        display: flex;
+        flex-direction: column;
     }
 
     .comment-user-name {
         font-weight: 600;
         margin-bottom: 0.1rem;
         color: var(--dark-gray);
+        display: flex;
+        align-items: center;
     }
 
     .comment-time {
@@ -710,13 +714,19 @@
                                                 <div class="comment-avatar">
                                                     {{ comment.user.first_name[0]|upper }}
                                                 </div>
-                                                <div class="comment-user-name">
-                                                    {{ comment.user.first_name }}
-                                                    {% if comment.user.id in host_user_ids %}
-                                                        <span class="comment-user-badge host-badge">
-                                                            <i class="bi bi-star-fill"></i> Club Host
-                                                        </span>
-                                                    {% endif %}
+                                                <div class="comment-user">
+                                                    <div class="comment-user-name">
+                                                        {{ comment.user.first_name }}
+                                                        {% if comment.user.id in host_user_ids %}
+                                                            <span class="comment-user-badge host-badge">
+                                                                <i class="bi bi-star-fill"></i> Club Host
+                                                            </span>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="comment-time">
+                                                        <i class="bi bi-clock me-1"></i>
+                                                        {{ comment.created_at.strftime('%b %d, %Y at %I:%M %p') }}
+                                                    </div>
                                                 </div>
                                             </div>
                                             
