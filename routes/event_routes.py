@@ -6,7 +6,7 @@ from models.form import EventForm
 from models.announcement import Announcement
 from models.comment import EventComment
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timedelta
 
 event_bp = Blueprint('event', __name__)
 
@@ -48,6 +48,7 @@ def events_page(club_id):
         selected_event=selected_event,
         is_host=membership.is_host,
         now=datetime.utcnow(),
+        timedelta=timedelta,
         membership=membership,
         host_user_ids=host_user_ids  
     )
