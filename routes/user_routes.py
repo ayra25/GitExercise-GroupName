@@ -62,3 +62,39 @@ def signup():
             return redirect(url_for('club.dashboard'))
 
     return render_template("signup.html", user=current_user)
+
+@user_bp.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+        if user:
+            return redirect(url_for('user.reset_password_direct', email=email))
+        else:
+            flash('No account found with that email.', 'danger')
+            return redirect(url_for('user.forgot_password'))
+
+    return render_template('forgot_password.html')
+
+@user_bp.route('/reset-password-direct/<email>', methods=['GET', 'POST'])
+def reset_password_direct(email):
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        flash('Invalid email.', 'danger')
+        return redirect(url_for('user.forgot_password'))
+
+    if request.method == 'POST':
+        new_password = request.form.get('password')
+        if not new_password or len(new_password) < 7:
+            flash('Password must be at least 7 characters.', 'error')
+            return render_template('reset_password_direct.html', email=email)
+        
+        hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        flash('Your password has been reset. You can now log in.', 'success')
+        return redirect(url_for('user.login'))
+
+    return render_template('reset_password_direct.html', email=email)
+
+

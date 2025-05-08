@@ -1,3 +1,4 @@
+{% set current_user = g.get('user', None) %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,6 +27,17 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/about">About</a>
                     </li>
+                </ul>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('user.login') }}">Login</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('user.logout') }}">Logout</a>
+                        </li>
+                    {% endif %}
                 </ul>
                 <div class="d-flex align-items-center">
                     <div class="notification-icon position-relative me-3">

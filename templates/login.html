@@ -10,12 +10,15 @@
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px maroon;
   }
   .form-container h2 {
     margin-bottom: 20px;
     text-align: center;
     font-weight: 600;
+  }
+  body{
+  background-color: rgba(128, 13, 13, 0.795);
   }
   .form-container .form-control {
     border-radius: 4px;
@@ -71,6 +74,7 @@
         <label for="password">Password</label>
         <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
       </div>
+      <p><a href="{{ url_for('user.forgot_password') }}">Forgot your password?</a></p>
 
       <button type="submit" class="btn btn-primary">Login</button>
     </form>
@@ -80,6 +84,7 @@
     </div>
   </div>
 </div>
+
 
 {% endblock %}
 
