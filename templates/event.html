@@ -563,6 +563,44 @@
     .filter-btn i {
         margin-right: 0.5rem;
     }
+
+    .search-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .search-icon {
+        cursor: pointer;
+        font-size: 1.25rem;
+        color: var(--dark-gray);
+        padding: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .search-icon:hover {
+        color: var(--maroon);
+    }
+
+    .search-input {
+        width: 0;
+        padding: 0.5rem 0.5rem 0.5rem 2rem;
+        border: 1px solid var(--medium-gray);
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .search-input.active {
+        display: block !important;
+        width: 200px;
+    }
+
+    .search-input:focus {
+        border-color: var(--maroon);
+        box-shadow: 0 0 0 0.2rem rgba(107, 29, 29, 0.1);
+        outline: none;
+    }
     
     @media (max-width: 768px) {
         .event-details-card {
@@ -618,6 +656,13 @@
                 <button class="filter-btn" data-filter="past">
                     <i class="bi bi-clock-history"></i> Past Events
                 </button>
+                <div class="search-container">
+                    <div class="search-wrapper">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" id="event-search" class="form-control search-input" 
+                               placeholder="Search events..." style="display: none;">
+                    </div>
+                </div>
             </div>
 
             <div class="row">
@@ -888,6 +933,7 @@
     }
     
     document.addEventListener('DOMContentLoaded', function() {
+        // Handle comment anchor links
         if (window.location.hash) {
             const comment = document.querySelector(window.location.hash);
             if (comment) {
@@ -898,48 +944,87 @@
                 }, 2000);
             }
         }
-    });
 
-    document.addEventListener('DOMContentLoaded', function() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const eventCards = document.querySelectorAll('.event-card');
-    
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        // Expandable search functionality
+        const searchIcon = document.querySelector('.search-icon');
+        const searchInput = document.getElementById('event-search');
+        
+        searchIcon.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent immediate closing
+            searchInput.classList.toggle('active');
+            if (searchInput.classList.contains('active')) {
+                searchInput.focus();
+            }
+        });
+        
+        // Close search when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-wrapper') && 
+                searchInput.classList.contains('active')) {
+                searchInput.classList.remove('active');
+            }
+        });
 
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            const filter = this.dataset.filter;
+        // Event filtering and search functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const eventCards = document.querySelectorAll('.event-card');
+        
+        // Filter events based on time (past/upcoming/all) and search term
+        function filterEvents(filter) {
             const now = new Date();
             const currentDate = now.toISOString().split('T')[0];
             const currentHours = now.getHours();
             const currentMinutes = now.getMinutes();
+            const searchTerm = searchInput.value.toLowerCase();
             
             eventCards.forEach(card => {
                 const eventDate = card.dataset.eventDate;
                 const [eventHours, eventMinutes] = card.dataset.eventTime.split(':').map(Number);
-                let shouldShow = true;
+                let timeMatch = true;
                 
+                // Time-based filtering
                 if (filter === 'upcoming') {
-
-                    shouldShow = (eventDate > currentDate) || 
+                    timeMatch = (eventDate > currentDate) || 
                                (eventDate === currentDate && 
                                 (eventHours > currentHours || 
                                 (eventHours === currentHours && eventMinutes >= currentMinutes)));
                 } else if (filter === 'past') {
-
-                    shouldShow = (eventDate < currentDate) || 
+                    timeMatch = (eventDate < currentDate) || 
                                (eventDate === currentDate && 
                                 (eventHours < currentHours || 
                                 (eventHours === currentHours && eventMinutes < currentMinutes)));
                 }
                 
-                card.style.display = shouldShow ? 'block' : 'none';
+                // Search term matching
+                const eventTitle = card.querySelector('.event-title').textContent.toLowerCase();
+                const eventLocation = card.querySelector('.event-meta span:nth-child(3)').textContent.toLowerCase();
+                const searchMatch = searchTerm === '' || 
+                                   eventTitle.includes(searchTerm) || 
+                                   eventLocation.includes(searchTerm);
+                
+                // Show/hide based on both filters
+                card.style.display = (timeMatch && searchMatch) ? 'block' : 'none';
+            });
+        }
+        
+        // Handle filter button clicks
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                filterEvents(this.dataset.filter);
             });
         });
+        
+        // Handle search input
+        searchInput.addEventListener('input', function() {
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            filterEvents(activeFilter);
+        });
+        
+        // Initialize with 'all' filter
+        filterEvents('all');
     });
-});
 </script>
 
 {% endblock %}
