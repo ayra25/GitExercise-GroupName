@@ -6,6 +6,13 @@ import bcrypt
 
 user_bp = Blueprint('user', __name__)
 
+@user_bp.route('/')
+def index():
+    if current_user.is_authenticated:
+        return redirect(url_for('club.dashboard'))  
+    return render_template('landing.html')
+ 
+
 @user_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
