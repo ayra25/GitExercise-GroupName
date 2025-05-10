@@ -20,7 +20,7 @@ def verify_host(club_id):
     if not membership:
         abort(403)
 
-@club_bp.route('/')
+@club_bp.route('/dashboard')
 @login_required
 def dashboard():
     # Get all clubs the user is a member of with their events
