@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-center my-5">
+  <h3>QR Code for {{ event.title }}</h3>
+  <p class="text-muted">Refresh the page to generate a new code.</p>
+
+  <img src="{{ url_for('attendance.qr_image', event_id=event.id) }}" alt="QR Code" class="img-fluid" width="300">
+
+  <p class="mt-3 small text-break">QR Content: {{ qr_data }}</p>
+
+  <a href="{{ url_for('attendance.take_attendance', event_id=event.id) }}" class="btn btn-secondary mt-3">
+    Back to Attendance
+  </a>
+</div>
+{% endblock %}
