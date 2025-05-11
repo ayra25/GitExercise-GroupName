@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
-
 {% block content %}
+
 <div class="container my-4">
   <h2>Take Attendance for {{ event.title }}</h2>
   <p class="text-muted">{{ event.date.strftime('%A, %B %d, %Y') }}</p>
+
   
+ <a href="{{ url_for('attendance.display_qr', event_id=event.id) }}" class="btn btn-outline-success mb-3">
+  Show QR Attendance
+</a>
+
   <form method="POST" action="{{ url_for('attendance.submit_attendance', event_id=event.id) }}">
     <table class="table">
       <thead>
@@ -30,7 +35,7 @@
         {% endfor %}
       </tbody>
     </table>
-    
+
     <button type="submit" class="btn btn-primary">Save Attendance</button>
     <a href="{{ url_for('event.events_page', club_id=event.club_id) }}" class="btn btn-secondary">Cancel</a>
   </form>
