@@ -95,7 +95,6 @@
 </style>
 
 <div class="announcement-form-container">
-    
     <div class="announcement-form-card">
         <div class="announcement-form-header">
             <h2 class="mb-0"><i class="bi bi-megaphone me-2"></i>Post New Announcement</h2>
@@ -115,6 +114,36 @@
                               placeholder="Write your announcement details here..."></textarea>
                 </div>
                 
+                <div class="mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="has_poll" name="has_poll">
+                        <label class="form-check-label" for="has_poll">
+                            Include a poll with this announcement
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="poll-options-container" class="mb-4" style="display: none;">
+                    <label class="form-label">Poll Options</label>
+                    <div id="poll-options-list">
+                        <div class="poll-option mb-2 d-flex align-items-center">
+                            <input type="text" class="form-control me-2" name="poll_options[]" placeholder="Option 1">
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-option-btn" disabled>
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        <div class="poll-option mb-2 d-flex align-items-center">
+                            <input type="text" class="form-control me-2" name="poll_options[]" placeholder="Option 2">
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-option-btn">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-option-btn" class="btn btn-sm btn-outline-secondary mt-2">
+                        <i class="bi bi-plus-circle me-1"></i>Add Option
+                    </button>
+                </div>
+                
                 <div class="d-flex justify-content-end gap-3">
                     <a href="{{ url_for('event.events_page', club_id=club_id) }}" 
                        class="btn btn-outline-maroon">
@@ -128,4 +157,47 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hasPollCheckbox = document.getElementById('has_poll');
+        const pollOptionsContainer = document.getElementById('poll-options-container');
+        
+        hasPollCheckbox.addEventListener('change', function() {
+            pollOptionsContainer.style.display = this.checked ? 'block' : 'none';
+        });
+        
+        document.getElementById('add-option-btn').addEventListener('click', function() {
+            const optionsList = document.getElementById('poll-options-list');
+            const optionCount = optionsList.children.length;
+            
+            const newOption = document.createElement('div');
+            newOption.className = 'poll-option mb-2 d-flex align-items-center';
+            newOption.innerHTML = `
+                <input type="text" class="form-control me-2" name="poll_options[]" placeholder="Option ${optionCount + 1}">
+                <button type="button" class="btn btn-sm btn-outline-danger remove-option-btn">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+            
+            optionsList.appendChild(newOption);
+            updateRemoveButtons();
+        });
+        
+        function updateRemoveButtons() {
+            const removeButtons = document.querySelectorAll('.remove-option-btn');
+            removeButtons.forEach((btn, index) => {
+                btn.disabled = index === 0 && removeButtons.length <= 2;
+                btn.addEventListener('click', function() {
+                    if (!this.disabled) {
+                        this.parentElement.remove();
+                        updateRemoveButtons();
+                    }
+                });
+            });
+        }
+        
+        updateRemoveButtons();
+    });
+</script>
 {% endblock %}

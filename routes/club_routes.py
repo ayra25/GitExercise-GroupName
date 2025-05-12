@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from models.club import ClubMembership, Club
 from models.event import Event, EventAttendance
-from models.announcement import Announcement
+from models.announcement import Announcement, PollOption, PollVote
 from extensions import db
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
@@ -290,6 +290,8 @@ def post_announcement(club_id):
         try:
             title = request.form.get('title', '').strip()
             content = request.form.get('content', '').strip()
+            has_poll = 'has_poll' in request.form
+            poll_options = request.form.getlist('poll_options[]')
             
             if not title or not content:
                 flash('Title and content are required', 'danger')
@@ -298,10 +300,22 @@ def post_announcement(club_id):
             new_announcement = Announcement(
                 title=title,
                 content=content,
-                club_id=club_id
+                club_id=club_id,
+                has_poll=has_poll
             )
             
             db.session.add(new_announcement)
+            db.session.flush()  # Get the announcement ID
+            
+            if has_poll and poll_options:
+                for option_text in poll_options:
+                    if option_text.strip():  # Skip empty options
+                        option = PollOption(
+                            text=option_text.strip(),
+                            announcement_id=new_announcement.id
+                        )
+                        db.session.add(option)
+            
             db.session.commit()
             
             flash('Announcement posted!', 'success')
@@ -345,3 +359,48 @@ def leave_club():
         db.session.rollback()
         flash(f'Error leaving club: {str(e)}', 'danger')
         return redirect(url_for('club.dashboard'))
+    
+@club_bp.route('/vote-poll/<int:option_id>', methods=['POST'])
+@login_required
+def vote_poll(option_id):
+    option = PollOption.query.get_or_404(option_id)
+    announcement = option.announcement
+    
+    # Check if user is a member of the club
+    membership = ClubMembership.query.filter_by(
+        user_id=current_user.id,
+        club_id=announcement.club_id
+    ).first()
+    
+    if not membership:
+        abort(403)
+    
+    # Check if user already voted in this poll
+    existing_vote = PollVote.query.filter_by(
+        user_id=current_user.id,
+        option_id=option_id
+    ).first()
+    
+    if existing_vote:
+        flash('You have already voted in this poll', 'info')
+    else:
+        # Delete any previous votes in this poll (modified for SQLite compatibility)
+        votes_to_delete = PollVote.query.filter(
+            PollVote.user_id == current_user.id,
+            PollOption.announcement_id == announcement.id,
+            PollOption.id == PollVote.option_id
+        ).join(PollOption).all()
+        
+        for vote in votes_to_delete:
+            db.session.delete(vote)
+        
+        # Add new vote
+        new_vote = PollVote(
+            user_id=current_user.id,
+            option_id=option_id
+        )
+        db.session.add(new_vote)
+        db.session.commit()
+        flash('Your vote has been recorded', 'success')
+    
+    return redirect(url_for('event.events_page', club_id=announcement.club_id))
