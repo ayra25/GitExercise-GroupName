@@ -1,11 +1,11 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from models.club import ClubMembership, Club
+from models.user import User
 from models.event import Event, EventAttendance
 from models.announcement import Announcement, PollOption, PollVote
 from extensions import db
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
-import calendar
 import random
 
 club_bp = Blueprint('club', __name__)
@@ -23,6 +23,7 @@ def verify_host(club_id):
 @club_bp.route('/dashboard')
 @login_required
 def dashboard():
+
     memberships = ClubMembership.query.filter_by(user_id=current_user.id).options(
         db.joinedload(ClubMembership.club).joinedload(Club.club_events)
     ).all()
