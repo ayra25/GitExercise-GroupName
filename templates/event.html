@@ -744,12 +744,15 @@
         <h1 class="club-name">{{ club.name }}</h1>
         <p class="club-description">{{ club.description or "Welcome to our club events page" }}</p>
         {% if is_host %}
-        <div class="analytics-link">
-            <a href="{{ url_for('club.attendance_analytics', club_id=club.id) }}">
-                <i class="bi bi-graph-up"></i> Attendance Analytics
-            </a>
-        </div>
-        {% endif %}
+  <div class="analytics-link">
+    <a href="{{ url_for('club.attendance_analytics', club_id=club.id) }}">
+      <i class="bi bi-graph-up"></i> Attendance Analytics
+    </a>
+    <a href="{{ url_for('club.view_members', club_id=club.id) }}">
+      <i class="bi bi-people"></i> Manage Members
+    </a>
+  </div>
+{% endif %}
     </div>
 </section>
 
