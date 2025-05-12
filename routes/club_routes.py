@@ -23,7 +23,6 @@ def verify_host(club_id):
 @club_bp.route('/dashboard')
 @login_required
 def dashboard():
-    # Get all clubs the user is a member of with their events
     memberships = ClubMembership.query.filter_by(user_id=current_user.id).options(
         db.joinedload(ClubMembership.club).joinedload(Club.club_events)
     ).all()
@@ -31,7 +30,6 @@ def dashboard():
     today = datetime.utcnow().date()
     club_ids = [m.club_id for m in memberships]
     
-    # Prepare clubs data
     clubs_data = []
     for membership in memberships:
         club = membership.club
@@ -45,7 +43,6 @@ def dashboard():
             'is_host': membership.is_host
         })
     
-    # Get upcoming events (next 5 days)
     upcoming_events = db.session.query(Event).outerjoin(
         EventAttendance,
         (EventAttendance.event_id == Event.id) & 
@@ -59,7 +56,6 @@ def dashboard():
         )
     ).order_by(Event.date.asc()).limit(5).all()
     
-    # Get attended events (most recent 5)
     attended_events = db.session.query(Event).join(
         EventAttendance,
         (EventAttendance.event_id == Event.id) & 
@@ -70,24 +66,20 @@ def dashboard():
         Event.date <= today
     ).order_by(Event.date.desc()).limit(5).all()
 
-    # Get announcements (most recent 5)
     announcements = db.session.query(Announcement).select_from(Announcement).join(
     ClubMembership, ClubMembership.club_id == Announcement.club_id
     ).filter(
     ClubMembership.user_id == current_user.id
     ).order_by(Announcement.created_at.desc()).limit(5).all()
 
-    # Calendar setup
     month = request.args.get('month', type=int, default=datetime.utcnow().month)
     year = request.args.get('year', type=int, default=datetime.utcnow().year)
     
-    # Validate month and year
     if month < 1 or month > 12:
         month = datetime.utcnow().month
     if year < 2000 or year > 2100:
         year = datetime.utcnow().year
     
-    # Calculate previous and next months for navigation
     if month == 1:
         prev_month = 12
         prev_year = year - 1
@@ -102,7 +94,6 @@ def dashboard():
         next_month = month + 1
         next_year = year
     
-    # Prepare calendar events
     calendar_events = []
     for membership in memberships:
         start_date = datetime(year, month, 1).date()
@@ -305,11 +296,11 @@ def post_announcement(club_id):
             )
             
             db.session.add(new_announcement)
-            db.session.flush()  # Get the announcement ID
+            db.session.flush()  
             
             if has_poll and poll_options:
                 for option_text in poll_options:
-                    if option_text.strip():  # Skip empty options
+                    if option_text.strip():  
                         option = PollOption(
                             text=option_text.strip(),
                             announcement_id=new_announcement.id
@@ -366,7 +357,6 @@ def vote_poll(option_id):
     option = PollOption.query.get_or_404(option_id)
     announcement = option.announcement
     
-    # Check if user is a member of the club
     membership = ClubMembership.query.filter_by(
         user_id=current_user.id,
         club_id=announcement.club_id
@@ -375,7 +365,6 @@ def vote_poll(option_id):
     if not membership:
         abort(403)
     
-    # Check if user already voted in this poll
     existing_vote = PollVote.query.filter_by(
         user_id=current_user.id,
         option_id=option_id
@@ -384,7 +373,6 @@ def vote_poll(option_id):
     if existing_vote:
         flash('You have already voted in this poll', 'info')
     else:
-        # Delete any previous votes in this poll (modified for SQLite compatibility)
         votes_to_delete = PollVote.query.filter(
             PollVote.user_id == current_user.id,
             PollOption.announcement_id == announcement.id,
@@ -394,7 +382,6 @@ def vote_poll(option_id):
         for vote in votes_to_delete:
             db.session.delete(vote)
         
-        # Add new vote
         new_vote = PollVote(
             user_id=current_user.id,
             option_id=option_id

@@ -602,7 +602,6 @@
         outline: none;
     }
 
-    /* Poll styles */
     .poll-section {
         background-color: white;
         border-radius: 8px;
@@ -1006,7 +1005,6 @@
             </div>
         </div>
 
-<!-- In the announcements tab section -->
 <div class="tab-pane fade" id="announcements" role="tabpanel">
     {% for announcement_data in announcements %}
     {% set announcement = announcement_data.announcement %}
@@ -1022,58 +1020,56 @@
             {{ announcement.content|safe }}
         </div>
         
-        <!-- Poll section -->
-        <!-- Poll section -->
-{% if announcement.has_poll %}
-<div class="poll-section">
-    <div class="poll-header">
-        <h6 class="poll-title">Poll</h6>
-        {% if announcement_data.options %}
-            {% if announcement_data.user_has_voted or is_host %}
-                <!-- Show results if user has voted or is host -->
-                {% for option_data in announcement_data.options %}
-                    {% set percentage = (option_data.votes / announcement_data.total_votes * 100) if announcement_data.total_votes > 0 else 0 %}
-                    
-                    <div class="poll-option {% if option_data.user_voted %}user-vote{% endif %}">
-                        <div class="poll-option-header">
-                            <span class="poll-option-text">
-                                {{ option_data.option.text }}
-                                {% if option_data.user_voted %}
-                                <span class="poll-user-vote-badge">
-                                    <i class="bi bi-check-circle-fill"></i> Your vote
-                                </span>
-                                {% endif %}
-                            </span>
-                            <span class="poll-option-stats">{{ "%.1f"|format(percentage) }}% ({{ option_data.votes }})</span>
+        {% if announcement.has_poll %}
+        <div class="poll-section">
+            <div class="poll-header">
+                <h6 class="poll-title">Poll</h6>
+                {% if announcement_data.options %}
+                    {% if announcement_data.user_has_voted or is_host %}
+
+                        {% for option_data in announcement_data.options %}
+                            {% set percentage = (option_data.votes / announcement_data.total_votes * 100) if announcement_data.total_votes > 0 else 0 %}
+                            
+                            <div class="poll-option {% if option_data.user_voted %}user-vote{% endif %}">
+                                <div class="poll-option-header">
+                                    <span class="poll-option-text">
+                                        {{ option_data.option.text }}
+                                        {% if option_data.user_voted %}
+                                        <span class="poll-user-vote-badge">
+                                            <i class="bi bi-check-circle-fill"></i> Your vote
+                                        </span>
+                                        {% endif %}
+                                    </span>
+                                    <span class="poll-option-stats">{{ "%.1f"|format(percentage) }}% ({{ option_data.votes }})</span>
+                                </div>
+                                <div class="poll-progress-container">
+                                    <div class="poll-progress-bar" data-percentage="{{ percentage }}"></div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="poll-footer">
+                            <span class="poll-total-votes">{{ announcement_data.total_votes }} total votes</span>
                         </div>
-                        <div class="poll-progress-container">
-                            <div class="poll-progress-bar" data-percentage="{{ percentage }}"></div>
+                    {% else %}
+                        
+                        {% for option_data in announcement_data.options %}
+                            <div class="poll-option">
+                                <form method="POST" action="{{ url_for('club.vote_poll', option_id=option_data.option.id) }}" class="poll-vote-form">
+                                    <span class="poll-option-text">{{ option_data.option.text }}</span>
+                                    <button type="submit" class="poll-vote-btn">
+                                        <i class="bi bi-check-circle"></i> Vote
+                                    </button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                        <div class="poll-footer">
+                            <span class="poll-vote-instruction">Vote to see results</span>
                         </div>
-                    </div>
-                {% endfor %}
-                <div class="poll-footer">
-                    <span class="poll-total-votes">{{ announcement_data.total_votes }} total votes</span>
-                </div>
-            {% else %}
-                <!-- Show voting options if user hasn't voted -->
-                {% for option_data in announcement_data.options %}
-                    <div class="poll-option">
-                        <form method="POST" action="{{ url_for('club.vote_poll', option_id=option_data.option.id) }}" class="poll-vote-form">
-                            <span class="poll-option-text">{{ option_data.option.text }}</span>
-                            <button type="submit" class="poll-vote-btn">
-                                <i class="bi bi-check-circle"></i> Vote
-                            </button>
-                        </form>
-                    </div>
-                {% endfor %}
-                <div class="poll-footer">
-                    <span class="poll-vote-instruction">Vote to see results</span>
-                </div>
-            {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
         {% endif %}
-    </div>
-</div>
-{% endif %}
     </div>
     {% else %}
     <div class="empty-state">
@@ -1111,14 +1107,13 @@
         form.classList.toggle('active');
     }
 
-    // Initialize poll progress bars
     document.querySelectorAll('.poll-progress-bar').forEach(bar => {
         const percentage = bar.dataset.percentage;
         bar.style.width = `${percentage}%`;
     });
     
     document.addEventListener('DOMContentLoaded', function() {
-        // Handle comment anchor links
+        
         if (window.location.hash) {
             const comment = document.querySelector(window.location.hash);
             if (comment) {
@@ -1130,19 +1125,17 @@
             }
         }
 
-        // Expandable search functionality
         const searchIcon = document.querySelector('.search-icon');
         const searchInput = document.getElementById('event-search');
         
         searchIcon.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent immediate closing
+            e.stopPropagation(); 
             searchInput.classList.toggle('active');
             if (searchInput.classList.contains('active')) {
                 searchInput.focus();
             }
         });
         
-        // Close search when clicking outside
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.search-wrapper') && 
                 searchInput.classList.contains('active')) {
@@ -1150,11 +1143,10 @@
             }
         });
 
-        // Event filtering and search functionality
+        
         const filterButtons = document.querySelectorAll('.filter-btn');
         const eventCards = document.querySelectorAll('.event-card');
         
-        // Filter events based on time (past/upcoming/all) and search term
         function filterEvents(filter) {
             const now = new Date();
             const currentDate = now.toISOString().split('T')[0];
@@ -1167,7 +1159,6 @@
                 const [eventHours, eventMinutes] = card.dataset.eventTime.split(':').map(Number);
                 let timeMatch = true;
                 
-                // Time-based filtering
                 if (filter === 'upcoming') {
                     timeMatch = (eventDate > currentDate) || 
                                (eventDate === currentDate && 
@@ -1180,19 +1171,16 @@
                                 (eventHours === currentHours && eventMinutes < currentMinutes)));
                 }
                 
-                // Search term matching
                 const eventTitle = card.querySelector('.event-title').textContent.toLowerCase();
                 const eventLocation = card.querySelector('.event-meta span:nth-child(3)').textContent.toLowerCase();
                 const searchMatch = searchTerm === '' || 
                                    eventTitle.includes(searchTerm) || 
                                    eventLocation.includes(searchTerm);
                 
-                // Show/hide based on both filters
                 card.style.display = (timeMatch && searchMatch) ? 'block' : 'none';
             });
         }
         
-        // Handle filter button clicks
         filterButtons.forEach(button => {
             button.addEventListener('click', function() {
                 filterButtons.forEach(btn => btn.classList.remove('active'));
@@ -1201,13 +1189,11 @@
             });
         });
         
-        // Handle search input
         searchInput.addEventListener('input', function() {
             const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
             filterEvents(activeFilter);
         });
         
-        // Initialize with 'all' filter
         filterEvents('all');
     });
 </script>

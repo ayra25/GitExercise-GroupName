@@ -35,7 +35,6 @@ def events_page(club_id):
         club_id=club_id
     ).order_by(Announcement.created_at.desc()).all()
 
-    # Prepare announcement data with vote counts
     announcements_data = []
     for announcement in announcements:
         announcement_dict = {
@@ -43,7 +42,7 @@ def events_page(club_id):
             'total_votes': 0,
             'options': [],
             'user_has_voted': False,
-            'user_voted_option': None  # Track which option user voted for
+            'user_voted_option': None  
         }
         
         if announcement.has_poll and announcement.poll_options:
@@ -56,7 +55,6 @@ def events_page(club_id):
                 option_votes = len(option.votes)
                 total_votes += option_votes
                 
-                # Check if current user has voted for this option
                 user_vote = any(vote.user_id == current_user.id for vote in option.votes)
                 if user_vote:
                     user_has_voted = True
@@ -75,7 +73,6 @@ def events_page(club_id):
         
         announcements_data.append(announcement_dict)
     
-    # Get user's voted announcements
     user_voted_announcements = set()
     if current_user.is_authenticated:
         user_votes = PollVote.query.join(
