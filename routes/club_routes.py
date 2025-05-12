@@ -211,6 +211,66 @@ def join_club():
             return "Bad Request: 'join_code' not provided", 400
             
     return render_template('join.html')
+@club_bp.route('/club/<int:club_id>/members')
+@login_required
+def view_members(club_id):
+    verify_host(club_id)  # Ensure only host can access
+
+    club = Club.query.get_or_404(club_id)
+    members = ClubMembership.query.filter_by(club_id=club_id).join(ClubMembership.member).all()
+
+    return render_template('members.html', club=club, members=members)
+
+# Route to remove a member
+@club_bp.route('/club/<int:club_id>/remove-member', methods=['POST'])
+@login_required
+def remove_member(club_id):
+    verify_host(club_id)  # Only host can remove
+
+    member_id = request.form.get('member_id')
+    if not member_id:
+        flash('Invalid member selection.', 'danger')
+        return redirect(url_for('club.view_members', club_id=club_id))
+
+    if int(member_id) == current_user.id:
+        flash("You can't remove yourself as host.", 'danger')
+        return redirect(url_for('club.view_members', club_id=club_id))
+
+    membership = ClubMembership.query.filter_by(user_id=member_id, club_id=club_id).first()
+
+    if not membership:
+        flash('Member not found.', 'warning')
+    elif membership.is_host:
+        flash('You cannot remove another host.', 'danger')
+    else:
+        db.session.delete(membership)
+        db.session.commit()
+        flash('Member removed successfully.', 'success')
+
+    return redirect(url_for('club.view_members', club_id=club_id))
+
+@club_bp.route('/club/<int:club_id>/promote-member', methods=['POST'])
+@login_required
+def promote_member(club_id):
+    verify_host(club_id)
+
+    member_id = request.form.get('member_id')
+    if not member_id:
+        flash('Invalid member selection.', 'danger')
+        return redirect(url_for('club.view_members', club_id=club_id))
+
+    membership = ClubMembership.query.filter_by(user_id=member_id, club_id=club_id).first()
+    if not membership:
+        flash('Member not found.', 'warning')
+    elif membership.is_host:
+        flash('This user is already a host.', 'info')
+    else:
+        membership.is_host = True
+        db.session.commit()
+        flash('Member promoted to host successfully.', 'success')
+
+    return redirect(url_for('club.view_members', club_id=club_id))
+
 
 @club_bp.route('/club/<int:club_id>/analytics')
 @login_required
