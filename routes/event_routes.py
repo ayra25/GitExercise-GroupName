@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from models.event import Event, EventAttendance
 from models.club import Club, ClubMembership
 from models.form import EventForm
-from models.announcement import Announcement
+from models.announcement import Announcement, PollVote, PollOption
 from models.comment import EventComment
 from extensions import db
 from datetime import datetime, timedelta
@@ -29,9 +29,59 @@ def events_page(club_id):
         db.joinedload(Event.comments).joinedload(EventComment.user)
     ).filter_by(club_id=club_id).order_by(Event.date.desc()).all()
 
-    announcements = Announcement.query.filter_by(
+    announcements = Announcement.query.options(
+        db.joinedload(Announcement.poll_options).joinedload(PollOption.votes)
+    ).filter_by(
         club_id=club_id
     ).order_by(Announcement.created_at.desc()).all()
+
+    announcements_data = []
+    for announcement in announcements:
+        announcement_dict = {
+            'announcement': announcement,
+            'total_votes': 0,
+            'options': [],
+            'user_has_voted': False,
+            'user_voted_option': None  
+        }
+        
+        if announcement.has_poll and announcement.poll_options:
+            total_votes = 0
+            user_has_voted = False
+            user_voted_option = None
+            
+            options = []
+            for option in announcement.poll_options:
+                option_votes = len(option.votes)
+                total_votes += option_votes
+                
+                user_vote = any(vote.user_id == current_user.id for vote in option.votes)
+                if user_vote:
+                    user_has_voted = True
+                    user_voted_option = option.id
+                
+                options.append({
+                    'option': option,
+                    'votes': option_votes,
+                    'user_voted': user_vote
+                })
+            
+            announcement_dict['total_votes'] = total_votes
+            announcement_dict['options'] = options
+            announcement_dict['user_has_voted'] = user_has_voted
+            announcement_dict['user_voted_option'] = user_voted_option
+        
+        announcements_data.append(announcement_dict)
+    
+    user_voted_announcements = set()
+    if current_user.is_authenticated:
+        user_votes = PollVote.query.join(
+            PollOption,
+            PollOption.id == PollVote.option_id
+        ).filter(
+            PollVote.user_id == current_user.id
+        ).all()
+        user_voted_announcements = {vote.option.announcement_id for vote in user_votes}
     
     selected_id = request.args.get('selected')
     selected_event = next(
@@ -44,13 +94,14 @@ def events_page(club_id):
     return render_template('event.html',
         club=club,
         events=events,
-        announcements=announcements,
+        announcements=announcements_data,
         selected_event=selected_event,
         is_host=membership.is_host,
         now=datetime.utcnow(),
         timedelta=timedelta,
         membership=membership,
-        host_user_ids=host_user_ids  
+        host_user_ids=host_user_ids,
+        user_voted_announcements=user_voted_announcements
     )
 
 @event_bp.route('/event/<int:club_id>/post-event', methods=['GET', 'POST'])
