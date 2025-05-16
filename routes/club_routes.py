@@ -451,3 +451,27 @@ def vote_poll(option_id):
         flash('Your vote has been recorded', 'success')
     
     return redirect(url_for('event.events_page', club_id=announcement.club_id))
+
+@club_bp.route('/club/<int:club_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_club(club_id):
+    verify_host(club_id)  
+
+    club = Club.query.get_or_404(club_id)
+
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        description = request.form.get('description', '').strip()
+
+        if not name:
+            flash('Club name cannot be empty.', 'danger')
+            return redirect(url_for('club.edit_club', club_id=club_id))
+
+        club.name = name
+        club.description = description or None
+        db.session.commit()
+
+        flash('Club details updated successfully.', 'success')
+        return redirect(url_for('club.dashboard'))
+
+    return render_template('edit_club.html', club=club)
