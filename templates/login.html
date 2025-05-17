@@ -4,27 +4,51 @@
 
 {% block content %}
 <style>
-  .form-container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px maroon;
+  body, html {
+    height: 100%;
+    margin: 0;
   }
+
+  .background {
+    background: url("{{ url_for('static', filename='images/login.jpg') }}") no-repeat center center fixed;
+    background-size: cover;
+    filter: blur(5px);
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+  }
+
+  .login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .form-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  }
+
   .form-container h2 {
     margin-bottom: 20px;
     text-align: center;
     font-weight: 600;
   }
-  body{
-  background-color: rgba(128, 13, 13, 0.795);
-  }
+
   .form-container .form-control {
     border-radius: 4px;
     padding: 10px;
     margin-bottom: 15px;
   }
+
   .btn-primary {
     width: 100%;
     padding: 10px;
@@ -34,25 +58,31 @@
     color: white;
     font-weight: 600;
   }
+
   .btn-primary:hover {
     background-color: #0056b3;
   }
+
   .flash {
     margin-bottom: 20px;
     padding: 10px;
     border-radius: 5px;
   }
+
   .flash.success {
     background-color: #d4edda;
     color: #155724;
   }
+
   .flash.error {
     background-color: #f8d7da;
     color: #721c24;
   }
 </style>
 
-<div class="container mt-5">
+<div class="background"></div>
+
+<div class="login-wrapper">
   <div class="form-container">
     <h2>Login</h2>
 
@@ -74,6 +104,7 @@
         <label for="password">Password</label>
         <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
       </div>
+
       <p><a href="{{ url_for('user.forgot_password') }}">Forgot your password?</a></p>
 
       <button type="submit" class="btn btn-primary">Login</button>
@@ -84,7 +115,4 @@
     </div>
   </div>
 </div>
-
-
 {% endblock %}
-
