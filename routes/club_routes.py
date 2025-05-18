@@ -593,3 +593,47 @@ def edit_event(club_id, event_id):
                          club=club,  
                          event=event,
                          datetime=datetime)
+
+@club_bp.route('/club/<int:club_id>/delete', methods=['GET', 'POST'])
+@login_required
+def delete_club(club_id):
+    verify_host(club_id)
+    club = Club.query.get_or_404(club_id)
+    
+    if request.method == 'POST':
+        password = request.form.get('password')
+        
+        if not password:
+            flash('Please enter your password', 'danger')
+            return redirect(url_for('club.delete_club', club_id=club_id))
+            
+        if not current_user.check_password(password):
+            flash('Incorrect password. Please try again.', 'danger')
+            return render_template('delete_club.html', 
+                               club=club,
+                               password_error=True)
+        
+        try:
+            EventAttendance.query.filter(
+                EventAttendance.event_id.in_(
+                    db.session.query(Event.id).filter_by(club_id=club_id)
+                )
+            ).delete(synchronize_session=False)
+
+            Event.query.filter_by(club_id=club_id).delete()
+            Announcement.query.filter_by(club_id=club_id).delete()
+            ClubMembership.query.filter_by(club_id=club_id).delete()
+
+            db.session.delete(club)
+            db.session.commit()
+
+            flash('Club deleted successfully', 'success')
+            return redirect(url_for('club.dashboard'))
+
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error deleting club: {str(e)}', 'danger')
+            return redirect(url_for('club.delete_club', club_id=club_id))
+    
+    return render_template('delete_club.html', club=club)
