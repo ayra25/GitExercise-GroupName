@@ -537,3 +537,59 @@ def delete_announcement(club_id, announcement_id):
     db.session.commit()
     flash('Announcement deleted successfully.', 'success')
     return redirect(url_for('event.events_page', club_id=club_id))
+
+@club_bp.route('/club/<int:club_id>/event/<int:event_id>/delete', methods=['POST'])
+@login_required
+def delete_event(club_id, event_id):
+    verify_host(club_id)
+    
+    event = Event.query.get_or_404(event_id)
+    
+    if event.club_id != club_id:
+        abort(403)
+    
+    try:
+        EventAttendance.query.filter_by(event_id=event_id).delete()
+        
+        db.session.delete(event)
+        db.session.commit()
+        
+        flash('Event deleted successfully', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting event: {str(e)}', 'danger')
+    
+    return redirect(url_for('event.events_page', club_id=club_id))
+
+@club_bp.route('/club/<int:club_id>/event/<int:event_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_event(club_id, event_id):
+    verify_host(club_id)
+    
+    event = Event.query.get_or_404(event_id)
+    club = Club.query.get_or_404(club_id)
+    
+    if event.club_id != club_id:
+        abort(403)
+    
+    if request.method == 'POST':
+        try:
+            event.title = request.form.get('title', '').strip()
+            event.description = request.form.get('description', '').strip()
+            event.date = datetime.strptime(request.form.get('date'), '%Y-%m-%d').date()
+            event.time = datetime.strptime(request.form.get('time'), '%H:%M').time()
+            event.location = request.form.get('location', '').strip()
+            event.additional_info = request.form.get('additional_info', '').strip() or None
+            
+            db.session.commit()
+            flash('Event updated successfully!', 'success')
+            return redirect(url_for('event.events_page', club_id=club_id, selected=event_id))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating event: {str(e)}', 'danger')
+    
+    return render_template('edit_event.html', 
+                         club=club,  
+                         event=event,
+                         datetime=datetime)
