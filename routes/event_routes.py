@@ -157,6 +157,7 @@ def post_event(club_id):
     
     return render_template('post_event.html', form=form, club=club)
 
+
 @event_bp.route('/event/<int:event_id>/attend', methods=['POST'])
 @login_required
 def mark_attendance(event_id):

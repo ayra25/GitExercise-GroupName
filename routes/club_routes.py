@@ -521,3 +521,19 @@ def edit_club(club_id):
         return redirect(url_for('club.dashboard'))
 
     return render_template('edit_club.html', club=club)
+
+@club_bp.route('/<int:club_id>/announcement/<int:announcement_id>/delete', methods=['POST'])
+@login_required
+def delete_announcement(club_id, announcement_id):
+    announcement = Announcement.query.get_or_404(announcement_id)
+
+   
+    membership = ClubMembership.query.filter_by(user_id=current_user.id, club_id=club_id, is_host=True).first()
+    if not membership:
+        flash("You don't have permission to delete this announcement.", "danger")
+        return redirect(url_for('event.events_page', club_id=club_id))
+
+    db.session.delete(announcement)
+    db.session.commit()
+    flash('Announcement deleted successfully.', 'success')
+    return redirect(url_for('event.events_page', club_id=club_id))
