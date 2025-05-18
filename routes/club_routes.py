@@ -3,6 +3,7 @@ from models.club import ClubMembership, Club
 from models.user import User
 from models.event import Event, EventAttendance
 from models.announcement import Announcement, PollOption, PollVote
+from models.notification import Notification
 from extensions import db
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
@@ -19,6 +20,16 @@ def verify_host(club_id):
     
     if not membership:
         abort(403)
+
+def create_notification(user_id, message, notification_type=None, related_id=None):
+    notification = Notification(
+        user_id=user_id,
+        message=message,
+        notification_type=notification_type,
+        related_id=related_id
+    )
+    db.session.add(notification)
+    db.session.commit()
 
 @club_bp.route('/dashboard')
 @login_required
@@ -221,13 +232,14 @@ def view_members(club_id):
 
     return render_template('members.html', club=club, members=members)
 
-# Route to remove a member
 @club_bp.route('/club/<int:club_id>/remove-member', methods=['POST'])
 @login_required
 def remove_member(club_id):
-    verify_host(club_id)  # Only host can remove
-
+    verify_host(club_id)  
+    
+    club = Club.query.get_or_404(club_id)
     member_id = request.form.get('member_id')
+    
     if not member_id:
         flash('Invalid member selection.', 'danger')
         return redirect(url_for('club.view_members', club_id=club_id))
@@ -243,8 +255,16 @@ def remove_member(club_id):
     elif membership.is_host:
         flash('You cannot remove another host.', 'danger')
     else:
+        
+        create_notification(
+            user_id=member_id,
+            message=f"You've been removed from {club.name}",
+            notification_type='membership',
+            related_id=club_id
+        )
+        
         db.session.delete(membership)
-        db.session.commit()
+        db.session.commit()  
         flash('Member removed successfully.', 'success')
 
     return redirect(url_for('club.view_members', club_id=club_id))
@@ -253,6 +273,8 @@ def remove_member(club_id):
 @login_required
 def promote_member(club_id):
     verify_host(club_id)
+
+    club = Club.query.get_or_404(club_id)
 
     member_id = request.form.get('member_id')
     if not member_id:
@@ -266,7 +288,16 @@ def promote_member(club_id):
         flash('This user is already a host.', 'info')
     else:
         membership.is_host = True
+
+        create_notification(
+            user_id=member_id,
+            message=f"You've been promoted to host in {club.name}",
+            notification_type='membership',
+            related_id=club_id
+        )
+        
         db.session.commit()
+
         flash('Member promoted to host successfully.', 'success')
 
     return redirect(url_for('club.view_members', club_id=club_id))
@@ -337,6 +368,8 @@ def event_history():
 @login_required
 def post_announcement(club_id):
     verify_host(club_id)
+
+    club = Club.query.get_or_404(club_id)
     
     if request.method == 'POST':
         try:
@@ -357,7 +390,7 @@ def post_announcement(club_id):
             )
             
             db.session.add(new_announcement)
-            db.session.flush()  
+            db.session.flush() 
             
             if has_poll and poll_options:
                 for option_text in poll_options:
@@ -368,6 +401,18 @@ def post_announcement(club_id):
                         )
                         db.session.add(option)
             
+            db.session.commit()
+
+            members = ClubMembership.query.filter_by(club_id=club_id).all()
+            for member in members:
+                if member.user_id != current_user.id:
+                    create_notification(
+                        user_id=member.user_id,
+                        message=f"New announcement in {club.name}: {new_announcement.title}",
+                        notification_type='announcement',
+                        related_id=new_announcement.id
+                    )
+
             db.session.commit()
             
             flash('Announcement posted!', 'success')
