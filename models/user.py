@@ -1,6 +1,7 @@
 from extensions import db
 from flask_login import UserMixin
 from models.notification import Notification
+import bcrypt
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -17,6 +18,12 @@ class User(db.Model, UserMixin):
     event_comments = db.relationship('EventComment', back_populates='user')
     notifications = db.relationship('Notification', back_populates='user', cascade='all, delete-orphan')
 
+    def set_password(self, password):
+        self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    def check_password(self, password):
+        return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
+
     def unread_notifications_count(self):
         return Notification.query.filter_by(
             user_id=self.id,
@@ -29,4 +36,4 @@ class User(db.Model, UserMixin):
         ).order_by(
             Notification.created_at.desc()
         ).limit(limit).all()
-
+    

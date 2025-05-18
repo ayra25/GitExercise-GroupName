@@ -636,18 +636,24 @@
             <a href="{{ url_for('event.events_page', club_id=club_data.club.id) }}" class="club-link" aria-label="View {{ club_data.club.name }}"></a>
             
             <div class="club-menu">
-                <button class="club-menu-toggle" onclick="event.stopPropagation(); this.parentElement.classList.toggle('active')">
-                    <i class="bi bi-three-dots-vertical"></i>
-                </button>
-                <div class="club-menu-dropdown">
+            <button class="club-menu-toggle" onclick="event.stopPropagation(); this.parentElement.classList.toggle('active')">
+                <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <div class="club-menu-dropdown">
+                {% if club_data.is_host %}
+                    <a href="{{ url_for('club.delete_club', club_id=club_data.club.id) }}" class="dropdown-item text-danger">
+                        <i class="bi bi-trash me-2"></i> Delete Club
+                    </a>
+                {% else %}
                     <form action="{{ url_for('club.leave_club') }}" method="POST">
                         <input type="hidden" name="club_id" value="{{ club_data.club.id }}">
-                        <button type="submit">
-                            <i class="bi bi-box-arrow-right me-2"></i>Leave Club
+                        <button type="submit" class="dropdown-item">
+                            <i class="bi bi-box-arrow-right me-2"></i> Leave Club
                         </button>
                     </form>
-                </div>
+                {% endif %}
             </div>
+        </div>
 
             <div class="club-card-header club-design-{{ club_data.club.cover_image }}">
                 <h3 class="club-name">{{ club_data.club.name }}</h3>

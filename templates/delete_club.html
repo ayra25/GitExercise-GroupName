@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .delete-confirmation {
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+
+    .delete-confirmation .card-header {
+        background-color: #dc3545;
+        color: white;
+        font-weight: 600;
+    }
+
+    .delete-confirmation .alert {
+        border-left: 4px solid #dc3545;
+    }
+
+    .delete-confirmation .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .delete-confirmation .btn-danger:hover {
+        background-color: #bb2d3b;
+        border-color: #b02a37;
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 0.875em;
+        margin-top: 0.25rem;
+    }
+    .is-invalid {
+        border-color: #dc3545;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Delete Club: {{ club.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone. All club data including events, announcements, and member records will be permanently deleted.
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('club.delete_club', club_id=club.id) }}">
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Enter your password to confirm</label>
+                            <input type="password" 
+                                class="form-control {% if password_error %}is-invalid{% endif %}" 
+                                id="password" 
+                                name="password" 
+                                required>
+                            {% if password_error %}
+                            <div class="error-message">
+                                Incorrect password. Please try again.
+                            </div>
+                            {% endif %}
+                            <small class="text-muted">For security, please re-enter your password.</small>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('club.dashboard') }}" class="btn btn-secondary">
+                                <i class="bi bi-x-lg me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash-fill me-1"></i> Permanently Delete Club
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
