@@ -142,6 +142,30 @@ def post_event(club_id):
     
     return render_template('post_event.html', form=form, club=club)
 
+@event_bp.route('/event/<int:club_id>/delete/<int:event_id>', methods=['POST'])
+@login_required
+def delete_event(club_id, event_id):
+    event = Event.query.get_or_404(event_id)
+
+    if event.club_id != club_id:
+        abort(404)
+
+    membership = ClubMembership.query.filter_by(
+        user_id=current_user.id,
+        club_id=club_id,
+        is_host=True
+    ).first()
+
+    if not membership:
+        flash("You don't have permission to delete this event.", "danger")
+        return redirect(url_for('event.events_page', club_id=club_id))
+
+    db.session.delete(event)
+    db.session.commit()
+
+    flash("Event deleted successfully!", "success")
+    return redirect(url_for('event.events_page', club_id=club_id))
+
 @event_bp.route('/event/<int:event_id>/attend', methods=['POST'])
 @login_required
 def mark_attendance(event_id):
