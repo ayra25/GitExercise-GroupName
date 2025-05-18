@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    :root {
+        --maroon: #6b1d1d;
+        --maroon-light: #8a2a2a;
+        --light-gray: #f8f9fa;
+        --medium-gray: #e9ecef;
+        --dark-gray: #495057;
+    }
+
+    .bg-maroon {
+        background-color: var(--maroon) !important;
+    }
+
+    .btn-maroon {
+        background-color: var(--maroon);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-maroon:hover {
+        background-color: var(--maroon-light);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-maroon:active {
+        transform: translateY(0);
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+        border-bottom: none;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .form-control {
+        border: 1px solid var(--medium-gray);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--maroon);
+        box-shadow: 0 0 0 0.2rem rgba(107, 29, 29, 0.1);
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+    }
+
+    .btn-secondary {
+        background-color: var(--medium-gray);
+        color: var(--dark-gray);
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background-color: #d1d7dc;
+        color: var(--dark-gray);
+    }
+
+    label.form-label {
+        font-weight: 500;
+        color: var(--dark-gray);
+        margin-bottom: 0.5rem;
+    }
+
+    /* Animation for form elements */
+    .form-group {
+        transition: all 0.3s ease;
+    }
+
+    .form-group:focus-within {
+        transform: translateX(2px);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .row.mb-3 > .col-md-6 {
+            margin-bottom: 1rem;
+        }
+    }
+
+    /* Floating label effect */
+    .form-floating label {
+        color: var(--dark-gray);
+        opacity: 0.8;
+    }
+
+    /* Error states */
+    .is-invalid {
+        border-color: #dc3545;
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875rem;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-maroon text-white">
+                    <h4 class="mb-0">Edit Event</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('club.edit_event', club_id=club.id, event_id=event.id) }}">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Event Title</label>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   value="{{ event.title }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" 
+                                      rows="3" required>{{ event.description }}</textarea>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="date" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="date" name="date" 
+                                       value="{{ event.date.strftime('%Y-%m-%d') }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="time" class="form-label">Time</label>
+                                <input type="time" class="form-control" id="time" name="time" 
+                                       value="{{ event.time.strftime('%H:%M') }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" 
+                                   value="{{ event.location }}" required>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('event.events_page', club_id=club.id, selected=event.id) }}" 
+                               class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-maroon">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
