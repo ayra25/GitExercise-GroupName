@@ -1,5 +1,6 @@
 from extensions import db
 from flask_login import UserMixin
+from models.notification import Notification
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -14,4 +15,18 @@ class User(db.Model, UserMixin):
     event_attendances = db.relationship('EventAttendance', back_populates='user')
     club_memberships = db.relationship('ClubMembership', back_populates='member')
     event_comments = db.relationship('EventComment', back_populates='user')
+    notifications = db.relationship('Notification', back_populates='user', cascade='all, delete-orphan')
+
+    def unread_notifications_count(self):
+        return Notification.query.filter_by(
+            user_id=self.id,
+            is_read=False
+        ).count()
+
+    def recent_notifications(self, limit=5):
+        return Notification.query.filter_by(
+            user_id=self.id
+        ).order_by(
+            Notification.created_at.desc()
+        ).limit(limit).all()
 

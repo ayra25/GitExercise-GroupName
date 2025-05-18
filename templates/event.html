@@ -729,13 +729,124 @@
         content: "•";
         margin: 0 0.5rem;
     }
-    
-    @media (max-width: 768px) {
-        .event-details-card {
-            position: static;
-            margin-top: 2rem;
+
+    .dropdown-menu {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        padding: 0.5rem 0;
+        background-color: white;
+    }
+
+    .dropdown-item {
+        padding: 0.5rem 1.25rem;
+        color: var(--dark-gray);
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+    }
+
+    .dropdown-item:hover {
+        background-color: rgba(107, 29, 29, 0.05);
+        color: var(--maroon);
+    }
+
+    .dropdown-item i {
+        width: 20px;
+        margin-right: 0.75rem;
+        color: var(--maroon);
+        opacity: 0.8;
+    }
+
+    .dropdown-divider {
+        border-color: rgba(107, 29, 29, 0.1);
+        margin: 0.25rem 0;
+    }
+
+    .modal-content {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background-color: var(--maroon);
+        color: white;
+        border-bottom: none;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .modal-title {
+        font-weight: 600;
+    }
+
+    .btn-close {
+        filter: invert(1);
+        opacity: 0.8;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        border-top: 1px solid rgba(107, 29, 29, 0.1);
+        padding: 1rem 1.5rem;
+    }
+
+    #inviteLink {
+        background-color: var(--light-gray);
+        border: 1px solid var(--medium-gray);
+        border-radius: 6px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    #copyInviteLink {
+        background-color: var(--maroon);
+        color: white;
+        border: none;
+        transition: all 0.2s;
+    }
+
+    #copyInviteLink:hover {
+        background-color: var(--maroon-light);
+    }
+
+    .highlight-comment {
+        animation: highlight-fade 2s ease-out;
+        box-shadow: 0 0 0 2px rgba(107, 29, 29, 0.3);
+    }
+
+    @keyframes highlight-fade {
+        0% {
+            box-shadow: 0 0 0 4px rgba(107, 29, 29, 0.5);
+        }
+        100% {
+            box-shadow: 0 0 0 2px rgba(107, 29, 29, 0);
         }
     }
+    
+    @media (max-width: 576px) {
+        .modal-header {
+            padding: 1rem;
+        }
+        
+        .modal-body {
+            padding: 1rem;
+        }
+        
+        .modal-footer {
+            padding: 0.75rem 1rem;
+        }
+    }
+        
+        @media (max-width: 768px) {
+            .event-details-card {
+                position: static;
+                margin-top: 2rem;
+            }
+        }
 </style>
 
 
@@ -743,22 +854,41 @@
     <div class="club-header">
         <h1 class="club-name">{{ club.name }}</h1>
         <p class="club-description">{{ club.description or "Welcome to our club events page" }}</p>
-        {% if is_host %}
-<div class="position-absolute bottom-0 end-0 p-4 text-end">
-    <a href="{{ url_for('club.attendance_analytics', club_id=club.id) }}" class="text-white text-decoration-none d-block mb-2">
-        <i class="bi bi-graph-up"></i> Attendance Analytics
-    </a>
-    <a href="{{ url_for('club.view_members', club_id=club.id) }}" class="text-white text-decoration-none d-block mb-2">
-        <i class="bi bi-people"></i> Manage Members
-    </a>
-    <a href="{{ url_for('club.edit_club', club_id=club.id) }}" class="text-white text-decoration-none d-block">
-        <i class="bi bi-pencil-square"></i> Edit Club
-    </a>
-</div>
-{% endif %}
     </div>
+    
+    {% if is_host %}
+    <div class="position-absolute top-0 end-0 p-3">
+        <div class="dropdown">
+            <button class="btn btn-transparent text-white" type="button" id="clubSettingsDropdown" 
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-gear-fill" style="font-size: 1.5rem;"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="clubSettingsDropdown">
+                <li>
+                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#clubInfoModal">
+                        <i class="bi bi-info-circle me-2"></i> Club Info
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ url_for('club.attendance_analytics', club_id=club.id) }}">
+                        <i class="bi bi-graph-up me-2"></i> Attendance Analytics
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ url_for('club.view_members', club_id=club.id) }}">
+                        <i class="bi bi-people me-2"></i> Manage Members
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ url_for('club.edit_club', club_id=club.id) }}">
+                        <i class="bi bi-pencil-square me-2"></i> Edit Club
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    {% endif %}
 </section>
-
 
 <div class="main-container">
     
@@ -1107,6 +1237,67 @@
 
 {% endif %}
 
+<!-- Add this modal at the bottom of the file, before the closing content block -->
+<div class="modal fade" id="clubInfoModal" tabindex="-1" aria-labelledby="clubInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="clubInfoModalLabel">Club Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Invite Members</h6>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="inviteLink" 
+                               value="{{ url_for('club.join_club', _external=True) }}?join_code={{ club.join_code }}" 
+                               readonly>
+                        <button class="btn btn-outline-secondary" type="button" id="copyInviteLink">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+                    <p class="small text-muted">Share this link to invite others to join your club</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Club Code</h6>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light p-3 rounded me-3 text-center" style="width: 120px;">
+                            <span class="h4 fw-bold">{{ club.join_code }}</span>
+                        </div>
+                        <div>
+                            <p class="mb-1">Members can use this code to join</p>
+                            <p class="small text-muted">Share this code if the link doesn't work</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="fw-bold mb-3">Club Details</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <p class="mb-1 text-muted">Club Name</p>
+                            <p class="fw-bold">{{ club.name }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <p class="mb-1 text-muted">Members</p>
+                            <p class="fw-bold">{{ club.memberships|length }}</p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <p class="mb-1 text-muted">Description</p>
+                            <p class="fw-bold">{{ club.description or "No description provided" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     function toggleReplyForm(commentId) {
         const form = document.getElementById(`reply-form-${commentId}`);
@@ -1116,6 +1307,20 @@
     document.querySelectorAll('.poll-progress-bar').forEach(bar => {
         const percentage = bar.dataset.percentage;
         bar.style.width = `${percentage}%`;
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('copyInviteLink').addEventListener('click', function() {
+            const inviteLink = document.getElementById('inviteLink');
+            inviteLink.select();
+            document.execCommand('copy');
+            
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="bi bi-check"></i> Copied!';
+            setTimeout(() => {
+                this.innerHTML = originalText;
+            }, 2000);
+        });
     });
     
     document.addEventListener('DOMContentLoaded', function() {

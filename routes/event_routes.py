@@ -5,6 +5,7 @@ from models.club import Club, ClubMembership
 from models.form import EventForm
 from models.announcement import Announcement, PollVote, PollOption
 from models.comment import EventComment
+from routes.club_routes import create_notification
 from extensions import db
 from datetime import datetime, timedelta
 
@@ -131,6 +132,20 @@ def post_event(club_id):
             )
             
             db.session.add(new_event)
+            db.session.flush()
+
+            members = ClubMembership.query.filter_by(club_id=club_id).all()
+            club = Club.query.get(club_id)
+
+            for member in members:
+                if member.user_id != current_user.id:
+                    create_notification(
+                        user_id=member.user_id,
+                        message=f"New event in {club.name}: {new_event.title}",
+                        notification_type='event',
+                        related_id=club_id
+                    )
+            
             db.session.commit()
             
             flash('Event created!', 'success')
