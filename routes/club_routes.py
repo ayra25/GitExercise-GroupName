@@ -8,6 +8,8 @@ from extensions import db
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 import random
+from routes.email_service import send_email
+from flask import current_app
 
 club_bp = Blueprint('club', __name__)
 
@@ -30,6 +32,21 @@ def create_notification(user_id, message, notification_type=None, related_id=Non
     )
     db.session.add(notification)
     db.session.commit()
+
+    # New email notification
+    user = User.query.get(user_id)
+    if user and user.email:
+        subject = "New notification from MMunity"
+        text_body = f"You have a new notification:\n\n{message}\n\n"
+        text_body += f"Login to your account to view: {current_app.config['FRONTEND_URL']}/notifications"
+        
+        html_body = f"""
+        <p>You have a new notification:</p>
+        <p><strong>{message}</strong></p>
+        <p><a href="{current_app.config['FRONTEND_URL']}/notifications">View in MMunity</a></p>
+        """
+        
+        send_email(subject, [user.email], text_body, html_body)
 
 @club_bp.route('/dashboard')
 @login_required
