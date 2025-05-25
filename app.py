@@ -3,11 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from extensions import db
-from routes.email_service import init_email
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 migrate = Migrate()
@@ -20,18 +15,11 @@ def create_app():
     app.config['SECRET_KEY'] = 'your_secret_key_here'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mmunity.db'  
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    # app.py (add these to your config)
-    app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'localhost')  # Defaults to Mailpit
-    app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 1025))        # Defaults to 1025
-    app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'False') == 'True'
-    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 
     
     db.init_app(app)  
     migrate.init_app(app, db)  
     login_manager.init_app(app)  
-    init_email(app)
 
     login_manager.login_view = 'user.login'  
 
