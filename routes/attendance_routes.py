@@ -60,7 +60,6 @@ def submit_attendance(event_id):
     event.attendance_started = True
     db.session.commit()
 
-    flash('Attendance saved successfully!', 'success')
     return redirect(url_for('event.events_page', club_id=event.club_id))
 
 @attendance_bp.route('/event/<int:event_id>/attend', methods=['POST'])
@@ -89,7 +88,6 @@ def mark_attendance(event_id):
         db.session.add(attendance)
 
     db.session.commit()
-    flash('Attendance updated!', 'success')
     return redirect(url_for('event.events_page', club_id=event.club_id))
 
 # --- QR Routes ---
