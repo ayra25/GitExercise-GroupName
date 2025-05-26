@@ -8,6 +8,7 @@ class Club(db.Model):
     description = db.Column(db.Text)
     join_code = db.Column(db.String(10), nullable=False, unique=True)
     cover_image = db.Column(db.Integer, default=1)
+    participant_limit = db.Column(db.Integer, nullable=True)
     
     
     club_events = db.relationship('Event', back_populates='club', cascade='all, delete-orphan')
