@@ -152,9 +152,14 @@ def create_club():
             name = request.form.get('name', '').strip()
             join_code = request.form.get('join_code', '').strip()
             description = request.form.get('description', '').strip() or None
+            participant_limit = request.form.get('participant_limit', type=int)
 
             if not name or not join_code:
                 flash('Club name and join code are required', 'danger')
+                return redirect(url_for('club.create_club'))
+
+            if participant_limit is not None and participant_limit < 1:
+                flash('Participant limit must be at least 1.', 'danger')
                 return redirect(url_for('club.create_club'))
 
             if Club.query.filter_by(join_code=join_code).first():
@@ -167,7 +172,8 @@ def create_club():
                 name=name,
                 join_code=join_code,
                 description=description,
-                cover_image=cover_image
+                cover_image=cover_image,
+                participant_limit=participant_limit if participant_limit else None
             )
             db.session.add(new_club)
             db.session.flush()
@@ -189,6 +195,7 @@ def create_club():
             return redirect(url_for('club.create_club'))
 
     return render_template('create.html')
+
 
 @club_bp.route('/join-club', methods=['GET', 'POST'])
 @login_required
@@ -225,7 +232,7 @@ def join_club():
 @club_bp.route('/club/<int:club_id>/members')
 @login_required
 def view_members(club_id):
-    verify_host(club_id)  # Ensure only host can access
+    verify_host(club_id)  
 
     club = Club.query.get_or_404(club_id)
     members = ClubMembership.query.filter_by(club_id=club_id).join(ClubMembership.member).all()
@@ -501,26 +508,33 @@ def vote_poll(option_id):
 @club_bp.route('/club/<int:club_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_club(club_id):
-    verify_host(club_id)  
+    verify_host(club_id)
 
     club = Club.query.get_or_404(club_id)
 
     if request.method == 'POST':
         name = request.form.get('name', '').strip()
         description = request.form.get('description', '').strip()
+        participant_limit = request.form.get('participant_limit', type=int)
 
         if not name:
             flash('Club name cannot be empty.', 'danger')
             return redirect(url_for('club.edit_club', club_id=club_id))
 
+        if participant_limit is not None and participant_limit < 1:
+            flash('Participant limit must be at least 1.', 'danger')
+            return redirect(url_for('club.edit_club', club_id=club_id))
+
         club.name = name
         club.description = description or None
+        club.participant_limit = participant_limit if participant_limit else None
         db.session.commit()
 
         flash('Club details updated successfully.', 'success')
         return redirect(url_for('club.dashboard'))
 
     return render_template('edit_club.html', club=club)
+
 
 @club_bp.route('/<int:club_id>/announcement/<int:announcement_id>/delete', methods=['POST'])
 @login_required
