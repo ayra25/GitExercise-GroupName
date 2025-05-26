@@ -204,30 +204,38 @@ def join_club():
         try:
             join_code = request.form['join_code']
             club = Club.query.filter_by(join_code=join_code).first()
-            
+
             if not club:
                 flash('Invalid join code', 'danger')
                 return redirect(url_for('club.join_club'))
-                
+
+            
             if ClubMembership.query.filter_by(user_id=current_user.id, club_id=club.id).first():
                 flash('You are already a member of this club', 'info')
                 return redirect(url_for('club.join_club'))
-                
+
+            
+            current_members = ClubMembership.query.filter_by(club_id=club.id).count()
+            if club.participant_limit and current_members >= club.participant_limit:
+                flash('This club has reached its participant limit.', 'danger')
+                return redirect(url_for('club.join_club'))
+
+           
             new_membership = ClubMembership(
                 user_id=current_user.id,
                 club_id=club.id,
                 is_host=False
             )
-            
+
             db.session.add(new_membership)
             db.session.commit()
-            
+
             flash(f'Successfully joined {club.name}!', 'success')
             return redirect(url_for('club.dashboard'))
-            
+
         except KeyError:
             return "Bad Request: 'join_code' not provided", 400
-            
+
     return render_template('join.html')
 @club_bp.route('/club/<int:club_id>/members')
 @login_required
