@@ -3,6 +3,9 @@ from models.user import User
 from extensions import db
 from flask_login import login_user, login_required, logout_user, current_user
 import bcrypt  
+from utils.token import generate_reset_token, verify_reset_token
+from utils.email import send_reset_email
+
 
 user_bp = Blueprint('user', __name__)
 
@@ -76,32 +79,35 @@ def forgot_password():
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
         if user:
-            return redirect(url_for('user.reset_password_direct', email=email))
+            token = generate_reset_token(user.email)
+            reset_url = url_for('user.reset_password_token', token=token, _external=True)
+            send_reset_email(user.email, reset_url)  
+            flash('A password reset link has been sent to your email.', 'info')
         else:
             flash('No account found with that email.', 'danger')
-            return redirect(url_for('user.forgot_password'))
-
     return render_template('forgot_password.html')
 
-@user_bp.route('/reset-password-direct/<email>', methods=['GET', 'POST'])
-def reset_password_direct(email):
+@user_bp.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password_token(token):
+    email = verify_reset_token(token)
+    if not email:
+        flash('Invalid or expired password reset link.', 'danger')
+        return redirect(url_for('user.forgot_password'))
+
     user = User.query.filter_by(email=email).first()
     if not user:
-        flash('Invalid email.', 'danger')
+        flash('User not found.', 'danger')
         return redirect(url_for('user.forgot_password'))
 
     if request.method == 'POST':
         new_password = request.form.get('password')
         if not new_password or len(new_password) < 7:
             flash('Password must be at least 7 characters.', 'error')
-            return render_template('reset_password_direct.html', email=email)
-        
-        hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        user.password = hashed_password
-        db.session.commit()
-        flash('Your password has been reset. You can now log in.', 'success')
-        return redirect(url_for('user.login'))
+        else:
+            hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            user.password = hashed_password
+            db.session.commit()
+            flash('Password has been reset. You can now log in.', 'success')
+            return redirect(url_for('user.login'))
 
-    return render_template('reset_password_direct.html', email=email)
-
-
+    return render_template('reset_password.html')  
