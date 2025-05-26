@@ -27,6 +27,12 @@
                       placeholder="Write a short description (optional)">{{ club.description }}</textarea>
         </div>
 
+        <div class="mb-3">
+            <label for="participant_limit" class="form-label">Max Participants (Optional, min 1)</label>
+            <input type="number" class="form-control" id="participant_limit" name="participant_limit"
+                   min="1" value="{{ club.participant_limit if club.participant_limit else '' }}">
+        </div>
+
         <button type="submit" class="btn btn-primary">
             <i class="bi bi-save"></i> Save Changes
         </button>
