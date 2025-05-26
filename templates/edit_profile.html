@@ -1,0 +1,15 @@
+<h2>Edit Profile</h2>
+<form method="POST">
+    <label>Name:</label>
+    <input type="text" name="first_name" value="{{ user.first_name }}"><br>
+
+    <label>Email:</label>
+    <input type="email" name="email" value="{{ user.email }}"><br>
+
+    <label>Bio:</label>
+    <textarea name="bio">{{ user.bio or '' }}</textarea><br>
+
+    <button type="submit">Update</button>
+</form>
+
+<a href="{{ url_for('user.profile') }}">Back to Profile</a>
