@@ -11,6 +11,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(50), default='normal_user')
+    bio = db.Column(db.Text, default="")
     
     hosted_events = db.relationship('Event', back_populates='host')
     event_attendances = db.relationship('EventAttendance', back_populates='user')

@@ -111,3 +111,35 @@ def reset_password_token(token):
             return redirect(url_for('user.login'))
 
     return render_template('reset_password.html')  
+
+@user_bp.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        current_user.first_name = request.form.get('first_name')
+        current_user.email = request.form.get('email')
+
+        current_password = request.form.get('current_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+
+        if current_password and new_password:
+            if not current_user.check_password(current_password):
+                flash('Current password is incorrect.', 'danger')
+                return redirect(url_for('user.profile'))
+
+            if new_password != confirm_password:
+                flash('New passwords do not match.', 'danger')
+                return redirect(url_for('user.profile'))
+
+            if len(new_password) < 7:
+                flash('New password must be at least 7 characters.', 'danger')
+                return redirect(url_for('user.profile'))
+
+            current_user.set_password(new_password)
+
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('user.index'))
+
+    return render_template('profile.html', user=current_user)
