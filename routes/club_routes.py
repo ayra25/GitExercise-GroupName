@@ -212,6 +212,11 @@ def join_club():
             if ClubMembership.query.filter_by(user_id=current_user.id, club_id=club.id).first():
                 flash('You are already a member of this club', 'info')
                 return redirect(url_for('club.join_club'))
+            
+            current_members = ClubMembership.query.filter_by(club_id=club.id,).count()
+            if club.participant_limit and current_members >= club.participant_limit:
+                flash('This club has reached its participant limit.', 'danger')
+                return redirect(url_for('club.join_club'))
                 
             new_membership = ClubMembership(
                 user_id=current_user.id,
