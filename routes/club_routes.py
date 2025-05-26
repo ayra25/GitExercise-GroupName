@@ -186,7 +186,6 @@ def create_club():
             db.session.add(new_membership)
             db.session.commit()
             
-            flash('Club created successfully!', 'success')
             return redirect(url_for('club.dashboard'))
 
         except Exception as e:
@@ -277,7 +276,6 @@ def remove_member(club_id):
         
         db.session.delete(membership)
         db.session.commit()  
-        flash('Member removed successfully.', 'success')
 
     return redirect(url_for('club.view_members', club_id=club_id))
 
@@ -309,8 +307,6 @@ def promote_member(club_id):
         )
         
         db.session.commit()
-
-        flash('Member promoted to host successfully.', 'success')
 
     return redirect(url_for('club.view_members', club_id=club_id))
 
@@ -427,7 +423,6 @@ def post_announcement(club_id):
 
             db.session.commit()
             
-            flash('Announcement posted!', 'success')
             return redirect(url_for('event.events_page', club_id=club_id))
             
         except Exception as e:
@@ -506,7 +501,6 @@ def vote_poll(option_id):
         )
         db.session.add(new_vote)
         db.session.commit()
-        flash('Your vote has been recorded', 'success')
     
     return redirect(url_for('event.events_page', club_id=announcement.club_id))
 
@@ -535,7 +529,6 @@ def edit_club(club_id):
         club.participant_limit = participant_limit if participant_limit else None
         db.session.commit()
 
-        flash('Club details updated successfully.', 'success')
         return redirect(url_for('club.dashboard'))
 
     return render_template('edit_club.html', club=club)
@@ -554,7 +547,6 @@ def delete_announcement(club_id, announcement_id):
 
     db.session.delete(announcement)
     db.session.commit()
-    flash('Announcement deleted successfully.', 'success')
     return redirect(url_for('event.events_page', club_id=club_id))
 
 @club_bp.route('/club/<int:club_id>/event/<int:event_id>/delete', methods=['POST'])
@@ -573,7 +565,6 @@ def delete_event(club_id, event_id):
         db.session.delete(event)
         db.session.commit()
         
-        flash('Event deleted successfully', 'success')
     except Exception as e:
         db.session.rollback()
         flash(f'Error deleting event: {str(e)}', 'danger')
@@ -601,7 +592,6 @@ def edit_event(club_id, event_id):
             event.additional_info = request.form.get('additional_info', '').strip() or None
             
             db.session.commit()
-            flash('Event updated successfully!', 'success')
             return redirect(url_for('event.events_page', club_id=club_id, selected=event_id))
             
         except Exception as e:
@@ -646,7 +636,6 @@ def delete_club(club_id):
             db.session.delete(club)
             db.session.commit()
 
-            flash('Club deleted successfully', 'success')
             return redirect(url_for('club.dashboard'))
 
             

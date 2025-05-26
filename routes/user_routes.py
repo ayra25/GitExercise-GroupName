@@ -25,7 +25,6 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user:
             if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-                flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)
                 return redirect(url_for('club.dashboard'))
             else:
@@ -68,7 +67,6 @@ def signup():
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
-            flash('Account created!', category='success')
             return redirect(url_for('club.dashboard'))
 
     return render_template("signup.html", user=current_user)
@@ -139,7 +137,6 @@ def profile():
             current_user.set_password(new_password)
 
         db.session.commit()
-        flash('Profile updated successfully!', 'success')
         return redirect(url_for('user.index'))
 
     return render_template('profile.html', user=current_user)

@@ -41,5 +41,4 @@ def mark_all_read():
     Notification.query.filter_by(user_id=current_user.id, is_read=False)\
         .update({'is_read': True})
     db.session.commit()
-    flash('All notifications marked as read', 'success')
     return redirect(url_for('notification.all_notifications'))
