@@ -184,7 +184,6 @@ def mark_attendance(event_id):
         db.session.add(attendance)
     
     db.session.commit()
-    flash('Attendance updated!', 'success')
     return redirect(url_for('event.events_page', club_id=event.club_id))
 
 @event_bp.route('/event/<int:event_id>/comment', methods=['POST'])
