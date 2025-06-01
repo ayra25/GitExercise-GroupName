@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, send_file
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, login_user
 from models.event import Event, EventAttendance
 from models.club import Club, ClubMembership
+from models.user import User  # adjust this import as needed
 from extensions import db
 from datetime import datetime
 import qrcode
@@ -103,18 +104,52 @@ def display_qr(event_id):
         is_host=True
     ).first_or_404()
 
-    now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-    qr_text = f"Event ID: {event.id} | {now}"
+    qr_url = url_for('attendance.attend_via_qr', event_id=event.id, _external=True)
 
-    return render_template('qr_display.html', event=event, qr_data=qr_text)
+    return render_template('qr_display.html', event=event, qr_data=qr_url)
 
 @attendance_bp.route('/event/<int:event_id>/qr_image')
 @login_required
 def qr_image(event_id):
-    now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-    qr_text = f"Event ID: {event_id} | {now}"
-    qr = qrcode.make(qr_text)
+    qr_url = url_for('attendance.attend_via_qr', event_id=event_id, _external=True)
+    qr = qrcode.make(qr_url)
     buf = io.BytesIO()
     qr.save(buf, format='PNG')
     buf.seek(0)
     return send_file(buf, mimetype='image/png')
+
+@attendance_bp.route('/event/<int:event_id>/attend-via-qr', methods=['GET', 'POST'])
+def attend_via_qr(event_id):
+    event = Event.query.get_or_404(event_id)
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        user = User.query.filter_by(email=email).first()
+        if user and user.check_password(password):
+            login_user(user)
+
+            attendance = EventAttendance.query.filter_by(
+                event_id=event.id,
+                user_id=user.id
+            ).first()
+
+            if not attendance:
+                attendance = EventAttendance(
+                    event_id=event.id,
+                    user_id=user.id,
+                    attended=True
+                )
+                db.session.add(attendance)
+            else:
+                attendance.attended = True
+
+            db.session.commit()
+
+            flash('Your attendance has been recorded!', 'success')
+            return redirect(url_for('event.events_page', club_id=event.club_id))
+        else:
+            flash('Invalid email or password.', 'danger')
+
+    return render_template('attend_via_qr.html', event=event)
