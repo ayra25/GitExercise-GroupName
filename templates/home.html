@@ -301,6 +301,7 @@
         font-size: 0.9rem;
     }
     
+    /* Enhanced Calendar Styles */
     .calendar-container {
         background: white;
         border-radius: var(--border-radius);
@@ -310,98 +311,227 @@
         border: 1px solid rgba(0,0,0,0.05);
         width: 100%;
         overflow: hidden;
+        transition: var(--transition);
     }
-    
+
+    .calendar-container:hover {
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
     .calendar-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-bottom: 1.5rem;
     }
-    
+
     .calendar-header .section-title {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin: 0;
         padding-left: 0;
     }
-    
-    .calendar-header .section-title::before {
-        display: none;
+
+    .calendar-nav {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
-    
+
     .month-nav {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         padding: 0;
-        margin-left: 0.5rem;
+        background: var(--lighter-gray);
+        border-radius: 50%;
+        color: var(--text-color);
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
     }
-    
+
+    .month-nav:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .month-nav i {
+        font-size: 1rem;
+    }
+
+    .current-month {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-color);
+        min-width: 120px;
+        text-align: center;
+    }
+
     .calendar-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 0.1rem;
+        gap: 4px;
         width: 100%;
-        grid-template-columns: repeat(7, minmax(0, 1fr));
     }
-    
-    .calendar-day {
+
+    .calendar-day-header {
         text-align: center;
-        padding: 0.5rem;
+        padding: 0.5rem 0;
         font-weight: 600;
         font-size: 0.85rem;
         color: var(--text-light);
         text-transform: uppercase;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
     }
-    
+
     .calendar-date {
-    text-align: center;
-    padding: 0.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: var(--transition);
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    min-width: 0; 
-    word-break: break-word; 
-}
-    
+        text-align: center;
+        padding: 0.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: var(--transition);
+        aspect-ratio: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        font-size: 0.9rem;
+        position: relative;
+        border: 1px solid transparent;
+    }
+
     .calendar-date:hover {
         background: var(--lighter-gray);
+        transform: scale(1.05);
     }
-    
+
     .calendar-date.has-event {
         font-weight: 600;
+        background: rgba(78, 115, 223, 0.05);
     }
-    
+
     .calendar-date.today {
         background: var(--primary-color);
         color: white;
         font-weight: 700;
+        box-shadow: 0 2px 8px rgba(107, 29, 29, 0.2);
     }
-    
+
     .calendar-date.other-month {
         color: #ccc;
-        opacity: 0.7;
+        opacity: 0.6;
     }
-    
+
+    .calendar-date.active {
+        background: var(--secondary-color);
+        color: white;
+        box-shadow: 0 2px 8px rgba(78, 115, 223, 0.3);
+    }
+
+    .event-indicators {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2px;
+        margin-top: 4px;
+        width: 100%;
+    }
+
     .event-indicator {
         width: 6px;
         height: 6px;
         border-radius: 50%;
         background: var(--secondary-color);
-        margin-top: 0.25rem;
     }
-    
+
     .event-indicator.other-month {
         background-color: #ccc;
     }
-    
+
+    .event-indicator.today {
+        background-color: white;
+    }
+
+    .event-indicator.active {
+        background-color: white;
+    }
+
+    .event-tooltip {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--text-color);
+        color: white;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        z-index: 10;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+        pointer-events: none;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .event-tooltip:after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 5px;
+        border-style: solid;
+        border-color: var(--text-color) transparent transparent transparent;
+    }
+
+    .calendar-date:hover .event-tooltip {
+        opacity: 1;
+        visibility: visible;
+        bottom: calc(100% + 5px);
+    }
+
+    /* Mini event list for active date */
+    .date-events {
+        margin-top: 1rem;
+        max-height: 200px;
+        overflow-y: auto;
+        border-top: 1px solid rgba(0,0,0,0.05);
+        padding-top: 0.5rem;
+    }
+
+    .date-event-item {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+        border-radius: 4px;
+        margin-bottom: 0.25rem;
+        background: rgba(78, 115, 223, 0.05);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+    }
+
+    .date-event-item:hover {
+        background: rgba(78, 115, 223, 0.1);
+    }
+
+    .date-event-item i {
+        margin-right: 0.5rem;
+        color: var(--secondary-color);
+    }
+
+    .no-events {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        text-align: center;
+        padding: 0.5rem;
+    }
+
     .empty-state {
     text-align: center;
     padding: 3rem 2rem;
@@ -752,8 +882,7 @@
                     </div>
                 {% endif %}
             </div>
-            
-            <!-- New Announcements Section -->
+
             <div class="event-section">
                 <div class="section-header">
                     <h2 class="section-title">Latest Announcements</h2>
@@ -782,85 +911,102 @@
             </div>
             
             <div class="calendar-container">
-                <div class="calendar-header">
-                    <h2 class="section-title">{{ datetime(current_year, current_month, 1).strftime('%B %Y') }}</h2>
-                    <div>
-                        <a href="?month={{ prev_month }}&year={{ prev_year }}" 
-                           class="btn btn-sm btn-outline-secondary month-nav" 
-                           title="Previous month">
-                            <i class="bi bi-chevron-left"></i>
-                        </a>
-                        <a href="?month={{ next_month }}&year={{ next_year }}" 
-                           class="btn btn-sm btn-outline-secondary month-nav" 
-                           title="Next month">
-                            <i class="bi bi-chevron-right"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="calendar-grid">
-                    <div class="calendar-day">Sun</div>
-                    <div class="calendar-day">Mon</div>
-                    <div class="calendar-day">Tue</div>
-                    <div class="calendar-day">Wed</div>
-                    <div class="calendar-day">Thu</div>
-                    <div class="calendar-day">Fri</div>
-                    <div class="calendar-day">Sat</div>
-                    
-                    {% set first_day = datetime(current_year, current_month, 1) %}
-                    {% set days_in_month = (datetime(current_year, current_month + 1, 1) - datetime(current_year, current_month, 1)).days %}
-                    {% set starting_weekday = first_day.weekday() %}
-                    {% set today = now.date() %}
-                    
-                    {% if starting_weekday > 0 %}
-                        {% set prev_month_days = (datetime(current_year, current_month, 1) - datetime(prev_year, prev_month, 1)).days %}
-                        {% for day in range(prev_month_days - starting_weekday + 1, prev_month_days + 1) %}
-                            <div class="calendar-date other-month">
-                                {{ day }}
-                                {% set prev_month_date = datetime(prev_year, prev_month, day).date() %}
-                                {% for event in calendar_events if event.date == prev_month_date %}
-                                    <div class="event-indicator other-month" 
-                                         title="{{ event.title }} - {{ event.club_name }}"
-                                         onclick="window.location.href='{{ event.url }}'; event.stopPropagation();">
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    
-                    {% for day in range(1, days_in_month + 1) %}
-                        {% set current_date = datetime(current_year, current_month, day).date() %}
-                        <div class="calendar-date 
-                            {% if current_date == today %}today{% endif %}
-                            {% if calendar_events|selectattr('date', 'equalto', current_date)|list %}has-event{% endif %}">
-                            {{ day }}
-                            {% for event in calendar_events if event.date == current_date %}
-                                <div class="event-indicator" 
-                                     title="{{ event.title }} - {{ event.club_name }}"
-                                     onclick="window.location.href='{{ event.url }}'; event.stopPropagation();">
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endfor %}
-                    
-                    {% set total_cells = starting_weekday + days_in_month %}
-                    {% set remaining_cells = (7 - (total_cells % 7)) % 7 %}
-                    {% if remaining_cells > 0 %}
-                        {% for day in range(1, remaining_cells + 1) %}
-                            <div class="calendar-date other-month">
-                                {{ day }}
-                                {% set next_month_date = datetime(next_year, next_month, day).date() %}
-                                {% for event in calendar_events if event.date == next_month_date %}
-                                    <div class="event-indicator other-month" 
-                                         title="{{ event.title }} - {{ event.club_name }}"
-                                         onclick="window.location.href='{{ event.url }}'; event.stopPropagation();">
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+            <div class="calendar-header">
+                <h2 class="section-title">Calendar</h2>
+                <div class="calendar-nav">
+                    <a href="?month={{ prev_month }}&year={{ prev_year }}" 
+                    class="month-nav" 
+                    title="Previous month">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                    <span class="current-month">{{ datetime(current_year, current_month, 1).strftime('%B %Y') }}</span>
+                    <a href="?month={{ next_month }}&year={{ next_year }}" 
+                    class="month-nav" 
+                    title="Next month">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
                 </div>
             </div>
+            
+            <div class="calendar-grid">
+                <div class="calendar-day-header">Sun</div>
+                <div class="calendar-day-header">Mon</div>
+                <div class="calendar-day-header">Tue</div>
+                <div class="calendar-day-header">Wed</div>
+                <div class="calendar-day-header">Thu</div>
+                <div class="calendar-day-header">Fri</div>
+                <div class="calendar-day-header">Sat</div>
+                
+                {% set first_day = datetime(current_year, current_month, 1) %}
+                {% set days_in_month = (datetime(current_year, current_month + 1, 1) - datetime(current_year, current_month, 1)).days %}
+                {% set starting_weekday = first_day.weekday() %}
+                {% set today = now.date() %}
+                
+                {% if starting_weekday > 0 %}
+                    {% set prev_month_days = (datetime(current_year, current_month, 1) - datetime(prev_year, prev_month, 1)).days %}
+                    {% for day in range(prev_month_days - starting_weekday + 1, prev_month_days + 1) %}
+                        {% set prev_month_date = datetime(prev_year, prev_month, day).date() %}
+                        {% set date_events = calendar_events|selectattr('date', 'equalto', prev_month_date)|list %}
+                        <div class="calendar-date other-month {% if date_events %}has-event{% endif %}" 
+                            onclick="showDateEvents('{{ prev_month_date }}', this)">
+                            {{ day }}
+                            {% if date_events %}
+                                <div class="event-indicators">
+                                    {% for event in date_events %}
+                                        <div class="event-indicator other-month"></div>
+                                        <div class="event-tooltip">{{ event.title }} - {{ event.club_name }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                {% for day in range(1, days_in_month + 1) %}
+                    {% set current_date = datetime(current_year, current_month, day).date() %}
+                    {% set date_events = calendar_events|selectattr('date', 'equalto', current_date)|list %}
+                    <div class="calendar-date 
+                        {% if current_date == today %}today{% endif %}
+                        {% if date_events %}has-event{% endif %}"
+                        onclick="showDateEvents('{{ current_date }}', this)">
+                        {{ day }}
+                        {% if date_events %}
+                            <div class="event-indicators">
+                                {% for event in date_events %}
+                                    <div class="event-indicator {% if current_date == today %}today{% endif %}"></div>
+                                    <div class="event-tooltip">{{ event.title }} - {{ event.club_name }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                
+                {% set total_cells = starting_weekday + days_in_month %}
+                {% set remaining_cells = (7 - (total_cells % 7)) % 7 %}
+                {% if remaining_cells > 0 %}
+                    {% for day in range(1, remaining_cells + 1) %}
+                        {% set next_month_date = datetime(next_year, next_month, day).date() %}
+                        {% set date_events = calendar_events|selectattr('date', 'equalto', next_month_date)|list %}
+                        <div class="calendar-date other-month {% if date_events %}has-event{% endif %}" 
+                            onclick="showDateEvents('{{ next_month_date }}', this)">
+                            {{ day }}
+                            {% if date_events %}
+                                <div class="event-indicators">
+                                    {% for event in date_events %}
+                                        <div class="event-indicator other-month"></div>
+                                        <div class="event-tooltip">{{ event.title }} - {{ event.club_name }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="date-events" id="dateEventsContainer">
+                <div class="no-events">Click on a date to view events</div>
+            </div>
+        </div>
         </div>
     </div>
 </div>
@@ -880,6 +1026,12 @@
             }
         });
     });
+
+    document.querySelectorAll('.calendar-date').forEach(date => {
+        date.classList.remove('active');
+    });
+    
+    
 </script>
 
 {% endblock %}
