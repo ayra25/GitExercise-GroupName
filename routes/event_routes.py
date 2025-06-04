@@ -178,7 +178,7 @@ def mark_attendance(event_id):
         attendance = EventAttendance(
             event_id=event_id,
             user_id=current_user.id,
-            attended=True
+            attended=True 
         )
         db.session.add(attendance)
     
