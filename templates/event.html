@@ -939,60 +939,6 @@
         font-size: 0.9rem;
     }
 
-        /* Avatar circle for members */
-    .avatar-circle {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: var(--maroon-light);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .avatar-circle .initials {
-        color: white;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-
-    /* Badge for hosts */
-    .badge.bg-maroon {
-        background-color: var(--maroon) !important;
-        color: white;
-        font-weight: 500;
-        padding: 0.35rem 0.6rem;
-    }
-
-    /* Info button styling */
-    .btn-outline-secondary {
-        border-color: var(--medium-gray);
-        color: var(--dark-gray);
-        padding: 0.25rem 0.5rem;
-    }
-
-    .btn-outline-secondary:hover {
-        background-color: var(--medium-gray);
-        color: var(--dark-gray);
-    }
-
-
-    .avatar-circle {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: var(--maroon-light);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-    }
-
-    .avatar-circle .initials {
-        font-size: 0.9rem;
-    }
-
     
 
     @keyframes highlight-fade {
@@ -1167,38 +1113,36 @@
                                     {{ selected_event.description }}
                                 </div>
                             </div>
-                            
+
                             {% if selected_event.date >= now.date() %}
                             <div class="attendance-section mb-4">
-                                {% set user_attendance = selected_event.attendances|selectattr('user_id', 'equalto', current_user.id)|first %}
-                                {% set attending_count = selected_event.attendances|selectattr('attended')|list|length %}
+                                {% set user_rsvp = selected_event.rsvps|selectattr('user_id', 'equalto', current_user.id)|first %}
+                                {% set rsvp_count = selected_event.rsvps|list|length %}
                                 
-                                <form method="POST" action="{{ url_for('attendance.mark_attendance', event_id=selected_event.id) }}" class="d-inline-block me-3">
+                                <form method="POST" action="{{ url_for('attendance.mark_rsvp', event_id=selected_event.id) }}" class="d-inline-block me-3">
                                     <button type="submit" class="btn attendance-btn">
-                                        {% if user_attendance and user_attendance.attended %}
-                                            <i class="bi bi-x-circle"></i> Leave Event
+                                        {% if user_rsvp %}
+                                            <i></i> Cancel
                                         {% else %}
-                                            <i class="bi bi-check-circle"></i> Join Event
+                                            <i></i> RSVP
                                         {% endif %}
                                     </button>
+
                                 </form>
                                 
-                                {% if user_attendance and user_attendance.attended %}
+                                {% if user_rsvp %}
                                 <span class="attendance-count">
                                     <i class="bi bi-people-fill"></i> 
-                                    {{ attending_count }}
-                                    {% set total_members = club.memberships|length %}
-                                    / {{ total_members }}
+                                    {{ rsvp_count }} going
 
-                                <button class="btn btn-sm btn-outline-secondary ms-2" data-bs-toggle="modal" 
+                                    <button class="btn" data-bs-toggle="modal" 
                                             data-bs-target="#attendingMembersModal-{{ selected_event.id }}">
                                         <i class="bi bi-info-circle"></i>
-                                </button>
+                                    </button>
 
                                 </span>
                                 {% endif %}
-
-                        </div>
+                            </div>
                             {% endif %}
 
                             {% if selected_event and selected_event.date <= now.date() and is_host %}
@@ -1468,63 +1412,6 @@
 
 {% endif %}
 
-<div class="modal fade" id="attendingMembersModal-{{ selected_event.id }}" tabindex="-1" 
-                                    aria-labelledby="attendingMembersModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="attendingMembersModalLabel">
-                                                    <i class="bi bi-people-fill me-2"></i>Attending Members
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                {% set attending_members = [] %}
-                                                {% for attendance in selected_event.attendances if attendance.attended %}
-                                                    {% set member = attendance.user %}
-                                                    {% if member %}
-                                                        {% set _ = attending_members.append(member) %}
-                                                    {% endif %}
-                                                {% endfor %}
-                                                
-                                                {% if attending_members %}
-                                                    <div class="list-group">
-                                                        {% for member in attending_members %}
-                                                        <div class="list-group-item border-0 py-2">
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="avatar-circle me-3">
-                                                                    <span class="initials">{{ member.first_name[0]|upper }}{{ member.last_name[0]|upper if member.last_name else '' }}</span>
-                                                                </div>
-                                                                <div>
-                                                                    <h6 class="mb-0">{{ member.first_name }} {{ member.last_name if member.last_name else '' }}</h6>
-                                                                    <small class="text-muted">{{ member.email }}</small>
-                                                                </div>
-                                                                {% if member.id in host_user_ids %}
-                                                                <span class="badge bg-maroon ms-auto">
-                                                                    <i class="bi bi-star-fill"></i> Host
-                                                                </span>
-                                                                {% endif %}
-                                                            </div>
-                                                        </div>
-                                                        {% endfor %}
-                                                    </div>
-                                                {% else %}
-                                                    <div class="text-center py-4">
-                                                        <i class="bi bi-people fs-1 text-muted"></i>
-                                                        <p class="mt-2">No members have joined yet</p>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
-
 <!-- Add this modal at the bottom of the file, before the closing content block -->
 <div class="modal fade" id="clubInfoModal" tabindex="-1" aria-labelledby="clubInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -1585,6 +1472,57 @@
     </div>
 </div>
 
+<div class="modal fade" id="attendingMembersModal-{{ selected_event.id }}" tabindex="-1" 
+     aria-labelledby="attendingMembersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="attendingMembersModalLabel">
+                    <i class="bi bi-people-fill me-2"></i>Members Joining
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% set joining_members = [] %}
+                {% for rsvp in selected_event.rsvps %}
+                    {% set member = rsvp.user %}
+                    {% if member %}
+                        {% set _ = joining_members.append(member) %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if joining_members %}
+                    <div class="list-group">
+                        {% for member in joining_members %}
+                        <div class="list-group-item border-0 py-2">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-circle me-3">
+                                    <span class="initials">{{ member.first_name[0]|upper }}{{ member.last_name[0]|upper if member.last_name else '' }}</span>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">{{ member.first_name }} {{ member.last_name if member.last_name else '' }}</h6>
+                                    <small class="text-muted">{{ member.email }}</small>
+                                </div>
+                                {% if member.id in host_user_ids %}
+                                <span class="badge bg-maroon ms-auto">
+                                    <i class="bi bi-star-fill"></i> Host
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-people fs-1 text-muted"></i>
+                        <p class="mt-2">No members have joined yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
     function toggleReplyForm(commentId) {
@@ -1596,8 +1534,6 @@
         const percentage = bar.dataset.percentage;
         bar.style.width = `${percentage}%`;
     });
-
-    
 
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('copyInviteLink').addEventListener('click', function() {

@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required, current_user
 from models.event import Event, EventAttendance
 from models.club import Club, ClubMembership
+from models.rsvp import RSVP
 from extensions import db
 from datetime import datetime
 import qrcode
@@ -89,6 +90,22 @@ def mark_attendance(event_id):
 
     db.session.commit()
     return redirect(url_for('event.events_page', club_id=event.club_id))
+
+@attendance_bp.route('/event/<int:event_id>/rsvp', methods=['POST'])
+@login_required
+def mark_rsvp(event_id):
+    event = Event.query.get_or_404(event_id)
+    rsvp = RSVP.query.filter_by(user_id=current_user.id, event_id=event.id).first()
+    
+    if rsvp:
+        db.session.delete(rsvp)
+        db.session.commit()
+    else:
+        rsvp = RSVP(user_id=current_user.id, event_id=event.id)
+        db.session.add(rsvp)
+        db.session.commit()
+    
+    return redirect(url_for('event.events_page', club_id=event.club_id, selected=event.id))
 
 # --- QR Routes ---
 
