@@ -148,7 +148,6 @@ def post_event(club_id):
             
             db.session.commit()
             
-            flash('Event created!', 'success')
             return redirect(url_for('event.events_page', club_id=club.id))
             
         except Exception as e:
@@ -214,7 +213,6 @@ def post_comment(event_id):
         )
         db.session.add(comment)
         db.session.commit()
-        flash('Comment posted!', 'success')
     except Exception as e:
         db.session.rollback()
         flash('Failed to post comment', 'danger')
