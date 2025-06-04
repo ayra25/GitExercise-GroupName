@@ -24,8 +24,8 @@
                         <a class="nav-link active" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/about">About</a>
-                    </li>
+                        <a class="nav-link" href="{{ url_for('user.profile') }}">Profile</a>
+                    </li>  
                 </ul>
 
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -60,10 +60,7 @@
                             <li><a class="dropdown-item text-center" href="{{ url_for('notification.all_notifications') }}">View All</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('user.profile') }}">Profile</a>
-                        </li>                        
+                    <li class="nav-item">                      
                             <a class="nav-link" href="{{ url_for('user.logout') }}">Logout</a>
                     </li>
                 {% else %}
