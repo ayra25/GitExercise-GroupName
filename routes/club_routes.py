@@ -226,7 +226,6 @@ def join_club():
             db.session.add(new_membership)
             db.session.commit()
             
-            flash(f'Successfully joined {club.name}!', 'success')
             return redirect(url_for('club.dashboard'))
             
         except KeyError:
@@ -266,13 +265,6 @@ def remove_member(club_id):
     elif membership.is_host:
         flash('You cannot remove another host.', 'danger')
     else:
-        
-        create_notification(
-            user_id=member_id,
-            message=f"You've been removed from {club.name}",
-            notification_type='membership',
-            related_id=club_id
-        )
         
         db.session.delete(membership)
         db.session.commit()  
