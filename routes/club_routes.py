@@ -226,7 +226,6 @@ def join_club():
             db.session.add(new_membership)
             db.session.commit()
             
-            flash(f'Successfully joined {club.name}!', 'success')
             return redirect(url_for('club.dashboard'))
             
         except KeyError:
