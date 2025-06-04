@@ -54,7 +54,7 @@ def create_app():
     from models.filters import time_ago
     app.register_blueprint(user_bp)
     app.register_blueprint(event_bp)
-    app.register_blueprint(club_bp, url_prefix='/club')
+    app.register_blueprint(club_bp)
     app.register_blueprint(attendance_bp)
     app.register_blueprint(notification_bp)
     app.jinja_env.filters['time_ago'] = time_ago

@@ -266,6 +266,13 @@ def remove_member(club_id):
         flash('You cannot remove another host.', 'danger')
     else:
         
+        create_notification(
+            user_id=member_id,
+            message=f"You've been removed from {club.name}",
+            notification_type='membership',
+            related_id=club_id
+        )
+        
         db.session.delete(membership)
         db.session.commit()  
 
