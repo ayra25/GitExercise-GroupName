@@ -17,6 +17,8 @@ class Event(db.Model):
     host = db.relationship('User', back_populates='hosted_events')
     attendances = db.relationship('EventAttendance', back_populates='event', cascade='all, delete-orphan')
     comments = db.relationship('EventComment', back_populates='event', cascade='all, delete-orphan')
+    rsvps = db.relationship('RSVP', back_populates='event', cascade='all, delete-orphan')
+
 
 class EventAttendance(db.Model):
     __tablename__ = 'event_attendance'

@@ -134,15 +134,15 @@ def profile():
 
         if current_password and new_password:
             if not current_user.check_password(current_password):
-                flash('Current password is incorrect.', 'danger')
+                flash('Current password is incorrect.', category='error')
                 return redirect(url_for('user.profile'))
 
             if new_password != confirm_password:
-                flash('New passwords do not match.', 'danger')
+                flash('New passwords do not match.', category='error')
                 return redirect(url_for('user.profile'))
 
             if len(new_password) < 7:
-                flash('Password must be at least 7 characters.', 'danger')
+                flash('Password must be at least 7 characters.', category='error')
                 return redirect(url_for('user.profile'))
 
             current_user.set_password(new_password)
