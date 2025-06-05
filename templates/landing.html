@@ -2,57 +2,364 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMUnity - Management System</title>
     <style>
+        :root {
+            --primary-color: #6b1d1d;
+            --primary-light: #8a2a2a;
+            --primary-dark: #4d1414;
+            --secondary-color: #4e73df;
+            --secondary-light: #6c8eff;
+            --text-color: #2d3748;
+            --text-light: #4a5568;
+            --light-gray: #f8f9fa;
+            --lighter-gray: #f0f2f5;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+        
         body {
             margin: 0;
             padding: 0;
-            background-image: url('/static/images/background.jpeg');
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: 
+                linear-gradient(135deg, rgba(107, 29, 29, 0.9) 0%, rgba(74, 20, 20, 0.9) 100%),
+                url('/static/images/background.jpeg') no-repeat center center;
             background-size: cover;
-            background-position: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
             color: white;
+            height: 100vh;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/static/images/pattern.svg') repeat;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            color: white;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: white;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .button-primary {
+            background-color: white;
+            color: var(--primary-color);
+            box-shadow: var(--box-shadow);
+        }
+
+        .button-primary:hover {
+            background-color: var(--lighter-gray);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .button-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .button-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Features Section - Matching your home page style */
+        .features {
+            padding: 5rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
             text-align: center;
         }
 
-        .overlay {
-            background-color: rgba(0, 0, 0, 0.6);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .content {
-            max-width: 600px;
-            margin: auto;
-        }
-
-        a.button {
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin: 0;
+            position: relative;
             display: inline-block;
-            margin: 10px;
-            padding: 12px 24px;
-            color: white;
-            background-color: maroon;
-            text-decoration: none;
-            border-radius: 4px;
+            padding-bottom: 0.5rem;
         }
 
-        a.button:hover {
-            background-color: #0056b3;
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 1rem auto 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .feature-description {
+            font-size: 1rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            background-color: var(--light-gray);
+            padding: 5rem 1rem;
+            text-align: center;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .testimonial-quote {
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .testimonial-quote::before,
+        .testimonial-quote::after {
+            color: var(--primary-light);
+            font-size: 3rem;
+            line-height: 1;
+            position: absolute;
+        }
+
+        .testimonial-quote::before {
+            content: '"';
+            top: -1rem;
+            left: -1.5rem;
+        }
+
+        .testimonial-quote::after {
+            content: '"';
+            bottom: -2rem;
+            right: -1.5rem;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        .copyright {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.25rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="overlay">
-        <div class="content">
-            <h1>Welcome to Our Website</h1>
-            <p>Connecting Passion, Purpose & People</p>
-            <p>Please sign in or create an account to continue.</p>
-            <a class="button" href="{{ url_for('user.login') }}">Login</a>
-            <a class="button" href="{{ url_for('user.signup') }}">Signup</a>
+    <section class="hero">
+        <div class="hero-content">
+            <div class="logo">MMUnity</div>
+            <h1>Elevate Your Club Management</h1>
+            <p class="subtitle">
+                The comprehensive platform designed to streamline member management, event planning, 
+                and communication for organizations of all sizes.
+            </p>
+            <div class="button-group">
+                <a href="{{ url_for('user.login') }}" class="button button-primary">Login</a>
+                <a href="{{ url_for('user.signup') }}" class="button button-secondary">Sign Up</a>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <section class="features">
+        <div class="section-header">
+            <h2 class="section-title">Powerful Features</h2>
+            <p class="section-subtitle">
+                Everything you need to manage your club effectively and efficiently
+            </p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3 class="feature-title">Member Management</h3>
+                <p class="feature-description">
+                    Easily track members, committees, and attendance with our intuitive dashboard and reporting tools.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h3 class="feature-title">Event Planning</h3>
+                <p class="feature-description">
+                    Schedule events, send automated reminders, and manage RSVPs all in one centralized platform.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3 class="feature-title">Communication Hub</h3>
+                <p class="feature-description">
+                    Send announcements, newsletters, and updates to keep all members informed and engaged.
+                </p>
+            </div>
+        </div>
+    </section>
 </body>
 </html>
