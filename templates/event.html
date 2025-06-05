@@ -922,21 +922,29 @@
         color: white;
     }
 
-    /* Avatar circle for members */
-    .avatar-circle {
-        width: 40px;
-        height: 40px;
+    .comment-avatar {
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
         background-color: var(--maroon-light);
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-right: 0.75rem;
+        cursor: pointer;
+        overflow: hidden;
     }
 
-    .avatar-circle .initials {
+    .comment-avatar .initials {
         color: white;
         font-weight: 600;
         font-size: 0.9rem;
+    }
+
+    .comment-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     
@@ -1173,7 +1181,12 @@
                                         <div class="comment-card" id="comment-{{ comment.id }}">
                                             <div class="comment-header">
                                                 <div class="comment-avatar">
-                                                    {{ comment.user.first_name[0]|upper }}
+                                                    {% if comment.user.profile_pic %}
+                                                        <img src="{{ url_for('static', filename='profile_pics/' + comment.user.profile_pic) }}"
+                                                            alt="Profile Picture" width="36" height="36" style="border-radius: 50%; object-fit: cover;">
+                                                    {% else %}
+                                                        <span class="initials">{{ comment.user.first_name[0]|upper }}</span>
+                                                    {% endif %}
                                                 </div>
                                                 <div class="comment-user">
                                                     <div class="comment-user-name">
@@ -1260,7 +1273,8 @@
                                 {% endif %}
 
                                 {% if membership %}
-                                <form method="POST" action="{{ url_for('event.post_comment', event_id=selected_event.id) }}" class="comment-form">
+                                <form method="POST" action="{{ url_for('event.post_comment', event_id=selected_event.id) }}" 
+                                    class="comment-form" enctype="multipart/form-data">
                                     <div class="form-group">
                                         <textarea class="form-control" name="comment_content" 
                                                   placeholder="Write your comment here..." required></textarea>
@@ -1497,7 +1511,12 @@
                         <div class="list-group-item border-0 py-2">
                             <div class="d-flex align-items-center">
                                 <div class="avatar-circle me-3">
-                                    <span class="initials">{{ member.first_name[0]|upper }}{{ member.last_name[0]|upper if member.last_name else '' }}</span>
+                                    {% if member.profile_pic %}
+                                        <img src="{{ url_for('static', filename='profile_pics/' + member.profile_pic) }}" 
+                                            alt="Profile Picture" width="36" height="36" style="border-radius: 50%; object-fit: cover;">
+                                    {% else %}
+                                        <span class="initials">{{ member.first_name[0]|upper }}{{ member.last_name[0]|upper if member.last_name else '' }}</span>
+                                    {% endif %}
                                 </div>
                                 <div>
                                     <h6 class="mb-0">{{ member.first_name }} {{ member.last_name if member.last_name else '' }}</h6>

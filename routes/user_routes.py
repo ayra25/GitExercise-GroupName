@@ -1,13 +1,18 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, flash, redirect, url_for, request, current_app
 from models.user import User
 from extensions import db
 from flask_login import login_user, login_required, logout_user, current_user
+from werkzeug.utils import secure_filename
 import bcrypt  
 from utils.token import generate_reset_token, verify_reset_token
 from utils.email import send_reset_email
+import os
 
 
 user_bp = Blueprint('user', __name__)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
 
 @user_bp.route('/')
 def index():
@@ -115,12 +120,17 @@ def reset_password_token(token):
 @login_required
 def profile():
     if request.method == 'POST':
-        current_user.first_name = request.form.get('first_name')
-        current_user.email = request.form.get('email')
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        email = request.form.get('email')
 
         current_password = request.form.get('current_password')
         new_password = request.form.get('new_password')
         confirm_password = request.form.get('confirm_password')
+
+        current_user.first_name = first_name
+        current_user.last_name = last_name
+        current_user.email = email
 
         if current_password and new_password:
             if not current_user.check_password(current_password):
@@ -132,12 +142,29 @@ def profile():
                 return redirect(url_for('user.profile'))
 
             if len(new_password) < 7:
-                flash('New password must be at least 7 characters.', 'danger')
+                flash('Password must be at least 7 characters.', 'danger')
                 return redirect(url_for('user.profile'))
 
             current_user.set_password(new_password)
 
+        profile_pic = request.files.get('profile_pic')
+        if profile_pic and profile_pic.filename != '':
+            if allowed_file(profile_pic.filename):
+                ext = os.path.splitext(profile_pic.filename)[1]
+                filename = f"user_{current_user.id}{ext}"
+                filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                
+                if current_user.profile_pic and current_user.profile_pic != 'default.jpg':
+                    old_path = os.path.join(current_app.config['UPLOAD_FOLDER'], current_user.profile_pic)
+                    if os.path.exists(old_path):
+                        os.remove(old_path)
+
+                profile_pic.save(filepath)
+                current_user.profile_pic = filename
+            else:
+                flash("Invalid file format. Only JPG, JPEG, PNG, and GIF are supported.", "danger")
+
         db.session.commit()
-        return redirect(url_for('user.index'))
+        return redirect(url_for('user.profile'))
 
     return render_template('profile.html', user=current_user)

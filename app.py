@@ -20,6 +20,11 @@ def create_app():
     app.config['SECRET_KEY'] = 'your_secret_key_here'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mmunity.db'  
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'profile_pics')
+    app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  
+
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587

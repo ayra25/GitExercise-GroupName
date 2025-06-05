@@ -1,36 +1,286 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>My Profile</h2>
-    <form method="POST">
-        <div class="mb-3">
-            <label for="first_name" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
-        </div>
-        <div class="mb-3">
-            <label for="last_name" class="form-label">Last Name</label>
-            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
-        </div>
-        <div class="mb-3">
-            <label for="current_password" class="form-label">Current Password</label>
-            <input type="password" class="form-control" id="current_password" name="current_password">
-        </div>
-        <div class="mb-3">
-            <label for="new_password" class="form-label">New Password</label>
-            <input type="password" class="form-control" id="new_password" name="new_password">
-        </div>
-        <div class="mb-3">
-            <label for="confirm_password" class="form-label">Confirm New Password</label>
-            <input type="password" class="form-control" id="confirm_password" name="confirm_password">
-        </div>
-        <button type="submit" class="btn btn-primary">Update Profile</button>
-    </form>
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
     
+    .profile-header {
+        margin-bottom: 2rem;
+        position: relative;
+    }
+    
+    .profile-header h2 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .profile-header p {
+        font-size: 1rem;
+        color: var(--text-light);
+    }
+    
+    .profile-stats {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .profile-stat {
+        font-size: 0.9rem;
+        color: var(--text-light);
+    }
+    
+    .profile-stat strong {
+        color: var(--text-color);
+        font-weight: 600;
+    }
+    
+    .profile-divider {
+        border: none;
+        height: 1px;
+        background-color: rgba(0,0,0,0.1);
+        margin: 1.5rem 0;
+    }
+    
+    .profile-section {
+        margin-bottom: 2rem;
+    }
+    
+    .profile-section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+        position: relative;
+        padding-left: 1rem;
+    }
+    
+    .profile-section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 18px;
+        width: 4px;
+        background: var(--primary-color);
+        border-radius: 2px;
+    }
+    
+    .profile-form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .profile-form-label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-light);
+        margin-bottom: 0.5rem;
+    }
+    
+    .profile-form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .profile-form-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(107, 29, 29, 0.1);
+        outline: none;
+    }
+    
+    .profile-save-btn {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .profile-save-btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    .exclusive-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #e0cfa2 0%, #e1c16e 100%);
+        color: #63323d;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-top: 1rem;
+    }
 
+    .profile-avatar-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .avatar-upload {
+        text-align: center;
+    }
+    
+    .avatar-preview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f5f5f5;
+    }
+    
+    .avatar-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .default-avatar {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        font-weight: bold;
+        color: white;
+        background-color: var(--primary-color);
+    }
+    
+    .form-control-file {
+        display: none;
+    }
+    
+    .avatar-preview:hover {
+        cursor: pointer;
+        opacity: 0.8;
+    }
+    
+    @media (max-width: 768px) {
+        .profile-container {
+            padding: 1.5rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .profile-container {
+            padding: 1rem;
+        }
+        
+        .profile-header h2 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="profile-container">    
+
+    <div class="profile-header">
+        <h2>My Profile</h2>
+        <p>Manage your personal information and settings</p>
+    </div>
+    
+    <hr class="profile-divider">
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="profile-section">
+
+            <div class="profile-section">
+                <h3 class="profile-section-title">Profile Picture</h3>
+                <div class="avatar-upload d-flex flex-column align-items-center">
+                    <div class="avatar-preview mb-3" onclick="document.getElementById('profile_pic').click()">
+                        {% if user.profile_pic %}
+                            <img src="{{ url_for('static', filename='profile_pics/' + user.profile_pic) }}" alt="Profile Picture" width="120" height="120">
+                        {% else %}
+                            <div class="default-avatar">{{ user.first_name[0]|upper }}</div>
+                        {% endif %}
+                    </div>
+                    <input type="file" id="profile_pic" name="profile_pic" accept="image/*" class="form-control-file">
+                    <small class="text-muted mt-2">Allowed formats: jpg, jpeg, png</small>
+                </div>
+            </div>
+            
+            <h3 class="profile-section-title">Personal details</h3>            
+            <div class="profile-form-group">
+                <label for="first_name" class="profile-form-label">First name</label>
+                <input type="text" class="profile-form-input" id="first_name" name="first_name" value="{{ user.first_name }}">
+            </div>
+            
+            <div class="profile-form-group">
+                <label for="last_name" class="profile-form-label">Last name</label>
+                <input type="text" class="profile-form-input" id="last_name" name="last_name" value="{{ user.last_name }}">
+            </div>
+            
+        </div>
+        
+        <div class="profile-section">
+            <div class="profile-form-group">
+                <label for="email" class="profile-form-label">Email</label>
+                <input type="email" class="profile-form-input" id="email" name="email" value="{{ user.email }}">
+            </div>
+        </div>
+        
+        <div class="profile-section">
+            <h3 class="profile-section-title">Password</h3>
+            
+            <div class="profile-form-group">
+                <label for="current_password" class="profile-form-label">Current Password</label>
+                <input type="password" class="profile-form-input" id="current_password" name="current_password">
+            </div>
+            
+            <div class="profile-form-group">
+                <label for="new_password" class="profile-form-label">New Password</label>
+                <input type="password" class="profile-form-input" id="new_password" name="new_password">
+            </div>
+            
+            <div class="profile-form-group">
+                <label for="confirm_password" class="profile-form-label">Confirm New Password</label>
+                <input type="password" class="profile-form-input" id="confirm_password" name="confirm_password">
+            </div>
+        </div>
+        
+        <button type="submit" class="profile-save-btn">Save changes</button>
+    
+    </form>
 </div>
+
+<script>
+    // Profile picture preview functionality
+    document.getElementById('profile_pic').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const preview = document.querySelector('.avatar-preview');
+                preview.innerHTML = '';
+                const img = document.createElement('img');
+                img.src = event.target.result;
+                img.alt = 'Profile Preview';
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
 {% endblock %}
