@@ -1,21 +1,150 @@
 {% extends 'base.html' %}
 {% block content %}
+<style>
+    :root {
+        --primary-color: #6b1d1d;
+        --primary-light: #8a2a2a;
+        --text-color: #2d3748;
+        --text-light: #4a5568;
+        --border-radius: 8px;
+    }
+    
+    .event-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .event-header {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .event-header h2 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .event-date {
+        font-size: 1rem;
+        color: var(--text-light);
+    }
+    
+    .event-form {
+        background: white;
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-light);
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(107, 29, 29, 0.1);
+        outline: none;
+    }
+    
+    .btn-submit {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .btn-submit:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+    }
+    
+    .flash-message {
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: var(--border-radius);
+        font-size: 0.9rem;
+    }
+    
+    .flash-message.success {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+    
+    .flash-message.danger {
+        background-color: #ffebee;
+        color: #c62828;
+    }
+    
+    @media (max-width: 768px) {
+        .event-container {
+            padding: 1.5rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .event-container {
+            padding: 1rem;
+        }
+        
+        .event-header h2 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
 
-<div class="container my-5">
-  <h2 class="text-center">Event: {{ event.title }}</h2>
-  <p class="text-center text-muted">{{ event.date.strftime('%A, %B %d, %Y') }}</p>
-
-  <form method="POST" class="mx-auto" style="max-width: 400px;">
-    <div class="mb-3">
-      <label for="email" class="form-label">Email</label>
-      <input type="email" class="form-control" id="email" name="email" required>
+<div class="event-container">
+    <div class="event-header">
+        <h2>Event: {{ event.title }}</h2>
+        <p class="event-date">{{ event.date.strftime('%A, %B %d, %Y') }}</p>
     </div>
-    <div class="mb-3">
-      <label for="password" class="form-label">Password</label>
-      <input type="password" class="form-control" id="password" name="password" required>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="event-form">
+        <form method="POST">
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn-submit">Submit Attendance</button>
+        </form>
     </div>
-    <button type="submit" class="btn btn-primary w-100">Submit Attendance</button>
-  </form>
 </div>
-
 {% endblock %}

@@ -42,26 +42,38 @@ def submit_attendance(event_id):
         is_host=True
     ).first_or_404()
 
-    for member_id, attended in request.form.items():
-        if member_id.isdigit():
-            attendance = EventAttendance.query.filter_by(
-                event_id=event_id,
-                user_id=int(member_id)
-            ).first()
+    # Get all members for this club
+    members = ClubMembership.query.filter_by(club_id=event.club_id).all()
+    
+    # Get all form data
+    form_data = request.form
+    
+    # Process each member
+    for member in members:
+        # Check if member's checkbox was submitted (means it was checked)
+        if str(member.user_id) in form_data:
+            attended = True
+        else:
+            attended = False
+            
+        # Find or create attendance record
+        attendance = EventAttendance.query.filter_by(
+            event_id=event_id,
+            user_id=member.user_id
+        ).first()
 
-            if not attendance:
-                attendance = EventAttendance(
-                    event_id=event_id,
-                    user_id=int(member_id),
-                    attended=(attended == 'on')
-                )
-                db.session.add(attendance)
-            else:
-                attendance.attended = (attended == 'on')
+        if attendance:
+            attendance.attended = attended
+        else:
+            attendance = EventAttendance(
+                event_id=event_id,
+                user_id=member.user_id,
+                attended=attended
+            )
+            db.session.add(attendance)
 
     event.attendance_started = True
     db.session.commit()
-
     return redirect(url_for('event.events_page', club_id=event.club_id))
 
 @attendance_bp.route('/event/<int:event_id>/attend', methods=['POST'])
@@ -166,7 +178,7 @@ def attend_via_qr(event_id):
             db.session.commit()
 
             flash('Your attendance has been recorded!', 'success')
-            return redirect(url_for('event.events_page', club_id=event.club_id))
+            return render_template('attend_via_qr.html', event=event)
         else:
             flash('Invalid email or password.', 'danger')
 
