@@ -183,9 +183,6 @@
     cursor: pointer;
 }
 
-.club-menu-dropdown button:hover {
-    background: #f5f5f5;
-}
 
 .club-menu.active .club-menu-dropdown {
     display: block;
@@ -654,9 +651,13 @@
             </button>
             <div class="club-menu-dropdown">
                 {% if club_data.is_host %}
-                    <a href="{{ url_for('club.delete_club', club_id=club_data.club.id) }}" class="dropdown-item text-danger">
-                        <i class="bi bi-trash me-2"></i> Delete Club
-                    </a>
+
+                    <form action="{{ url_for('club.delete_club', club_id=club_data.club.id) }}" method="POST">
+                        <input type="hidden" name="club_id" value="{{ club_data.club.id }}">
+                        <button type="submit" class="dropdown-item">
+                            <i class="bi bi-box-arrow-right me-2"></i> Delete Club
+                        </button>
+                    </form>
                 {% else %}
                     <form action="{{ url_for('club.leave_club') }}" method="POST">
                         <input type="hidden" name="club_id" value="{{ club_data.club.id }}">

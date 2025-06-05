@@ -8,4 +8,6 @@ class RSVP(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     user = db.relationship('User', backref='rsvps')
-    event = db.relationship('Event', backref='rsvps')
+    event = db.relationship('Event', back_populates='rsvps')
+
+    

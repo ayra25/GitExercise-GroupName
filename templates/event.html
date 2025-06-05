@@ -239,7 +239,6 @@
     }
 
     .announcement-card:hover {
-        transform: translateY(-3px);
         box-shadow: 0 5px 20px rgba(0,0,0,0.12);
     }
 
@@ -970,7 +969,7 @@
 <section class="hero-section club-design-{{ club.cover_image }}">
     <div class="club-header">
         <h1 class="club-name">{{ club.name }}</h1>
-        <p class="club-description">{{ club.description or "Welcome to our club events page" }}</p>
+        <p class="club-description">{{ club.description or "" }}</p>
     </div>
     
     {% if is_host %}

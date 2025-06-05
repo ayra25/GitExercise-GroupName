@@ -455,7 +455,6 @@ def leave_club():
         db.session.delete(membership)
         db.session.commit()
         
-        flash('You have left the club', 'success')
         return redirect(url_for('club.dashboard'))
         
     except Exception as e:

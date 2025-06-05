@@ -8,133 +8,286 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <title>{% block title %}Sign Up{% endblock %}</title>
+    <style>
+        :root {
+            --primary-color: #6b1d1d;
+            --primary-light: #8a2a2a;
+            --secondary-color: #4e73df;
+            --secondary-light: #6c8eff;
+            --text-color: #2d3748;
+            --text-light: #4a5568;
+            --light-gray: #f8f9fa;
+            --lighter-gray: #f0f2f5;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--lighter-gray);
+        }
+
+        .signup-container {
+            display: flex;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: url("{{ url_for('static', filename='images/login.jpg') }}") no-repeat center center;
+            background-size: cover;
+            position: relative;
+        }
+
+        .signup-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(107, 29, 29, 0.7);
+            z-index: 0;
+        }
+
+        .signup-card {
+            width: 100%;
+            max-width: 450px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .signup-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .signup-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .signup-header h2 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .signup-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .signup-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(107, 29, 29, 0.1);
+            outline: none;
+        }
+
+        .btn-signup {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: var(--border-radius);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-signup:hover {
+            background-color: var(--primary-light);
+        }
+
+        .signup-footer {
+            text-align: center;
+            padding: 1rem 2rem 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .signup-footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .signup-footer a:hover {
+            color: var(--secondary-light);
+            text-decoration: underline;
+        }
+
+        .flash-message {
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+        }
+
+        .flash-message.success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .flash-message.error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .password-toggle {
+            position: relative;
+        }
+
+        .password-toggle-icon {
+            position: absolute;
+            right: 1rem;
+            top: 55%;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .name-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 576px) {
+            .signup-container {
+                padding: 1rem;
+            }
+            
+            .signup-card {
+                max-width: 100%;
+            }
+            
+            .signup-header {
+                padding: 1.5rem;
+            }
+            
+            .signup-body {
+                padding: 1.5rem;
+            }
+            
+            .name-fields {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<style>
-  body, html {
-    height: 100%;
-    margin: 0;
-    overflow: hidden; /* Disable scrolling */
-  }
+<div class="signup-container">
+    <div class="signup-card">
+        <div class="signup-header">
+            <h2>Create Your Account</h2>
+        </div>
+        
+        <div class="signup-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
-  .background {
-    background: url("{{ url_for('static', filename='images/login.jpg') }}") no-repeat center center fixed;
-    background-size: cover;
-    filter: blur(5px);
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    z-index: -1;
-  }
+            <form method="POST" action="{{ url_for('user.signup') }}">
+                <div class="name-fields">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First name" required>
+                    </div>
 
-  .signup-wrapper {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last name">
+                    </div>
+                </div>
 
-  .form-container {
-    width: 100%;
-    max-width: 450px;
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.95);
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-  }
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                </div>
 
-  .form-container h2 {
-    margin-bottom: 10px;
-    text-align: center;
-    font-weight: 600;
-  }
+                <div class="form-group password-toggle">
+                    <label for="password1">Password</label>
+                    <input type="password" class="form-control" id="password1" name="password1" placeholder="Create password" required>
+                    <i class="bi bi-eye-slash password-toggle-icon" id="togglePassword1"></i>
+                </div>
 
-  .form-container .form-control {
-    border-radius: 4px;
-    padding: 10px;
-    margin-bottom: 15px;
-  }
+                <div class="form-group password-toggle">
+                    <label for="password2">Confirm Password</label>
+                    <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm password" required>
+                    <i class="bi bi-eye-slash password-toggle-icon" id="togglePassword2"></i>
+                </div>
 
-  .btn-primary {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    font-weight: 600;
-  }
-
-  .btn-primary:hover {
-    background-color: #0056b3;
-  }
-
-  .flash {
-    margin-bottom: 20px;
-    padding: 10px;
-    border-radius: 5px;
-  }
-
-  .flash.success {
-    background-color: #d4edda;
-    color: #155724;
-  }
-
-  .flash.error {
-    background-color: #f8d7da;
-    color: #721c24;
-  }
-</style>
-
-<div class="background"></div>
-
-<div class="signup-wrapper">
-  <div class="form-container">
-    <h2>Sign Up</h2>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-    <form method="POST" action="{{ url_for('user.signup') }}">
-      <div class="form-group">
-        <label for="firstName">First Name</label>
-        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter your first name" required>
-      </div>
-
-      <div class="form-group">
-        <label for="lastName">Last Name</label>
-        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter your last name">
-      </div>
-
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
-      </div>
-
-      <div class="form-group">
-        <label for="password1">Password</label>
-        <input type="password" class="form-control" id="password1" name="password1" placeholder="Enter your password" required>
-      </div>
-
-      <div class="form-group">
-        <label for="password2">Confirm Password</label>
-        <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm your password" required>
-      </div>
-
-      <button type="submit" class="btn btn-primary">Sign Up</button>
-    </form>
-
-    <div class="text-center mt-3">
-      <p>Already have an account? <a href="{{ url_for('user.login') }}">Log in</a></p>
+                <button type="submit" class="btn btn-signup">Sign Up</button>
+            </form>
+        </div>
+        
+        <div class="signup-footer">
+            <p>Already have an account? <a href="{{ url_for('user.login') }}">Log in</a></p>
+        </div>
     </div>
-  </div>
 </div>
+
+<script>
+    // Toggle password visibility for both fields
+    const togglePassword1 = document.querySelector('#togglePassword1');
+    const password1 = document.querySelector('#password1');
+    const togglePassword2 = document.querySelector('#togglePassword2');
+    const password2 = document.querySelector('#password2');
+    
+    togglePassword1.addEventListener('click', function() {
+        const type = password1.getAttribute('type') === 'password' ? 'text' : 'password';
+        password1.setAttribute('type', type);
+        this.classList.toggle('bi-eye');
+        this.classList.toggle('bi-eye-slash');
+    });
+    
+    togglePassword2.addEventListener('click', function() {
+        const type = password2.getAttribute('type') === 'password' ? 'text' : 'password';
+        password2.setAttribute('type', type);
+        this.classList.toggle('bi-eye');
+        this.classList.toggle('bi-eye-slash');
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous"></script>
 </body>
 </html>
