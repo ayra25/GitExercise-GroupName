@@ -43,15 +43,11 @@ def submit_attendance(event_id):
     ).first_or_404()
 
     members = ClubMembership.query.filter_by(club_id=event.club_id).all()
-    
     form_data = request.form
-    
+
     for member in members:
-        if str(member.user_id) in form_data:
-            attended = True
-        else:
-            attended = False
-            
+        attended = str(member.user_id) in form_data
+
         attendance = EventAttendance.query.filter_by(
             event_id=event_id,
             user_id=member.user_id
@@ -104,7 +100,7 @@ def mark_attendance(event_id):
 def mark_rsvp(event_id):
     event = Event.query.get_or_404(event_id)
     rsvp = RSVP.query.filter_by(user_id=current_user.id, event_id=event.id).first()
-    
+
     if rsvp:
         db.session.delete(rsvp)
         db.session.commit()
@@ -112,10 +108,10 @@ def mark_rsvp(event_id):
         rsvp = RSVP(user_id=current_user.id, event_id=event.id)
         db.session.add(rsvp)
         db.session.commit()
-    
+
     return redirect(url_for('event.events_page', club_id=event.club_id, selected=event.id))
 
-#QR Routes 
+#QR Routes
 
 @attendance_bp.route('/event/<int:event_id>/qr')
 @login_required
@@ -154,46 +150,47 @@ def qr_image(event_id):
 @attendance_bp.route('/event/<int:event_id>/attend-via-qr', methods=['GET', 'POST'])
 def attend_via_qr(event_id):
     event = Event.query.get_or_404(event_id)
-    timestamp_str = request.args.get('t')
 
-   
-    if timestamp_str:
-        try:
-            qr_time = datetime.strptime(timestamp_str, '%Y-%m-%dT%H:%M:%S')
-            now = datetime.utcnow()
-            delta = (now - qr_time).total_seconds()
-            if delta > 30:
-                return render_template('qr_expired.html')
-        except Exception:
-            return render_template('attend_via_qr.html')
-    else:
+    
+    if request.method == 'GET':
+        timestamp_str = request.args.get('t')
+        if timestamp_str:
+            try:
+                qr_time = datetime.strptime(timestamp_str, '%Y-%m-%dT%H:%M:%S')
+                now = datetime.utcnow()
+                delta = (now - qr_time).total_seconds()
+                if delta > 30:
+                    return render_template('qr_expired.html')
+            except Exception:
+                return render_template('attend_via_qr.html')
+        else:
+            return render_template('qr_success.html')
+
+        return render_template('attend_via_qr.html', event=event)
+
+    
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    user = User.query.filter_by(email=email).first()
+    if user and user.check_password(password):
+        attendance = EventAttendance.query.filter_by(
+            event_id=event.id,
+            user_id=user.id
+        ).first()
+
+        if not attendance:
+            attendance = EventAttendance(
+                event_id=event.id,
+                user_id=user.id,
+                attended=True
+            )
+            db.session.add(attendance)
+        else:
+            attendance.attended = True
+
+        db.session.commit()
         return render_template('qr_success.html')
 
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-
-        user = User.query.filter_by(email=email).first()
-        if user and user.check_password(password):
-            attendance = EventAttendance.query.filter_by(
-                event_id=event.id,
-                user_id=user.id
-            ).first()
-
-            if not attendance:
-                attendance = EventAttendance(
-                    event_id=event.id,
-                    user_id=user.id,
-                    attended=True
-                )
-                db.session.add(attendance)
-            else:
-                attendance.attended = True
-
-            db.session.commit()
-
-            return render_template('qr_success.html')
-        else:
-            flash('Invalid email or password.', 'danger')
-
+    flash('Invalid email or password.', 'danger')
     return render_template('attend_via_qr.html', event=event)
