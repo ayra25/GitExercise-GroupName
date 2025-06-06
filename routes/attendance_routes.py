@@ -135,17 +135,39 @@ def display_qr(event_id):
 @attendance_bp.route('/event/<int:event_id>/qr_image')
 @login_required
 def qr_image(event_id):
+    now = datetime.utcnow()
+    rounded_seconds = now.second - (now.second % 30)
+    timestamp = now.replace(second=rounded_seconds, microsecond=0).strftime('%Y-%m-%dT%H:%M:%S')
+
     qr_url = url_for('attendance.attend_via_qr', event_id=event_id, _external=True)
-    qr = qrcode.make(qr_url)
+    qr_data = f"{qr_url}?t={timestamp}"
+
+    qr = qrcode.make(qr_data)
     buf = io.BytesIO()
     qr.save(buf, format='PNG')
     buf.seek(0)
-    return send_file(buf, mimetype='image/png')
 
+    response = send_file(buf, mimetype='image/png')
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    return response
 
 @attendance_bp.route('/event/<int:event_id>/attend-via-qr', methods=['GET', 'POST'])
 def attend_via_qr(event_id):
     event = Event.query.get_or_404(event_id)
+    timestamp_str = request.args.get('t')
+
+   
+    if timestamp_str:
+        try:
+            qr_time = datetime.strptime(timestamp_str, '%Y-%m-%dT%H:%M:%S')
+            now = datetime.utcnow()
+            delta = (now - qr_time).total_seconds()
+            if delta > 30:
+                return render_template('qr_expired.html')
+        except Exception:
+            return render_template('attend_via_qr.html')
+    else:
+        return render_template('qr_expired.html')
 
     if request.method == 'POST':
         email = request.form.get('email')
@@ -153,8 +175,6 @@ def attend_via_qr(event_id):
 
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
-            login_user(user)
-
             attendance = EventAttendance.query.filter_by(
                 event_id=event.id,
                 user_id=user.id
@@ -172,8 +192,7 @@ def attend_via_qr(event_id):
 
             db.session.commit()
 
-            flash('Your attendance has been recorded!', 'success')
-            return redirect(url_for('event.events_page', club_id=event.club_id))
+            return render_template('qr_success.html')
         else:
             flash('Invalid email or password.', 'danger')
 
