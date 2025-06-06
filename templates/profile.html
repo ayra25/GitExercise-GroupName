@@ -220,9 +220,19 @@
     <hr class="profile-divider">
     
     <form method="POST" enctype="multipart/form-data">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
         <div class="profile-section">
 
             <div class="profile-section">
+
                 <h3 class="profile-section-title">Profile Picture</h3>
                 <div class="avatar-upload d-flex flex-column align-items-center">
                     <div class="avatar-preview mb-3" onclick="document.getElementById('profile_pic').click()">
@@ -259,14 +269,6 @@
         
         <div class="profile-section">
             <h3 class="profile-section-title">Password</h3>
-
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="flash-message {{ category }}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
             
             <div class="profile-form-group">
                 <label for="current_password" class="profile-form-label">Current Password</label>
