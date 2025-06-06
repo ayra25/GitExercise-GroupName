@@ -3,9 +3,12 @@
 {% block content %}
 <div class="container text-center my-5">
   <h3>QR Code for {{ event.title }}</h3>
-  <p class="text-muted">Refresh the page to generate a new code.</p>
+  <p class="text-muted">
+    QR will update every 30 seconds — 
+    <span id="countdown">30</span>s left
+  </p>
 
-  <img src="{{ url_for('attendance.qr_image', event_id=event.id) }}" alt="QR Code" class="img-fluid" width="300">
+  <img id="qr-code" src="{{ url_for('attendance.qr_image', event_id=event.id) }}" alt="QR Code" class="img-fluid" width="300">
 
   <p class="mt-3 small text-break">QR Content: {{ qr_data }}</p>
 
@@ -13,4 +16,21 @@
     Back to Attendance
   </a>
 </div>
+
+<script>
+  let seconds = 30;
+  const countdown = document.getElementById('countdown');
+  const qrImage = document.getElementById('qr-code');
+
+  setInterval(() => {
+    seconds--;
+    countdown.textContent = seconds;
+
+    if (seconds === 0) {
+      const base = qrImage.src.split('?')[0];
+      qrImage.src = `${base}?_=${new Date().getTime()}`;
+      seconds = 30;
+    }
+  }, 1000);
+</script>
 {% endblock %}
