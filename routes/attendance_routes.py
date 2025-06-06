@@ -167,7 +167,7 @@ def attend_via_qr(event_id):
         except Exception:
             return render_template('attend_via_qr.html')
     else:
-        return render_template('qr_expired.html')
+        return render_template('qr_success.html')
 
     if request.method == 'POST':
         email = request.form.get('email')
