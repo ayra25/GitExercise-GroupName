@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Banned Members – {{ club.name }}</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    {% if banned_members %}
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Banned At</th>
+                <th>Reason</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ban in banned_members %}
+            <tr>
+                <td>{{ ban.user.first_name }}</td>
+                <td>{{ ban.user.last_name }}</td>
+                <td>{{ ban.user.email }}</td>
+                <td>{{ ban.banned_at.strftime('%Y-%m-%d') }}</td>
+                <td>{{ ban.reason or "N/A" }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('club.unban_member', club_id=club.id, user_id=ban.user_id) }}">
+                        <button type="submit" class="btn btn-success btn-sm"
+                                onclick="return confirm('Unban this user?')">
+                            <i class="bi bi-check-circle"></i> Unban
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No banned members for this club.</p>
+    {% endif %}
+
+    <a href="{{ url_for('club.view_members', club_id=club.id) }}" class="btn btn-secondary mt-3">
+        &larr; Back to Members
+    </a>
+</div>
+{% endblock %}

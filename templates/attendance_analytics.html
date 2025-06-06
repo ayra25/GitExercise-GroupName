@@ -42,7 +42,7 @@
     <tbody>
       {% for stat in member_stats %}
       <tr>
-        <td>{{ stat.member.first_name }}</td>
+        <td>{{ stat.member.first_name }} {{ stat.member.last_name }}</td>
         <td>{{ stat.total_events }}</td>
         <td>{{ stat.attended_events }}</td>
         <td>{{ "%.1f"|format(stat.attendance_rate) }}%</td>
