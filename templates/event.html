@@ -1143,17 +1143,22 @@
                                     </form>
 
                                     <!-- Attendance Button (for hosts) -->
-                                    {% if selected_event and selected_event.date <= now.date() and is_host %}
-                                        {% if selected_event.attendance_started %}
-                                            <a href="{{ url_for('attendance.take_attendance', event_id=selected_event.id) }}" 
-                                            class="btn attendance-btn">
-                                                <i class="bi bi-pencil-square me-2"></i>Update Attendance
-                                            </a>
-                                        {% else %}
-                                            <a href="{{ url_for('attendance.take_attendance', event_id=selected_event.id) }}" 
-                                            class="btn attendance-btn">
-                                                <i class="bi bi-clipboard-check me-2"></i>Take Attendance
-                                            </a>
+                                    {% if selected_event and is_host %}
+                                        {% set event_date_passed = (selected_event.date < now.date()) or 
+                                                                (selected_event.date == now.date() and selected_event.time.strftime('%H:%M') <= now.strftime('%H:%M')) %}
+                                        
+                                        {% if event_date_passed %}
+                                            {% if selected_event.attendance_started %}
+                                                <a href="{{ url_for('attendance.take_attendance', event_id=selected_event.id) }}" 
+                                                class="btn attendance-btn">
+                                                    <i class="bi bi-pencil-square me-2"></i>Update Attendance
+                                                </a>
+                                            {% else %}
+                                                <a href="{{ url_for('attendance.take_attendance', event_id=selected_event.id) }}" 
+                                                class="btn attendance-btn">
+                                                    <i class="bi bi-clipboard-check me-2"></i>Take Attendance
+                                                </a>
+                                            {% endif %}
                                         {% endif %}
                                     {% endif %}
 
@@ -1193,7 +1198,7 @@
                                                 </div>
                                                 <div class="comment-user">
                                                     <div class="comment-user-name">
-                                                        {{ comment.user.first_name }}
+                                                        {{ comment.user.first_name }} {{ comment.user.last_name }}
                                                         {% if comment.user.id in host_user_ids %}
                                                             <span class="comment-user-badge host-badge">
                                                                 <i class="bi bi-star-fill"></i> Club Host

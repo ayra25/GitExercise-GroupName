@@ -19,6 +19,7 @@
         <thead class="table-dark">
             <tr>
                 <th>First Name</th>
+                <th>Last Name</th>
                 <th>Email</th>
                 <th>Role</th>
                 <th>Joined</th>
@@ -29,6 +30,7 @@
             {% for m in members %}
             <tr>
                 <td>{{ m.member.first_name }}</td>
+                <td>{{ m.member.last_name }}</td>
                 <td>{{ m.member.email }}</td>
                 <td>
                     {% if m.is_host %}
@@ -54,6 +56,12 @@
                             <i class="bi bi-trash"></i> Remove
                         </button>
                     </form>
+                    <form method="POST" action="{{ url_for('club.ban_member', club_id=club.id, user_id=m.user_id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-outline-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to ban this member? This will remove them from the club.')">
+                            <i class="bi bi-slash-circle"></i> Ban
+                        </button>
+                    </form>                    
                     {% else %}
                     <span class="text-muted">N/A</span>
                     {% endif %}
@@ -66,5 +74,8 @@
     <a href="{{ url_for('club.dashboard') }}" class="btn btn-secondary mt-3">
         &larr; Back to Dashboard
     </a>
+    <a href="{{ url_for('club.view_banned_members', club_id=club.id) }}" class="btn btn-secondary mt-3">
+        View Banned Members
+     </a>
 </div>
 {% endblock %}
