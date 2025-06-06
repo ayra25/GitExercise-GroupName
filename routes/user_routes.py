@@ -162,9 +162,14 @@ def profile():
                 profile_pic.save(filepath)
                 current_user.profile_pic = filename
             else:
-                flash("Invalid file format. Only JPG, JPEG, PNG, and GIF are supported.", "danger")
+                flash("Invalid file format. Only JPG, JPEG, PNG, and GIF are supported.", category='error')
 
         db.session.commit()
         return redirect(url_for('user.profile'))
 
     return render_template('profile.html', user=current_user)
+
+@user_bp.errorhandler(413)
+def request_entity_too_large(error):
+    flash("File is too large. Maximum allowed size is 2MB.", category='error')
+    return redirect(request.referrer or "/")

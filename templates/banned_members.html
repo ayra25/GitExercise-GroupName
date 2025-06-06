@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="mb-4">Banned Members – {{ club.name }}</h2>
+<div class="container my-4">
+    <h2 class="text-center mb-4" style="font-weight:800;">Banned Members – {{ club.name }}</h2>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -16,43 +16,79 @@
     {% endwith %}
 
     {% if banned_members %}
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Banned At</th>
-                <th>Reason</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for ban in banned_members %}
-            <tr>
-                <td>{{ ban.user.first_name }}</td>
-                <td>{{ ban.user.last_name }}</td>
-                <td>{{ ban.user.email }}</td>
-                <td>{{ ban.banned_at.strftime('%Y-%m-%d') }}</td>
-                <td>{{ ban.reason or "N/A" }}</td>
-                <td>
-                    <form method="POST" action="{{ url_for('club.unban_member', club_id=club.id, user_id=ban.user_id) }}">
-                        <button type="submit" class="btn btn-success btn-sm"
-                                onclick="return confirm('Unban this user?')">
-                            <i class="bi bi-check-circle"></i> Unban
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="card shadow mb-5" style="border-color: #6b1d1d;">
+        <div class="card-header" style="background-color: #6b1d1d; color: white;">
+            <h3 class="mb-0">Banned Members List</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="color: #6b1d1d;">First Name</th>
+                            <th style="color: #6b1d1d;">Last Name</th>
+                            <th style="color: #6b1d1d;">Email</th>
+                            <th style="color: #6b1d1d;">Banned At</th>
+                            <th style="color: #6b1d1d;">Reason</th>
+                            <th style="color: #6b1d1d;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ban in banned_members %}
+                        <tr>
+                            <td>{{ ban.user.first_name }}</td>
+                            <td>{{ ban.user.last_name }}</td>
+                            <td>{{ ban.user.email }}</td>
+                            <td>{{ ban.banned_at.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ ban.reason or "N/A" }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('club.unban_member', club_id=club.id, user_id=ban.user_id) }}">
+                                    <button type="submit" class="btn btn-sm" style="background-color: rgba(40, 167, 69, 0.1); color: #28a745;"
+                                            onclick="return confirm('Unban this user?')">
+                                        <i class="bi bi-check-circle"></i> Unban
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     {% else %}
-    <p>No banned members for this club.</p>
+    <div class="card shadow" style="border-color: #6b1d1d;">
+        <div class="card-header" style="background-color: #6b1d1d; color: white;">
+            <h3 class="mb-0">Banned Members</h3>
+        </div>
+        <div class="card-body">
+            <p class="text-center text-muted">No banned members for this club.</p>
+        </div>
+    </div>
     {% endif %}
 
-    <a href="{{ url_for('club.view_members', club_id=club.id) }}" class="btn btn-secondary mt-3">
-        &larr; Back to Members
-    </a>
+    <div class="d-flex justify-content-start mt-3">
+        <a href="{{ url_for('club.view_members', club_id=club.id) }}" class="btn" style="background-color: rgba(107, 29, 29, 0.1); color: #6b1d1d;">
+            &larr; Back to Members
+        </a>
+    </div>
 </div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(107, 29, 29, 0.05);
+    }
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .card-header {
+        font-weight: 600;
+    }
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        border-radius: 0.2rem;
+    }
+</style>
 {% endblock %}

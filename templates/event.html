@@ -28,23 +28,23 @@
     }
 
     .club-design-1 {
-        background: linear-gradient(135deg, #e0cfa2 0%, #e1c16e 100%);
+        background: linear-gradient(135deg, #BD6809 0%, #BD6809 100%);
     }
 
     .club-design-2 {
-        background: linear-gradient(135deg, #779ed1 0%, #1d4e6b 100%);
+        background: linear-gradient(135deg, #25344f 0%, #25344f 100%);
     }
 
     .club-design-3 {
-        background: linear-gradient(135deg, #493f55 0%, #2a2a5a 100%);
+        background: linear-gradient(135deg, #5F5420  0%, #5F5420 100%);
     }
 
     .club-design-4 {
-        background: linear-gradient(135deg, #466f6f 0%, #008080 100%);
+        background: linear-gradient(135deg, #e09f3e 0%, #e09f3e 100%);
     }
 
     .club-design-5 {
-        background: linear-gradient(135deg, #987c83 0%, #63323d 100%);
+        background: linear-gradient(135deg, #6f4d38 0%, #6f4d38 100%);
     }
 
 
@@ -1050,8 +1050,9 @@
                     {% for event in events %}
                     <div class="event-card {% if request.args.get('selected') == event.id|string %}selected-event{% endif %}" 
                     data-event-date="{{ event.date.strftime('%Y-%m-%d') }}"
-                    data-event-time="{{ event.time.strftime('%H:%M') }}">
-                        <div class="event-card-body">
+                    data-event-time="{{ event.time.strftime('%H:%M') }}"
+                    data-event-datetime="{{ event.date.strftime('%Y-%m-%d') }} {{ event.time.strftime('%H:%M') }}">
+                                        <div class="event-card-body">
                             {% if event.date > (now - timedelta(days=1)).date() %}
                             <div class="event-status-badge past">Past Event</div>
                         {% elif event.date > now.date() %}
@@ -1078,12 +1079,15 @@
                     <div class="event-details-card">
                         <div class="event-details-header">
                             <h3>{{ selected_event.title }}</h3>
+                            {% if is_host %}
                             <div class="dropdown event-options-dropdown" style="position: absolute; top: 10px; right: 10px;">
-                                <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="eventDropdownMenu{{ selected_event.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn btn-sm btn-light dropdown-toggle" type="button" 
+                                        id="eventDropdownMenu{{ selected_event.id }}" 
+                                        data-bs-toggle="dropdown" aria-expanded="false"
+                                        style="opacity: 1 !important;"> 
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="eventDropdownMenu{{ selected_event.id }}">
-                                    {% if is_host %}
                                     <li>
                                         <a class="dropdown-item" href="{{ url_for('club.edit_event', club_id=club.id, event_id=selected_event.id) }}">
                                             <i class="bi bi-pencil-square me-2"></i> Edit Event
@@ -1097,9 +1101,9 @@
                                             </button>
                                         </form>
                                     </li>
-                                    {% endif %}
                                 </ul>
                             </div>
+                            {% endif %}
                         </div>
                         <div class="event-details-body">
                             <div class="mb-4">
@@ -1126,45 +1130,50 @@
                                 {% set user_rsvp = selected_event.rsvps|selectattr('user_id', 'equalto', current_user.id)|first %}
                                 {% set rsvp_count = selected_event.rsvps|list|length %}
                                 
-                                <form method="POST" action="{{ url_for('attendance.mark_rsvp', event_id=selected_event.id) }}" class="d-inline-block me-3">
-                                    <button type="submit" class="btn attendance-btn">
-                                        {% if user_rsvp %}
-                                            <i></i> Cancel
-                                        {% else %}
-                                            <i></i> RSVP
+                                <div class="d-flex gap-2">  <!-- Added flex container with gap -->
+                                    <!-- RSVP Button -->
+                                    <form method="POST" action="{{ url_for('attendance.mark_rsvp', event_id=selected_event.id) }}" class="d-inline-block">
+                                        <button type="submit" class="btn attendance-btn">
+                                            {% if user_rsvp %}
+                                                <i></i> Cancel
+                                            {% else %}
+                                                <i></i> RSVP
+                                            {% endif %}
+                                        </button>
+                                    </form>
+
+                                    <!-- Attendance Button (for hosts) -->
+                                    {% if selected_event and is_host %}
+                                        {% set event_date_passed = (selected_event.date < now.date()) or 
+                                                                (selected_event.date == now.date() and selected_event.time.strftime('%H:%M') <= now.strftime('%H:%M')) %}
+                                        
+                                        {% if event_date_passed %}
+                                            {% if selected_event.attendance_started %}
+                                                <a href="{{ url_for('attendance.take_attendance', event_id=selected_event.id) }}" 
+                                                class="btn attendance-btn">
+                                                    <i class="bi bi-pencil-square me-2"></i>Update Attendance
+                                                </a>
+                                            {% else %}
+                                                <a href="{{ url_for('attendance.take_attendance', event_id=selected_event.id) }}" 
+                                                class="btn attendance-btn">
+                                                    <i class="bi bi-clipboard-check me-2"></i>Take Attendance
+                                                </a>
+                                            {% endif %}
                                         {% endif %}
-                                    </button>
+                                    {% endif %}
 
-                                </form>
-                                
-                                {% if user_rsvp %}
-                                <span class="attendance-count">
-                                    <i class="bi bi-people-fill"></i> 
-                                    {{ rsvp_count }} going
-
-                                    <button class="btn" data-bs-toggle="modal" 
-                                            data-bs-target="#attendingMembersModal-{{ selected_event.id }}">
-                                        <i class="bi bi-info-circle"></i>
-                                    </button>
-
-                                </span>
-                                {% endif %}
-                            </div>
-                            {% endif %}
-
-                            {% if selected_event and selected_event.date <= now.date() and is_host %}
-                            <div class="d-flex gap-2 mt-4">
-                                {% if selected_event.attendance_started %}
-                                <a href="{{ url_for('attendance.take_attendance', event_id=selected_event.id) }}" 
-                                   class="btn attendance-btn">
-                                    <i class="bi bi-pencil-square me-2"></i>Update Attendance
-                                </a>
-                                {% else %}
-                                <a href="{{ url_for('attendance.take_attendance', event_id=selected_event.id) }}" 
-                                   class="btn attendance-btn">
-                                    <i class="bi bi-clipboard-check me-2"></i>Take Attendance
-                                </a>
-                                {% endif %}
+                                    <!-- RSVP Count -->
+                                    {% if user_rsvp %}
+                                        <span class="attendance-count d-flex align-items-center">
+                                            <i class="bi bi-people-fill me-1"></i> 
+                                            {{ rsvp_count }} going
+                                            <button class="btn p-0 ms-1" data-bs-toggle="modal" 
+                                                    data-bs-target="#attendingMembersModal-{{ selected_event.id }}">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                        </span>
+                                    {% endif %}
+                                </div>
                             </div>
                             {% endif %}
 
@@ -1430,16 +1439,16 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="clubInfoModalLabel">Club Information</h5>
+                <h5 class="modal-title" id="clubInfoModalLabel" style="font-weight: 800;" >Club Information</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-4">
                     <h6 class="fw-bold mb-3">Invite Members</h6>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="inviteLink" 
-                               value="{{ url_for('club.join_club', _external=True) }}?join_code={{ club.join_code }}" 
-                               readonly>
+                        <input type="text" class="form-control" id="inviteLink"
+                            value="{{ url_for('club.join_club', _external=True) }}?join_code={{ club.join_code }}"
+                            readonly>
                         <button class="btn btn-outline-secondary" type="button" id="copyInviteLink">
                             <i class="bi bi-clipboard"></i> Copy
                         </button>
@@ -1605,32 +1614,36 @@
         function filterEvents(filter) {
             const now = new Date();
             const currentDate = now.toISOString().split('T')[0];
-            const currentHours = now.getHours();
-            const currentMinutes = now.getMinutes();
-            const searchTerm = searchInput.value.toLowerCase();
+            const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
             
             eventCards.forEach(card => {
                 const eventDate = card.dataset.eventDate;
                 const [eventHours, eventMinutes] = card.dataset.eventTime.split(':').map(Number);
+                const eventTime = eventHours * 60 + eventMinutes; // Event time in minutes
+                
                 let timeMatch = true;
                 
                 if (filter === 'upcoming') {
+                    // Event is upcoming if date is in future OR same date but time is in future
                     timeMatch = (eventDate > currentDate) || 
-                               (eventDate === currentDate && 
-                                (eventHours > currentHours || 
-                                (eventHours === currentHours && eventMinutes >= currentMinutes)));
-                } else if (filter === 'past') {
+                            (eventDate === currentDate && eventTime >= currentTime);
+                } 
+                else if (filter === 'past') {
+                    // Event is past if date is in past OR same date but time has passed
                     timeMatch = (eventDate < currentDate) || 
-                               (eventDate === currentDate && 
-                                (eventHours < currentHours || 
-                                (eventHours === currentHours && eventMinutes < currentMinutes)));
+                            (eventDate === currentDate && eventTime < currentTime);
+                }
+                else if (filter === 'today') {
+                    // Event is today if date matches current date
+                    timeMatch = (eventDate === currentDate);
                 }
                 
                 const eventTitle = card.querySelector('.event-title').textContent.toLowerCase();
                 const eventLocation = card.querySelector('.event-meta span:nth-child(3)').textContent.toLowerCase();
+                const searchTerm = searchInput.value.toLowerCase();
                 const searchMatch = searchTerm === '' || 
-                                   eventTitle.includes(searchTerm) || 
-                                   eventLocation.includes(searchTerm);
+                                eventTitle.includes(searchTerm) || 
+                                eventLocation.includes(searchTerm);
                 
                 card.style.display = (timeMatch && searchMatch) ? 'block' : 'none';
             });
