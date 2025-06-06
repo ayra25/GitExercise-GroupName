@@ -1189,7 +1189,7 @@
                                                 </div>
                                                 <div class="comment-user">
                                                     <div class="comment-user-name">
-                                                        {{ comment.user.first_name }}
+                                                        {{ comment.user.first_name }} {{ comment.user.last_name }}
                                                         {% if comment.user.id in host_user_ids %}
                                                             <span class="comment-user-badge host-badge">
                                                                 <i class="bi bi-star-fill"></i> Club Host

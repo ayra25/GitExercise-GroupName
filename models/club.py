@@ -12,7 +12,9 @@ class Club(db.Model):
     
     
     club_events = db.relationship('Event', back_populates='club', cascade='all, delete-orphan')
-    memberships = db.relationship('ClubMembership', back_populates='club')  
+    memberships = db.relationship('ClubMembership', back_populates='club')
+    banned_members = db.relationship('BannedMember', back_populates='club', cascade='all, delete-orphan')
+  
 
 
 class ClubMembership(db.Model):

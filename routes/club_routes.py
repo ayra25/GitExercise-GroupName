@@ -8,6 +8,7 @@ from extensions import db
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 import random
+from models.banned import BannedMember
 
 club_bp = Blueprint('club', __name__)
 
@@ -207,6 +208,12 @@ def join_club():
             if not club:
                 flash('Invalid join code', 'danger')
                 return redirect(url_for('club.join_club'))
+            
+            banned = BannedMember.query.filter_by(club_id=club.id, user_id=current_user.id).first()
+            if banned:
+                flash("You are banned from this club and cannot join.", "danger")
+                return redirect(url_for('club.join_club'))
+
                 
             if ClubMembership.query.filter_by(user_id=current_user.id, club_id=club.id).first():
                 flash('You are already a member of this club', 'info')
@@ -308,6 +315,59 @@ def promote_member(club_id):
         db.session.commit()
 
     return redirect(url_for('club.view_members', club_id=club_id))
+
+@club_bp.route('/ban-member/<int:club_id>/<int:user_id>', methods=['POST'])
+@login_required
+def ban_member(club_id, user_id):
+
+    membership = ClubMembership.query.filter_by(user_id=current_user.id, club_id=club_id, is_host=True).first()
+    if not membership:
+        flash("You are not authorized to ban members from this club.", "danger")
+        return redirect(url_for('club.dashboard'))
+
+    existing_ban = BannedMember.query.filter_by(club_id=club_id, user_id=user_id).first()
+    if existing_ban:
+        flash("User is already banned from this club.", "info")
+        return redirect(url_for('club.view_members', club_id=club_id))
+
+
+    new_ban = BannedMember(user_id=user_id, club_id=club_id)
+    db.session.add(new_ban)
+
+
+    membership_to_remove = ClubMembership.query.filter_by(user_id=user_id, club_id=club_id).first()
+    if membership_to_remove:
+        db.session.delete(membership_to_remove)
+
+    db.session.commit()
+    flash("Member has been banned from the club.", "success")
+    return redirect(url_for('club.view_members', club_id=club_id))
+
+@club_bp.route('/club/<int:club_id>/banned-members')
+@login_required
+def view_banned_members(club_id):
+    verify_host(club_id)
+
+    club = Club.query.get_or_404(club_id)
+    banned_members = BannedMember.query.filter_by(club_id=club_id).join(BannedMember.user).all()
+
+    return render_template('banned_members.html', club=club, banned_members=banned_members)
+
+@club_bp.route('/club/<int:club_id>/unban-member/<int:user_id>', methods=['POST'])
+@login_required
+def unban_member(club_id, user_id):
+    verify_host(club_id)
+
+    ban_entry = BannedMember.query.filter_by(club_id=club_id, user_id=user_id).first()
+    if not ban_entry:
+        flash("User is not banned.", "info")
+        return redirect(url_for('club.view_banned_members', club_id=club_id))
+
+    db.session.delete(ban_entry)
+    db.session.commit()
+
+    flash("User has been unbanned and can now rejoin the club.", "success")
+    return redirect(url_for('club.view_banned_members', club_id=club_id))
 
 
 @club_bp.route('/club/<int:club_id>/analytics')
