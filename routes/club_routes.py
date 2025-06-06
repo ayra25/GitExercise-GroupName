@@ -337,14 +337,17 @@ def attendance_analytics(club_id):
     ).all()
     
     member_stats = []
+    total_events = Event.query.filter_by(club_id=club_id).count()
+    
     for member in members:
-        total_events = Event.query.filter_by(club_id=club_id).count()
-        attended_events = EventAttendance.query.filter_by(
-            user_id=member.user_id,
-            attended=True
+        attended_events = db.session.query(EventAttendance).join(Event).filter(
+            Event.club_id == club_id,
+            EventAttendance.user_id == member.user_id,
+            EventAttendance.attended == True
         ).count()
+        
         member_stats.append({
-            'member': member.member, 
+            'member': member.member,
             'total_events': total_events,
             'attended_events': attended_events,
             'attendance_rate': (attended_events / total_events * 100) if total_events > 0 else 0
