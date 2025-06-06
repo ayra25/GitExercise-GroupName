@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="mb-4">Manage Members – {{ club.name }}</h2>
+<div class="container my-4">
+    <h2 class="text-center mb-4" style="font-weight: 800;">Manage Members – {{ club.name }}</h2>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -15,67 +15,103 @@
     {% endif %}
     {% endwith %}
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Joined</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for m in members %}
-            <tr>
-                <td>{{ m.member.first_name }}</td>
-                <td>{{ m.member.last_name }}</td>
-                <td>{{ m.member.email }}</td>
-                <td>
-                    {% if m.is_host %}
-                    <span class="badge bg-primary">Host</span>
-                    {% else %}
-                    <span class="badge bg-secondary">Member</span>
-                    {% endif %}
-                </td>
-                <td>{{ m.joined_at.strftime('%Y-%m-%d') }}</td>
-                <td>
-                    {% if not m.is_host %}
-                    <form method="POST" action="{{ url_for('club.promote_member', club_id=club.id) }}" class="d-inline me-2">
-                        <input type="hidden" name="member_id" value="{{ m.user_id }}">
-                        <button type="submit" class="btn btn-warning btn-sm"
-                                onclick="return confirm('Promote this member to host?')">
-                            <i class="bi bi-star-fill"></i> Promote
-                        </button>
-                    </form>
-                    <form method="POST" action="{{ url_for('club.remove_member', club_id=club.id) }}" class="d-inline">
-                        <input type="hidden" name="member_id" value="{{ m.user_id }}">
-                        <button type="submit" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Are you sure you want to remove this member?')">
-                            <i class="bi bi-trash"></i> Remove
-                        </button>
-                    </form>
-                    <form method="POST" action="{{ url_for('club.ban_member', club_id=club.id, user_id=m.user_id) }}" class="d-inline">
-                        <button type="submit" class="btn btn-outline-danger btn-sm"
-                                onclick="return confirm('Are you sure you want to ban this member? This will remove them from the club.')">
-                            <i class="bi bi-slash-circle"></i> Ban
-                        </button>
-                    </form>                    
-                    {% else %}
-                    <span class="text-muted">N/A</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="card shadow mb-5" style="border-color: #6b1d1d;">
+        <div class="card-header" style="background-color: #6b1d1d; color: white;">
+            <h3 class="mb-0">Club Members</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="color: #6b1d1d;">First Name</th>
+                            <th style="color: #6b1d1d;">Last Name</th>
+                            <th style="color: #6b1d1d;">Email</th>
+                            <th style="color: #6b1d1d;">Role</th>
+                            <th style="color: #6b1d1d;">Joined</th>
+                            <th style="color: #6b1d1d;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in members %}
+                        <tr>
+                            <td>{{ m.member.first_name }}</td>
+                            <td>{{ m.member.last_name }}</td>
+                            <td>{{ m.member.email }}</td>
+                            <td>
+                                {% if m.is_host %}
+                                <span class="badge" style="background-color: #6b1d1d; color: white;">Host</span>
+                                {% else %}
+                                <span class="badge" style="background-color: rgba(107, 29, 29, 0.1); color: #6b1d1d;">Member</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ m.joined_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                {% if not m.is_host %}
+                                <form method="POST" action="{{ url_for('club.promote_member', club_id=club.id) }}" class="d-inline me-2">
+                                    <input type="hidden" name="member_id" value="{{ m.user_id }}">
+                                    <button type="submit" class="btn btn-sm" style="background-color: rgba(107, 29, 29, 0.1); color: #6b1d1d;"
+                                            onclick="return confirm('Promote this member to host?')">
+                                        <i class="bi bi-star-fill"></i> Promote
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ url_for('club.remove_member', club_id=club.id) }}" class="d-inline me-2">
+                                    <input type="hidden" name="member_id" value="{{ m.user_id }}">
+                                    <button type="submit" class="btn btn-sm" style="background-color: rgba(107, 29, 29, 0.1); color: #6b1d1d;"
+                                            onclick="return confirm('Are you sure you want to remove this member?')">
+                                        <i class="bi bi-trash"></i> Remove
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ url_for('club.ban_member', club_id=club.id, user_id=m.user_id) }}" class="d-inline">
+                                    <button type="submit" class="btn btn-sm" style="background-color: rgba(255, 0, 0, 0.1); color: #dc3545;"
+                                            onclick="return confirm('Are you sure you want to ban this member? This will remove them from the club.')">
+                                        <i class="bi bi-slash-circle"></i> Ban
+                                    </button>
+                                </form>                    
+                                {% else %}
+                                <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-    <a href="{{ url_for('club.dashboard') }}" class="btn btn-secondary mt-3">
-        &larr; Back to Dashboard
-    </a>
-    <a href="{{ url_for('club.view_banned_members', club_id=club.id) }}" class="btn btn-secondary mt-3">
-        View Banned Members
-     </a>
+    <div class="d-flex justify-content-between">
+        <a href="{{ url_for('club.dashboard') }}" class="btn" style="background-color: rgba(107, 29, 29, 0.1); color: #6b1d1d;">
+            &larr; Back to Dashboard
+        </a>
+        <a href="{{ url_for('club.view_banned_members', club_id=club.id) }}" class="btn" style="background-color: rgba(107, 29, 29, 0.1); color: #6b1d1d;">
+            View Banned Members
+        </a>
+    </div>
 </div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(107, 29, 29, 0.05);
+    }
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .card-header {
+        font-weight: 600;
+    }
+    .badge {
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-weight: 500;
+        display: inline-block;
+        text-align: center;
+    }
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        border-radius: 0.2rem;
+    }
+</style>
 {% endblock %}

@@ -1,54 +1,98 @@
-
 {% extends 'base.html' %}
 
 {% block content %}
 <div class="container my-4">
-  <h2>Attendance Analytics for {{ club.name }}</h2>
+  <h2 class="text-center mb-4" style="font-weight: 800;">Attendance Analytics for {{ club.name }}</h2>
   
-  <h3 class="mt-4">Event Statistics</h3>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Event</th>
-        <th>Date</th>
-        <th>Participants</th>
-        <th>Attended</th>
-        <th>Rate</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for stat in event_stats %}
-      <tr>
-        <td>{{ stat.event.title }}</td>
-        <td>{{ stat.event.date.strftime('%Y-%m-%d') }}</td>
-        <td>{{ stat.total_participants }}</td>
-        <td>{{ stat.attended }}</td>
-        <td>{{ "%.1f"|format(stat.attendance_rate) }}%</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="card shadow mb-5" style="border-color: #6b1d1d;">
+    <div class="card-header" style="background-color: #6b1d1d; color: white;">
+      <h3 class="mb-0">Event Statistics</h3>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th style="color: #6b1d1d;">Event</th>
+              <th style="color: #6b1d1d;">Date</th>
+              <th style="color: #6b1d1d;">Participants</th>
+              <th style="color: #6b1d1d;">Attended</th>
+              <th style="color: #6b1d1d;">Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for stat in event_stats %}
+            <tr>
+              <td>{{ stat.event.title }}</td>
+              <td>{{ stat.event.date.strftime('%Y-%m-%d') }}</td>
+              <td>{{ stat.total_participants }}</td>
+              <td>{{ stat.attended }}</td>
+              <td>
+                <span class="badge" style="background-color: rgba(107, 29, 29, 0.1); color: #6b1d1d;">
+                  {{ "%.1f"|format(stat.attendance_rate) }}%
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
   
-  <h3 class="mt-4">Member Statistics</h3>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Member</th>
-        <th>Events</th>
-        <th>Attended</th>
-        <th>Rate</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for stat in member_stats %}
-      <tr>
-        <td>{{ stat.member.first_name }} {{ stat.member.last_name }}</td>
-        <td>{{ stat.total_events }}</td>
-        <td>{{ stat.attended_events }}</td>
-        <td>{{ "%.1f"|format(stat.attendance_rate) }}%</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="card shadow" style="border-color: #6b1d1d;">
+    <div class="card-header" style="background-color: #6b1d1d; color: white;">
+      <h3 class="mb-0">Member Statistics</h3>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th style="color: #6b1d1d;">Member</th>
+              <th style="color: #6b1d1d;">Events</th>
+              <th style="color: #6b1d1d;">Attended</th>
+              <th style="color: #6b1d1d;">Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for stat in member_stats %}
+            <tr>
+              <td>{{ stat.member.first_name }} {{ stat.member.last_name }}</td>
+              <td>{{ stat.total_events }}</td>
+              <td>{{ stat.attended_events }}</td>
+              <td>
+                <span class="badge" style="background-color: rgba(107, 29, 29, {{ stat.attendance_rate/100 }}); color: {% if stat.attendance_rate > 50 %}white{% else %}#6b1d1d{% endif %};">
+                  {{ "%.1f"|format(stat.attendance_rate) }}%
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
+
+<style>
+  .table-hover tbody tr:hover {
+    background-color: rgba(107, 29, 29, 0.05);
+  }
+  .card {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .card-header {
+    font-weight: 600;
+  }
+  .badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+    min-width: 60px;
+    display: inline-block;
+    text-align: center;
+  }
+</style>
 {% endblock %}
