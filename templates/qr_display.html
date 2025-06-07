@@ -3,17 +3,19 @@
 {% block content %}
 <div class="container text-center my-5">
   <h3>QR Code for {{ event.title }}</h3>
+  
+  <!-- Add date and time display here -->
+  <h5 class="mb-4">{{ event.date.strftime('%A, %B %d, %Y') }}</h5>
+  
   <p class="text-muted">
     QR will update every 30 seconds — 
     <span id="countdown">30</span>s left
   </p>
 
-  
   <div class="d-flex justify-content-center my-4">
     <img id="qr-code" src="{{ url_for('attendance.qr_image', event_id=event.id) }}" alt="QR Code" class="img-fluid" width="300">
   </div>
 
-  
   <div class="d-flex justify-content-center">
     <a href="{{ url_for('attendance.take_attendance', event_id=event.id) }}" class="btn btn-secondary">
       Back to Attendance
