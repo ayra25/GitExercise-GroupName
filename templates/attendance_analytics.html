@@ -3,7 +3,8 @@
 {% block content %}
 <div class="container my-4">
   <h2 class="text-center mb-4" style="font-weight: 800;">Attendance Analytics for {{ club.name }}</h2>
-  
+
+  <!-- Your Existing Event Statistics Card -->
   <div class="card shadow mb-5" style="border-color: #6b1d1d;">
     <div class="card-header" style="background-color: #6b1d1d; color: white;">
       <h3 class="mb-0">Event Statistics</h3>
@@ -40,7 +41,8 @@
     </div>
   </div>
   
-  <div class="card shadow" style="border-color: #6b1d1d;">
+  <!-- Your Existing Member Statistics Card -->
+  <div class="card shadow mb-5" style="border-color: #6b1d1d;">
     <div class="card-header" style="background-color: #6b1d1d; color: white;">
       <h3 class="mb-0">Member Statistics</h3>
     </div>
@@ -73,8 +75,91 @@
       </div>
     </div>
   </div>
+
+  <!-- Moved Monthly Attendance Graph to Bottom -->
+  <div class="card shadow" style="border-color: #6b1d1d;">
+    <div class="card-header" style="background-color: #6b1d1d; color: white;">
+      <h3 class="mb-0">Monthly Attendance Trends</h3>
+    </div>
+    <div class="card-body">
+      {% if monthly_stats %}
+        <canvas id="attendanceChart" height="75"></canvas> <!-- Reduced height -->
+      {% else %}
+        <div class="alert alert-info">
+          No monthly attendance data available.
+        </div>
+      {% endif %}
+    </div>
+  </div>
 </div>
 
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>   
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    {% if monthly_stats %}
+      const ctx = document.getElementById('attendanceChart').getContext('2d');
+      const monthlyData = {{ monthly_stats|tojson|safe }};
+      
+      const labels = monthlyData.map(item => item.month);
+      const rates = monthlyData.map(item => item.attendance_rate);
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Attendance Rate',
+            data: rates,
+            borderColor: '#6b1d1d',
+            backgroundColor: 'rgba(107, 29, 29, 0.1)',
+            tension: 0.3,
+            fill: true,
+            pointBackgroundColor: '#6b1d1d',
+            pointRadius: 5,
+            pointHoverRadius: 7
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.parsed.y.toFixed(1) + '%';
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                callback: function(value) {
+                  return value + '%';
+                }
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+    {% endif %}
+  });
+</script>
+
+<!-- Styles -->
 <style>
   .table-hover tbody tr:hover {
     background-color: rgba(107, 29, 29, 0.05);
