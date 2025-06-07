@@ -81,9 +81,10 @@
     </div>
 
     <div class="d-flex justify-content-between">
-        <a href="{{ url_for('club.dashboard') }}" class="btn" style="background-color: rgba(107, 29, 29, 0.1); color: #6b1d1d;">
-            &larr; Back to Dashboard
-        </a>
+    <a href="{{ url_for('event.events_page', club_id=club.id) }}?selected=none" class="btn" style="background-color: rgba(107, 29, 29, 0.1); color: #6b1d1d;">
+        &larr; Back to Events Dashboard 
+    </a>
+
         <a href="{{ url_for('club.view_banned_members', club_id=club.id) }}" class="btn" style="background-color: rgba(107, 29, 29, 0.1); color: #6b1d1d;">
             View Banned Members
         </a>
