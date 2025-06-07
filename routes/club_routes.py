@@ -415,13 +415,16 @@ def attendance_analytics(club_id):
     
     club = Club.query.get_or_404(club_id)
     
+    # Get all events with their attendances
     events = Event.query.filter_by(club_id=club_id).options(
         db.joinedload(Event.attendances)
-    ).all()
+    ).order_by(Event.date).all()
     
+    # Calculate event statistics
     event_stats = []
+    total_members = ClubMembership.query.filter_by(club_id=club_id).count()
+    
     for event in events:
-        total_members = ClubMembership.query.filter_by(club_id=club_id).count()
         attended = sum(1 for a in event.attendances if a.attended)
         event_stats.append({
             'event': event,
@@ -430,12 +433,13 @@ def attendance_analytics(club_id):
             'attendance_rate': (attended / total_members * 100) if total_members > 0 else 0
         })
     
+    # Calculate member statistics
     members = ClubMembership.query.filter_by(club_id=club_id).options(
         db.joinedload(ClubMembership.member)
     ).all()
     
     member_stats = []
-    total_events = Event.query.filter_by(club_id=club_id).count()
+    total_events = len(events)
     
     for member in members:
         attended_events = db.session.query(EventAttendance).join(Event).filter(
@@ -451,10 +455,40 @@ def attendance_analytics(club_id):
             'attendance_rate': (attended_events / total_events * 100) if total_events > 0 else 0
         })
     
+    # Calculate monthly statistics
+    monthly_stats = []
+    monthly_data = {}
+    
+    for event in events:
+        month_year = event.date.strftime("%b %Y")
+        attended = sum(1 for a in event.attendances if a.attended)
+        
+        if month_year not in monthly_data:
+            monthly_data[month_year] = {
+                'total_events': 0,
+                'total_participants': 0,
+                'total_attended': 0
+            }
+        
+        monthly_data[month_year]['total_events'] += 1
+        monthly_data[month_year]['total_participants'] += total_members
+        monthly_data[month_year]['total_attended'] += attended
+    
+    # Convert to the format needed for the chart
+    for month, data in monthly_data.items():
+        if data['total_participants'] > 0:
+            rate = (data['total_attended'] / data['total_participants']) * 100
+            monthly_stats.append({
+                'month': month,
+                'attendance_rate': round(rate, 1),
+                'events_count': data['total_events']
+            })
+    
     return render_template('attendance_analytics.html',
         club=club,
         event_stats=event_stats,
-        member_stats=member_stats
+        member_stats=member_stats,
+        monthly_stats=monthly_stats  # Add this line to pass the monthly data
     )
 
 @club_bp.route('/my-events')
