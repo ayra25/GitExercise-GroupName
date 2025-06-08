@@ -8,8 +8,27 @@ from models.comment import EventComment
 from routes.club_routes import create_notification
 from extensions import db
 from datetime import datetime, timedelta
+import pytz 
 
 event_bp = Blueprint('event', __name__)
+
+APP_TIMEZONE = 'Asia/Kuala_Lumpur'
+
+def get_current_time():
+    """Get current time in the configured timezone"""
+    utc_now = datetime.utcnow()
+    tz = pytz.timezone(APP_TIMEZONE)
+    return utc_now.replace(tzinfo=pytz.utc).astimezone(tz)
+
+def format_datetime(dt, timezone=None):
+    """Format datetime in the specified timezone"""
+    if dt is None:
+        return None
+    if timezone is None:
+        timezone = APP_TIMEZONE
+    if dt.tzinfo is None:
+        dt = pytz.utc.localize(dt)
+    return dt.astimezone(pytz.timezone(timezone))
 
 @event_bp.route('/event/<int:club_id>')
 @login_required
@@ -29,6 +48,12 @@ def events_page(club_id):
     events = Event.query.options(
         db.joinedload(Event.comments).joinedload(EventComment.user)
     ).filter_by(club_id=club_id).order_by(Event.date.desc()).all()
+
+    # Convert event times to local timezone
+    for event in events:
+        if event.date and event.time:
+            event_datetime = datetime.combine(event.date, event.time)
+            event.formatted_datetime = format_datetime(event_datetime)
 
     announcements = Announcement.query.options(
         db.joinedload(Announcement.poll_options).joinedload(PollOption.votes)
@@ -98,7 +123,8 @@ def events_page(club_id):
         announcements=announcements_data,
         selected_event=selected_event,
         is_host=membership.is_host,
-        now=datetime.utcnow(),
+        now=get_current_time(),  # Use our timezone-aware function
+        datetime=datetime,
         timedelta=timedelta,
         membership=membership,
         host_user_ids=host_user_ids,
