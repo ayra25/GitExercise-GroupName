@@ -1053,13 +1053,13 @@
                     data-event-time="{{ event.time.strftime('%H:%M') }}"
                     data-event-datetime="{{ event.date.strftime('%Y-%m-%d') }} {{ event.time.strftime('%H:%M') }}">
                                         <div class="event-card-body">
-                            {% if event.date > (now - timedelta(days=1)).date() %}
-                            <div class="event-status-badge past">Past Event</div>
-                        {% elif event.date > now.date() %}
-                            <div class="event-status-badge upcoming">Upcoming</div>
-                        {% else %}
-                            <div class="event-status-badge">Today</div>
-                        {% endif %}
+                            {% if event.date < now.date() or (event.date == now.date() and event.time.strftime('%H:%M') < now.strftime('%H:%M')) %}
+                                <div class="event-status-badge past">Past Event</div>
+                            {% elif event.date > now.date() or (event.date == now.date() and event.time.strftime('%H:%M') > now.strftime('%H:%M')) %}
+                                <div class="event-status-badge upcoming">Upcoming</div>
+                            {% else %}
+                                <div class="event-status-badge">Happening Now</div>
+                            {% endif %}
                             <a href="{{ url_for('event.events_page', club_id=club.id, selected=event.id) }}" style="text-decoration: none; color: inherit;">
                                 <h5 class="event-title">{{ event.title }}</h5>
                                 <div class="event-meta">
@@ -1109,7 +1109,7 @@
                             <div class="mb-4">
                                 <div class="detail-label">Date & Time</div>
                                 <div class="detail-value">
-                                    {{ selected_event.date.strftime('%A, %B %d, %Y') }} at {{ selected_event.time.strftime('%I:%M %p') }}
+                                    {{ selected_event.date.strftime('%A, %B %d, %Y') }} at {{ selected_event.time.strftime('%I:%M %p') }} (UTC+8)
                                 </div>
                                 
                                 <div class="detail-label">Location</div>
@@ -1130,19 +1130,22 @@
                                 {% set user_rsvp = selected_event.rsvps|selectattr('user_id', 'equalto', current_user.id)|first %}
                                 {% set rsvp_count = selected_event.rsvps|list|length %}
                                 
-                                <div class="d-flex gap-2">  <!-- Added flex container with gap -->
-                                    <!-- RSVP Button -->
-                                    <form method="POST" action="{{ url_for('attendance.mark_rsvp', event_id=selected_event.id) }}" class="d-inline-block">
-                                        <button type="submit" class="btn attendance-btn">
-                                            {% if user_rsvp %}
-                                                <i></i> Cancel
-                                            {% else %}
-                                                <i></i> RSVP
-                                            {% endif %}
-                                        </button>
-                                    </form>
+                                <div class="d-flex gap-2">
+                                    <!-- RSVP Button - only shows if event is in the future -->
+                                    {% if selected_event.date > now.date() or 
+                                        (selected_event.date == now.date() and selected_event.time.strftime('%H:%M') > now.strftime('%H:%M')) %}
+                                        <form method="POST" action="{{ url_for('attendance.mark_rsvp', event_id=selected_event.id) }}" class="d-inline-block">
+                                            <button type="submit" class="btn attendance-btn">
+                                                {% if user_rsvp %}
+                                                    <i class="bi bi-x-circle me-2"></i> Cancel RSVP
+                                                {% else %}
+                                                    <i class="bi bi-check-circle me-2"></i> RSVP
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                    {% endif %}
 
-                                    <!-- Attendance Button (for hosts) -->
+                                    <!-- Attendance Button (for hosts) - only shows if event is ongoing or past -->
                                     {% if selected_event and is_host %}
                                         {% set event_date_passed = (selected_event.date < now.date()) or 
                                                                 (selected_event.date == now.date() and selected_event.time.strftime('%H:%M') <= now.strftime('%H:%M')) %}
@@ -1151,12 +1154,12 @@
                                             {% if selected_event.attendance_started %}
                                                 <a href="{{ url_for('attendance.take_attendance', event_id=selected_event.id) }}" 
                                                 class="btn attendance-btn">
-                                                    <i class="bi bi-pencil-square me-2"></i>Update Attendance
+                                                    <i class="bi bi-pencil-square me-2"></i> Update Attendance
                                                 </a>
                                             {% else %}
                                                 <a href="{{ url_for('attendance.take_attendance', event_id=selected_event.id) }}" 
                                                 class="btn attendance-btn">
-                                                    <i class="bi bi-clipboard-check me-2"></i>Take Attendance
+                                                    <i class="bi bi-clipboard-check me-2"></i> Take Attendance
                                                 </a>
                                             {% endif %}
                                         {% endif %}
