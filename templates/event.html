@@ -1250,7 +1250,12 @@
                                                     
                                                     <div class="comment-header">
                                                         <div class="comment-avatar">
-                                                            {{ reply.user.first_name[0]|upper }}
+                                                            {% if reply.user.profile_pic %}
+                                                                <img src="{{ url_for('static', filename='profile_pics/' + reply.user.profile_pic) }}"
+                                                                    alt="Profile Picture" width="36" height="36" style="border-radius: 50%; object-fit: cover;">
+                                                            {% else %}
+                                                                <span class="initials">{{ reply.user.first_name[0]|upper }}</span>
+                                                            {% endif %}
                                                         </div>
                                                         <div class="comment-user">
                                                             <div class="comment-user-name">
@@ -1269,7 +1274,6 @@
                                                     <div class="comment-content">
                                                         {{ reply.content }}
                                                     </div>
-                                                    
                                                 </div>
                                             </div>
                                             {% endfor %}

@@ -1,31 +1,100 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
 <style>
-    .delete-confirmation {
+    :root {
+        --maroon: #6b1d1d;
+        --maroon-light: #8a2a2a;
+        --light-gray: #f8f9fa;
+        --medium-gray: #e9ecef;
+        --dark-gray: #495057;
+    }
+
+    .delete-confirmation-container {
         max-width: 600px;
         margin: 2rem auto;
+        padding: 0 1rem;
     }
 
-    .delete-confirmation .card-header {
-        background-color: #dc3545;
+    .delete-confirmation-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .delete-confirmation-header {
+        background-color: var(--maroon);
         color: white;
+        padding: 1.5rem;
+    }
+
+    .delete-confirmation-header h4 {
+        font-weight: 800;
+    }
+
+    .delete-confirmation-body {
+        padding: 2rem;
+        background-color: white;
+    }
+
+    .form-label {
         font-weight: 600;
+        color: var(--maroon);
+        margin-bottom: 0.5rem;
     }
 
-    .delete-confirmation .alert {
-        border-left: 4px solid #dc3545;
+    .form-control {
+        border: 1px solid var(--medium-gray);
+        border-radius: 5px;
+        padding: 0.75rem;
+        margin-bottom: 1.25rem;
     }
 
-    .delete-confirmation .btn-danger {
+    .form-control:focus {
+        border-color: var(--maroon);
+        box-shadow: 0 0 0 0.25rem rgba(107, 29, 29, 0.25);
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .btn-maroon {
+        background-color: var(--maroon);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-maroon:hover {
+        background-color: var(--maroon-light);
+        color: white;
+    }
+
+    .btn-danger {
         background-color: #dc3545;
         border-color: #dc3545;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
     }
 
-    .delete-confirmation .btn-danger:hover {
+    .btn-danger:hover {
         background-color: #bb2d3b;
-        border-color: #b02a37;
+        color: white;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
     }
 
     .error-message {
@@ -33,52 +102,49 @@
         font-size: 0.875em;
         margin-top: 0.25rem;
     }
+
     .is-invalid {
         border-color: #dc3545;
     }
 </style>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="card shadow">
-                <div class="card-header bg-danger text-white">
-                    <h4 class="mb-0">Delete Club: {{ club.name }}</h4>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        <strong>Warning:</strong> This action cannot be undone. All club data including events, announcements, and member records will be permanently deleted.
-                    </div>
-                    
-                    <form method="POST" action="{{ url_for('club.delete_club', club_id=club.id) }}">
-                        
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Enter your password to confirm</label>
-                            <input type="password" 
-                                class="form-control {% if password_error %}is-invalid{% endif %}" 
-                                id="password" 
-                                name="password" 
-                                required>
-                            {% if password_error %}
-                            <div class="error-message">
-                                Incorrect password. Please try again.
-                            </div>
-                            {% endif %}
-                            <small class="text-muted">For security, please re-enter your password.</small>
-                        </div>
-                        
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ url_for('club.dashboard') }}" class="btn btn-secondary">
-                                <i class="bi bi-x-lg me-1"></i> Cancel
-                            </a>
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-trash-fill me-1"></i> Permanently Delete Club
-                            </button>
-                        </div>
-                    </form>
-                </div>
+<div class="delete-confirmation-container">
+    <div class="delete-confirmation-card">
+        <div class="delete-confirmation-header">
+            <h4 class="mb-0">Delete Club: {{ club.name }}</h4>
+        </div>
+
+        <div class="delete-confirmation-body">
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>Warning:</strong> This action cannot be undone. All club data including events, announcements, and member records will be permanently deleted.
             </div>
+
+            <form method="POST" action="{{ url_for('club.delete_club', club_id=club.id) }}">
+                <div class="mb-3">
+                    <label for="password" class="form-label">Enter your password to confirm</label>
+                    <input type="password"
+                           class="form-control {% if password_error %}is-invalid{% endif %}"
+                           id="password"
+                           name="password"
+                           required>
+                    {% if password_error %}
+                    <div class="error-message">
+                        Incorrect password. Please try again.
+                    </div>
+                    {% endif %}
+                    <small class="text-muted">For security, please re-enter your password.</small>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3">
+                    <a href="{{ url_for('club.dashboard') }}" class="btn btn-outline-maroon">
+                        <i class="bi bi-x-lg me-1"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash-fill me-1"></i> Permanently Delete Club
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
