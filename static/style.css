@@ -58,7 +58,7 @@ body {
   transform: translateX(-50%);
 }
 
-.nav-link:hover, 
+.nav-link:hover,
 .nav-link:focus {
   color: var(--primary-color);
 }
@@ -155,17 +155,23 @@ body {
     color: #212529;
 }
 
+.navbar-nav .nav-link {
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+}
+
 
 @media (max-width: 992px) {
   .navbar-collapse {
       padding-top: 1rem;
   }
-  
+
   .nav-link {
       margin: 0.2rem 0;
       padding: 0.5rem 0;
   }
-  
+
   .d-flex {
       margin-top: 1rem;
       padding-top: 1rem;

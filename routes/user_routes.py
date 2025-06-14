@@ -50,8 +50,7 @@ def logout():
 def signup():
     if request.method == 'POST':
         email = request.form.get('email')
-        first_name = request.form.get('firstName')
-        last_name = request.form.get('lastName')
+        full_name = request.form.get('FullName')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
         user = User.query.filter_by(email=email).first()
@@ -59,8 +58,8 @@ def signup():
             flash('Email already exists.', category='error')
         elif len(email) < 4:
             flash('Email must be greater than 3 characters.', category='error')
-        elif len(first_name) < 2:
-            flash('First name must be greater than 1 character.', category='error')
+        elif len(full_name) < 2:
+            flash('Full name must be greater than 1 character.', category='error')
         elif password1 != password2:
             flash('Passwords don\'t match.', category='error')
         elif len(password1) < 7:
@@ -69,7 +68,7 @@ def signup():
 
             hashed_password = bcrypt.hashpw(password1.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-            new_user = User(email=email, first_name=first_name, last_name=last_name, password=hashed_password)
+            new_user = User(email=email, full_name=full_name, password=hashed_password)
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
@@ -120,16 +119,14 @@ def reset_password_token(token):
 @login_required
 def profile():
     if request.method == 'POST':
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
+        full_name = request.form.get('full_name')
         email = request.form.get('email')
 
         current_password = request.form.get('current_password')
         new_password = request.form.get('new_password')
         confirm_password = request.form.get('confirm_password')
 
-        current_user.first_name = first_name
-        current_user.last_name = last_name
+        current_user.full_name = full_name
         current_user.email = email
 
         if current_password and new_password:

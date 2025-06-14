@@ -15,19 +15,19 @@
         --box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         --transition: all 0.3s ease;
     }
-    
+
     .dashboard-container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 2rem;
     }
-    
+
     .welcome-header {
         margin-bottom: 3rem;
         position: relative;
         padding-bottom: 1.5rem;
     }
-    
+
     .welcome-header::after {
         content: '';
         position: absolute;
@@ -38,7 +38,7 @@
         background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
         border-radius: 2px;
     }
-    
+
     .welcome-header h1 {
         font-size: 2.5rem;
         font-weight: 800;
@@ -46,20 +46,20 @@
         margin-bottom: 0.5rem;
         line-height: 1.2;
     }
-    
+
     .welcome-header p {
         font-size: 1.2rem;
         color: var(--text-light);
         max-width: 600px;
     }
-    
+
     .section-header {
         margin-bottom: 2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
-    
+
     .section-title {
         font-size: 1.6rem;
         font-weight: 700;
@@ -68,7 +68,7 @@
         position: relative;
         padding-left: 1.5rem;
     }
-    
+
     .section-title::before {
         content: '';
         position: absolute;
@@ -80,14 +80,14 @@
         background: var(--primary-color);
         border-radius: 3px;
     }
-    
+
     .view-all {
         font-size: 0.9rem;
         color: var(--secondary-color);
         text-decoration: none;
         transition: var(--transition);
     }
-    
+
     .view-all:hover {
         color: var(--secondary-light);
         text-decoration: underline;
@@ -99,7 +99,7 @@
         gap: 20px;
         margin-bottom: 40px;
     }
-    
+
     .club-card {
         background: white;
         border-radius: var(--border-radius);
@@ -187,37 +187,37 @@
 .club-menu.active .club-menu-dropdown {
     display: block;
 }
-    
+
     .club-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 5px 15px rgba(0,0,0,0.15);
     }
-    
+
     .club-card-header {
         background-color: var(--primary-color);
         color: white;
         padding: 15px;
     }
-    
+
     .club-card-body {
         padding: 15px;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
     }
-    
+
     .club-name {
         font-weight: 600;
         margin-bottom: 5px;
         color: white;
     }
-    
+
     .club-description {
         font-size: 0.9rem;
         color: rgba(255,255,255,0.8);
         margin-bottom: 10px;
     }
-    
+
     .club-meta {
         margin-top: auto;
         font-size: 0.85rem;
@@ -225,7 +225,7 @@
         display: flex;
         justify-content: space-between;
     }
-    
+
     .club-link {
         position: absolute;
         top: 0;
@@ -234,14 +234,14 @@
         height: 100%;
         z-index: 1;
     }
-    
+
     .events-container {
         display: grid;
         grid-template-columns: 1fr 350px;
         gap: 2rem;
         margin-bottom: 3rem;
     }
-    
+
     .event-section {
         background: white;
         border-radius: var(--border-radius);
@@ -250,7 +250,7 @@
         margin-bottom: 2rem;
         border: 1px solid rgba(0,0,0,0.05);
     }
-    
+
     .event-item {
         padding: 1rem 0;
         border-bottom: 1px solid #eee;
@@ -258,16 +258,16 @@
         align-items: flex-start;
         transition: var(--transition);
     }
-    
+
     .event-item:hover {
         background: var(--lighter-gray);
         transform: translateX(4px);
     }
-    
+
     .event-item:last-child {
         border-bottom: none;
     }
-    
+
     .event-icon {
         margin-right: 1rem;
         color: var(--primary-color);
@@ -275,17 +275,17 @@
         min-width: 24px;
         margin-top: 2px;
     }
-    
+
     .event-content {
         flex-grow: 1;
     }
-    
+
     .event-title {
         font-weight: 600;
         margin-bottom: 0.25rem;
         color: var(--text-color);
     }
-    
+
     .event-meta {
         font-size: 0.9rem;
         color: var(--text-light);
@@ -293,7 +293,7 @@
         flex-wrap: wrap;
         gap: 0.75rem;
     }
-    
+
     .attendance-badge {
         display: inline-flex;
         align-items: center;
@@ -305,12 +305,12 @@
         margin-top: 0.5rem;
         font-weight: 500;
     }
-    
+
     .attendance-badge i {
         margin-right: 0.35rem;
         font-size: 0.9rem;
     }
-    
+
     .calendar-container {
         background: white;
         border-radius: var(--border-radius);
@@ -321,23 +321,23 @@
         width: 100%;
         overflow: hidden;
     }
-    
+
     .calendar-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-bottom: 1.5rem;
     }
-    
+
     .calendar-header .section-title {
         font-size: 1.2rem;
         padding-left: 0;
     }
-    
+
     .calendar-header .section-title::before {
         display: none;
     }
-    
+
     .month-nav {
         width: 32px;
         height: 32px;
@@ -347,7 +347,7 @@
         padding: 0;
         margin-left: 0.5rem;
     }
-    
+
     .calendar-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
@@ -355,7 +355,7 @@
         width: 100%;
         grid-template-columns: repeat(7, minmax(0, 1fr));
     }
-    
+
     .calendar-day {
         text-align: center;
         padding: 0.5rem;
@@ -364,7 +364,7 @@
         color: var(--text-light);
         text-transform: uppercase;
     }
-    
+
     .calendar-date {
     text-align: center;
     padding: 0.5rem;
@@ -377,29 +377,29 @@
     align-items: center;
     justify-content: center;
     font-size: 0.9rem;
-    min-width: 0; 
-    word-break: break-word; 
+    min-width: 0;
+    word-break: break-word;
 }
-    
+
     .calendar-date:hover {
         background: var(--lighter-gray);
     }
-    
+
     .calendar-date.has-event {
         font-weight: 600;
     }
-    
+
     .calendar-date.today {
         background: var(--primary-color);
         color: white;
         font-weight: 700;
     }
-    
+
     .calendar-date.other-month {
         color: #ccc;
         opacity: 0.7;
     }
-    
+
     .event-indicator {
         width: 6px;
         height: 6px;
@@ -407,11 +407,11 @@
         background: var(--secondary-color);
         margin-top: 0.25rem;
     }
-    
+
     .event-indicator.other-month {
         background-color: #ccc;
     }
-    
+
 .empty-state {
     text-align: center;
     padding: 3rem 2rem;
@@ -469,7 +469,7 @@
 .empty-state {
     animation: fadeIn 0.6s ease-out forwards;
 }
-    
+
     .fab-container {
         position: fixed;
         bottom: 2rem;
@@ -480,7 +480,7 @@
         gap: 1rem;
         z-index: 1000;
     }
-    
+
     .fab {
         width: 56px;
         height: 56px;
@@ -497,28 +497,28 @@
         border: none;
         cursor: pointer;
     }
-    
+
     .fab:hover {
         background: var(--primary-light);
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(107, 29, 29, 0.4);
     }
-    
+
     /* Announcement styles */
     .announcement-item {
         padding: 1rem 0;
         border-bottom: 1px solid #eee;
         transition: var(--transition);
     }
-    
+
     .announcement-item:hover {
         background: var(--lighter-gray);
     }
-    
+
     .announcement-item:last-child {
         border-bottom: none;
     }
-    
+
     .announcement-title {
         font-weight: 600;
         margin-bottom: 0.5rem;
@@ -526,7 +526,7 @@
         display: flex;
         align-items: center;
     }
-    
+
     .announcement-club {
         display: inline-block;
         background: rgba(107, 29, 29, 0.1);
@@ -536,63 +536,63 @@
         font-size: 0.8rem;
         margin-left: 0.5rem;
     }
-    
+
     .announcement-content {
         font-size: 0.95rem;
         color: var(--text-light);
         margin-bottom: 0.5rem;
     }
-    
+
     .announcement-meta {
         font-size: 0.8rem;
         color: #999;
         display: flex;
         align-items: center;
     }
-    
+
     .announcement-icon {
         margin-right: 0.5rem;
         color: var(--primary-color);
     }
-    
+
     @media (max-width: 992px) {
         .dashboard-container {
             padding: 1.5rem;
         }
-        
+
         .clubs-grid {
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         }
     }
-    
+
     @media (max-width: 768px) {
         .events-container {
             grid-template-columns: 1fr;
         }
-        
+
         .welcome-header h1 {
             font-size: 1.8rem;
         }
     }
-    
+
     @media (max-width: 576px) {
         .dashboard-container {
             padding: 1rem;
         }
-        
+
         .club-card-header {
             min-height: 100px;
             padding: 1rem;
         }
-        
+
         .club-name {
             font-size: 1.1rem;
         }
-        
+
         .club-card-body {
             padding: 1rem;
         }
-        
+
         .section-title {
             font-size: 1.3rem;
         }
@@ -603,7 +603,7 @@
         padding: 0.25rem;
         font-size: 0.8rem;
     }
-    
+
     .calendar-day {
         font-size: 0.75rem;
     }
@@ -613,12 +613,12 @@
     .calendar-container {
         padding: 1rem;
     }
-    
+
     .calendar-date {
         padding: 0.15rem;
         font-size: 0.7rem;
     }
-    
+
     .event-indicator {
         width: 4px;
         height: 4px;
@@ -628,23 +628,23 @@
 
 <div class="dashboard-container">
     <div class="welcome-header">
-        <h1>Welcome back, {{ current_user.first_name }}!</h1>
+        <h1>Welcome back, {{ current_user.full_name }}!</h1>
         <p>Here's what's happening in your clubs today</p>
     </div>
-    
+
     <div class="section-header">
         <h2 class="section-title">My Clubs</h2>
         <a href="{{ url_for('club.create_club') }}" class="btn btn-primary">
             <i class="bi bi-plus-lg me-1"></i> Create Club
         </a>
     </div>
-    
+
     {% if clubs_data %}
     <div class="clubs-grid">
         {% for club_data in clubs_data %}
         <div class="club-card">
             <a href="{{ url_for('event.events_page', club_id=club_data.club.id) }}" class="club-link" aria-label="View {{ club_data.club.name }}"></a>
-            
+
             <div class="club-menu">
             <button class="club-menu-toggle" onclick="event.stopPropagation(); this.parentElement.classList.toggle('active')">
                 <i class="bi bi-three-dots-vertical"></i>
@@ -701,7 +701,7 @@
             <div class="section-header">
                 <h2 class="section-title">Recent Activity</h2>
             </div>
-            
+
             {% if attended_events %}
                 {% for event in attended_events %}
                 <div class="event-item">
@@ -737,13 +737,13 @@
                 </div>
             {% endif %}
         </div>
-        
+
         <div>
             <div class="event-section">
                 <div class="section-header">
                     <h2 class="section-title">Upcoming</h2>
                 </div>
-                
+
                 {% if upcoming_events %}
                     {% for event in upcoming_events %}
                     <div class="event-item">
@@ -766,13 +766,13 @@
                     </div>
                 {% endif %}
             </div>
-            
+
             <!-- New Announcements Section -->
             <div class="event-section">
                 <div class="section-header">
                     <h2 class="section-title">Latest Announcements</h2>
                 </div>
-                
+
                 {% if announcements %}
                     {% for announcement in announcements %}
                     <div class="announcement-item">
@@ -794,24 +794,24 @@
                     </div>
                 {% endif %}
             </div>
-            
+
             <div class="calendar-container">
                 <div class="calendar-header">
                     <h2 class="section-title">{{ datetime(current_year, current_month, 1).strftime('%B %Y') }}</h2>
                     <div>
-                        <a href="?month={{ prev_month }}&year={{ prev_year }}" 
-                           class="btn btn-sm btn-outline-secondary month-nav" 
+                        <a href="?month={{ prev_month }}&year={{ prev_year }}"
+                           class="btn btn-sm btn-outline-secondary month-nav"
                            title="Previous month">
                             <i class="bi bi-chevron-left"></i>
                         </a>
-                        <a href="?month={{ next_month }}&year={{ next_year }}" 
-                           class="btn btn-sm btn-outline-secondary month-nav" 
+                        <a href="?month={{ next_month }}&year={{ next_year }}"
+                           class="btn btn-sm btn-outline-secondary month-nav"
                            title="Next month">
                             <i class="bi bi-chevron-right"></i>
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="calendar-grid">
                     <div class="calendar-day">Sun</div>
                     <div class="calendar-day">Mon</div>
@@ -820,12 +820,12 @@
                     <div class="calendar-day">Thu</div>
                     <div class="calendar-day">Fri</div>
                     <div class="calendar-day">Sat</div>
-                    
+
                     {% set first_day = datetime(current_year, current_month, 1) %}
                     {% set days_in_month = (datetime(current_year, current_month + 1, 1) - datetime(current_year, current_month, 1)).days %}
                     {% set starting_weekday = first_day.weekday() %}
                     {% set today = now.date() %}
-                    
+
                     {% if starting_weekday > 0 %}
                         {% set prev_month_days = (datetime(current_year, current_month, 1) - datetime(prev_year, prev_month, 1)).days %}
                         {% for day in range(prev_month_days - starting_weekday + 1, prev_month_days + 1) %}
@@ -833,7 +833,7 @@
                                 {{ day }}
                                 {% set prev_month_date = datetime(prev_year, prev_month, day).date() %}
                                 {% for event in calendar_events if event.date == prev_month_date %}
-                                    <div class="event-indicator other-month" 
+                                    <div class="event-indicator other-month"
                                          title="{{ event.title }} - {{ event.club_name }}"
                                          onclick="window.location.href='{{ event.url }}'; event.stopPropagation();">
                                     </div>
@@ -841,22 +841,22 @@
                             </div>
                         {% endfor %}
                     {% endif %}
-                    
+
                     {% for day in range(1, days_in_month + 1) %}
                         {% set current_date = datetime(current_year, current_month, day).date() %}
-                        <div class="calendar-date 
+                        <div class="calendar-date
                             {% if current_date == today %}today{% endif %}
                             {% if calendar_events|selectattr('date', 'equalto', current_date)|list %}has-event{% endif %}">
                             {{ day }}
                             {% for event in calendar_events if event.date == current_date %}
-                                <div class="event-indicator" 
+                                <div class="event-indicator"
                                      title="{{ event.title }} - {{ event.club_name }}"
                                      onclick="window.location.href='{{ event.url }}'; event.stopPropagation();">
                                 </div>
                             {% endfor %}
                         </div>
                     {% endfor %}
-                    
+
                     {% set total_cells = starting_weekday + days_in_month %}
                     {% set remaining_cells = (7 - (total_cells % 7)) % 7 %}
                     {% if remaining_cells > 0 %}
@@ -865,7 +865,7 @@
                                 {{ day }}
                                 {% set next_month_date = datetime(next_year, next_month, day).date() %}
                                 {% for event in calendar_events if event.date == next_month_date %}
-                                    <div class="event-indicator other-month" 
+                                    <div class="event-indicator other-month"
                                          title="{{ event.title }} - {{ event.club_name }}"
                                          onclick="window.location.href='{{ event.url }}'; event.stopPropagation();">
                                     </div>

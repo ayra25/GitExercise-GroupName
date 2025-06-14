@@ -1196,12 +1196,12 @@
                                                         <img src="{{ url_for('static', filename='profile_pics/' + comment.user.profile_pic) }}"
                                                             alt="Profile Picture" width="36" height="36" style="border-radius: 50%; object-fit: cover;">
                                                     {% else %}
-                                                        <span class="initials">{{ comment.user.first_name[0]|upper }}</span>
+                                                        <span class="initials">{{ comment.user.full_name[0]|upper }}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="comment-user">
                                                     <div class="comment-user-name">
-                                                        {{ comment.user.first_name }} {{ comment.user.last_name }}
+                                                        {{ comment.user.full_name }}
                                                         {% if comment.user.id in host_user_ids %}
                                                             <span class="comment-user-badge host-badge">
                                                                 <i class="bi bi-star-fill"></i> Club Host
@@ -1245,7 +1245,7 @@
                                                 <div class="comment-card" id="comment-{{ reply.id }}">
                                                     <div class="reply-indicator">
                                                         <i class="bi bi-arrow-return-right"></i>
-                                                        Replying to <a href="#comment-{{ comment.id }}">@{{ comment.user.first_name }}</a>
+                                                        Replying to <a href="#comment-{{ comment.id }}">@{{ comment.user.full_name }}</a>
                                                     </div>
                                                     
                                                     <div class="comment-header">
@@ -1254,12 +1254,12 @@
                                                                 <img src="{{ url_for('static', filename='profile_pics/' + reply.user.profile_pic) }}"
                                                                     alt="Profile Picture" width="36" height="36" style="border-radius: 50%; object-fit: cover;">
                                                             {% else %}
-                                                                <span class="initials">{{ reply.user.first_name[0]|upper }}</span>
+                                                                <span class="initials">{{ reply.user.full_name[0]|upper }}</span>
                                                             {% endif %}
                                                         </div>
                                                         <div class="comment-user">
                                                             <div class="comment-user-name">
-                                                                {{ reply.user.first_name }}
+                                                                {{ reply.user.full_name }}
                                                                 {% if reply.user.id in host_ids %}
                                                                     <span class="comment-user-badge host-badge">Club Host</span>
                                                                 {% endif %}
@@ -1435,13 +1435,12 @@
     <a href="{{ url_for('event.post_event', club_id=club.id) }}" 
        class="floating-btn floating-btn-primary"
        title="Create Event">
-        <i class="bi bi-plus"></i>
+        <i class="bi bi-calendar-plus"></i> 
     </a>
 </div>
 
 {% endif %}
 
-<!-- Add this modal at the bottom of the file, before the closing content block -->
 <div class="modal fade" id="clubInfoModal" tabindex="-1" aria-labelledby="clubInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1530,11 +1529,11 @@
                                         <img src="{{ url_for('static', filename='profile_pics/' + member.profile_pic) }}" 
                                             alt="Profile Picture" width="36" height="36" style="border-radius: 50%; object-fit: cover;">
                                     {% else %}
-                                        <span class="initials">{{ member.first_name[0]|upper }}{{ member.last_name[0]|upper if member.last_name else '' }}</span>
+                                        <span class="initials">{{ member.full_name[0]|upper }}</span>
                                     {% endif %}
                                 </div>
                                 <div>
-                                    <h6 class="mb-0">{{ member.first_name }} {{ member.last_name if member.last_name else '' }}</h6>
+                                    <h6 class="mb-0">{{ member.full_name }}</h6>
                                     <small class="text-muted">{{ member.email }}</small>
                                 </div>
                                 {% if member.id in host_user_ids %}
