@@ -239,7 +239,7 @@
                         {% if user.profile_pic %}
                             <img src="{{ url_for('static', filename='profile_pics/' + user.profile_pic) }}" alt="Profile Picture" width="120" height="120">
                         {% else %}
-                            <div class="default-avatar">{{ user.first_name[0]|upper }}</div>
+                            <div class="default-avatar">{{ user.full_name[0]|upper }}</div>
                         {% endif %}
                     </div>
                     <input type="file" id="profile_pic" name="profile_pic" accept="image/*" class="form-control-file">
@@ -249,13 +249,8 @@
             
             <h3 class="profile-section-title">Personal details</h3>            
             <div class="profile-form-group">
-                <label for="first_name" class="profile-form-label">First name</label>
-                <input type="text" class="profile-form-input" id="first_name" name="first_name" value="{{ user.first_name }}">
-            </div>
-            
-            <div class="profile-form-group">
-                <label for="last_name" class="profile-form-label">Last name</label>
-                <input type="text" class="profile-form-input" id="last_name" name="last_name" value="{{ user.last_name }}">
+                <label for="full_name" class="profile-form-label">Full name</label>
+                <input type="text" class="profile-form-input" id="full_name" name="full_name" value="{{ user.full_name }}">
             </div>
             
         </div>
